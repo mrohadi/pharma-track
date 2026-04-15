@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [develop, main]
+    branches: [main]
   push:
-    branches: [develop, main]
+    branches: [main]
 
 jobs:
   verify:
@@ -49,6 +49,18 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Apply DB migrations
+        run: pnpm db:migrate
+
+      - name: Verify schema matches migrations (no drift)
+        run: |
+          pnpm --filter @pharmatrack/db generate
+          if ! git diff --quiet packages/db/drizzle; then
+            echo "::error::Schema and migrations are out of sync. Run 'pnpm db:generate' locally and commit the result."
+            git diff packages/db/drizzle
+            exit 1
+          fi
 
       - name: Build
         run: pnpm build
