@@ -1,5 +1,6 @@
 export * from './pharmacies';
 export * from './users';
+export * from './auth';
 export * from './drivers';
 export * from './orders';
 export * from './batches';

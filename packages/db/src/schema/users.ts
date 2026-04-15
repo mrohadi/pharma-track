@@ -1,16 +1,21 @@
-import { pgTable, uuid, text, timestamp, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, pgEnum, boolean } from 'drizzle-orm/pg-core';
 import { pharmacies } from './pharmacies';
 
 export const roleEnum = pgEnum('user_role', ['admin', 'pharmacy', 'driver']);
 
+/**
+ * Users table — serves as better-auth's `user` table.
+ * Password is stored in the `accounts` table (better-auth convention).
+ */
 export const users = pgTable('users', {
   id: uuid('id').defaultRandom().primaryKey(),
   email: text('email').notNull().unique(),
-  phone: text('phone'),
+  emailVerified: boolean('email_verified').default(false).notNull(),
   name: text('name'),
+  image: text('image'),
+  phone: text('phone'),
   role: roleEnum('role').notNull(),
   pharmacyId: uuid('pharmacy_id').references(() => pharmacies.id, { onDelete: 'set null' }),
-  passwordHash: text('password_hash').notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });
