@@ -10,3 +10,5 @@ const client = postgres(connectionString, { max: 10 });
 export const db = drizzle(client, { schema });
 export * from './schema';
 export { schema };
+export * from './queries/orders';
+export * from './queries/insert-orders';

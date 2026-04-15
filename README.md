@@ -2,7 +2,6 @@
 
 Pharmacy delivery management PoC — pharmacy uploads orders, patients confirm addresses via WhatsApp, drivers pick up and deliver with OTP-based confirmation, admin monitors in real time.
 
-> Target region: Indonesia / SE Asia. Driver UX: mobile PWA. See [plan](/Users/mrohadi/.claude/plans/temporal-questing-ladybug.md) for full scope.
 
 ## Stack
 
@@ -85,6 +84,12 @@ App runs at http://localhost:3000.
 - Open PRs against `develop`. Squash-merge.
 - `develop` → `main` via a release PR.
 - Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/).
+
+## CSV upload (pharmacy)
+
+Sign in as `pharmacy@pharmatrack.local` and open `/p/upload`. Required columns (case/whitespace insensitive): `patient_name`, `patient_phone`, `medicine`. Optional: `delivery_address`. Download the starter template from `/api/csv-template`.
+
+Uploads are atomic: the whole file must validate, or nothing is inserted. Each created order gets an `order.created_via_csv` entry in `audit_log`.
 
 ## Project phases
 

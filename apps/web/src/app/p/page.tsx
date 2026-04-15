@@ -1,8 +1,79 @@
-export default function PharmacyHome() {
+import Link from 'next/link';
+import { listRecentOrdersForPharmacy } from '@pharmatrack/db';
+import { requireRole } from '@/lib/guards';
+
+const STATUS_LABELS: Record<string, string> = {
+  pending_address: 'Pending address',
+  address_collected: 'Address collected',
+  assigned: 'Assigned',
+  picked_up: 'Picked up',
+  in_transit: 'In transit',
+  delivered: 'Delivered',
+  failed: 'Failed',
+  cancelled: 'Cancelled',
+};
+
+function maskPhone(phone: string): string {
+  // Show country code + first 2 + last 2 digits; mask the middle.
+  if (phone.length <= 6) return phone;
+  return `${phone.slice(0, 4)}••••${phone.slice(-2)}`;
+}
+
+export default async function PharmacyHome() {
+  const session = await requireRole('pharmacy');
+  const pharmacyId = session.user.pharmacyId as string | undefined;
+
+  const recent = pharmacyId ? await listRecentOrdersForPharmacy(pharmacyId) : [];
+
   return (
-    <main className="mx-auto max-w-3xl p-8">
-      <h1 className="text-2xl font-bold">Pharmacy portal</h1>
-      <p className="text-slate-600">Login + CSV upload coming in Phase 1.</p>
+    <main className="mx-auto max-w-4xl p-8">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Pharmacy portal</h1>
+        <Link
+          href="/p/upload"
+          className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+        >
+          Upload CSV
+        </Link>
+      </div>
+
+      <h2 className="mb-2 text-lg font-semibold">Recent orders</h2>
+      {recent.length === 0 ? (
+        <p className="text-sm text-slate-600">
+          No orders yet.{' '}
+          <Link href="/p/upload" className="text-brand-700 underline">
+            Upload a CSV
+          </Link>{' '}
+          to get started.
+        </p>
+      ) : (
+        <div className="overflow-x-auto rounded border border-slate-200">
+          <table className="min-w-full text-sm">
+            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
+              <tr>
+                <th className="px-3 py-2">Patient</th>
+                <th className="px-3 py-2">Phone</th>
+                <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Created</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {recent.map((o) => (
+                <tr key={o.id}>
+                  <td className="px-3 py-2">{o.patientName}</td>
+                  <td className="px-3 py-2 font-mono text-xs text-slate-600">
+                    {maskPhone(o.patientPhone)}
+                  </td>
+                  <td className="px-3 py-2">{STATUS_LABELS[o.status] ?? o.status}</td>
+                  <td className="px-3 py-2 text-slate-500">
+                    {new Date(o.createdAt).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </main>
   );
 }
