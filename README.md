@@ -1,84 +1,87 @@
-# **Pharamcy Delivery Management System with OTP & Driver Tracking**
+# PharmaTrack
 
-**Build Pharamcy Delivery Management System with OTP & Driver Tracking (FleetBase Optional)**
+Pharmacy delivery management PoC — pharmacy uploads orders, patients confirm addresses via WhatsApp, drivers pick up and deliver with OTP-based confirmation, admin monitors in real time.
 
-I am building a cloud-based system to manage the delivery of medication from hospital pharmacies to patients.
+> Target region: Indonesia / SE Asia. Driver UX: mobile PWA. See [plan](/Users/mrohadi/.claude/plans/temporal-questing-ladybug.md) for full scope.
 
-The goal is to create a simple but fully functional MVP that covers the full delivery cycle — from order upload to driver confirmation. You are free to use an open-source base like FleetBase or any other tools that will help deliver faster and at lower cost.
+## Stack
 
-This is an exploratory project, and if successful, it may expand into a larger, long-term system.
+- **Next.js 15** (App Router, TypeScript) — pharmacy, admin, and driver UIs in one app
+- **PostgreSQL 16** + **Drizzle ORM**
+- **Redis** + **BullMQ** (background jobs — added in Phase 2)
+- **Better-Auth** (added in Phase 1 completion)
+- **Meta WhatsApp Cloud API** (Phase 2)
+- Docker Compose for local infra; AWS Lightsail for PoC deploy
 
-What the system should do (workflow):
+## Repo layout
 
-Pharmacy Login & Upload
+```
+apps/
+  web/                # Next.js app (/p pharmacy, /a admin, /d driver)
+packages/
+  db/                 # Drizzle schema + client
+  shared/             # zod schemas, shared types
+infra/
+  docker-compose.yml  # Postgres + Redis for local dev
+.github/workflows/    # CI
+```
 
-- Pharmacies log in to a secure web portal
-- Upload Excel/CSV files with patient name, phone number, and medicine
-- Orders are added to the system and tracked
+## Prerequisites
 
-Automated Address Collection
+- Node 22 (use `nvm use`)
+- pnpm 9.6
+- Docker + Docker Compose
 
-- Patients are contacted automatically to provide their delivery address
-- If no response is received within 15 minutes, a reminder is sent
-- The address is stored and linked to the correct order
+## Local setup
 
-Driver Assignment
+```bash
+# 1. Install deps
+pnpm install
 
-- Admin (or system) assigns one or more orders to a driver
-- Drivers see orders in their dashboard (or app) with pickup and delivery details
+# 2. Start Postgres + Redis
+pnpm infra:up
 
-Pharmacy Pickup Confirmation
+# 3. Copy env
+cp .env.example .env
 
-- Driver confirms pickup of orders at the pharmacy
+# 4. Generate + apply DB migrations (once schema is final)
+pnpm db:generate
+pnpm db:migrate
 
-This can be done via:
+# 5. Run dev server
+pnpm dev
+```
 
-- OTP from pharmacy staff, or
-- Digital signature for the entire batch
+App runs at http://localhost:3000.
 
-Delivery Confirmation
+## Scripts
 
-- Upon delivery, patient provides an OTP
-- Driver enters the OTP into the system to confirm successful delivery
-- Order is marked as completed
+| Command | Description |
+|---|---|
+| `pnpm dev` | Start Next.js in dev mode |
+| `pnpm build` | Build all packages |
+| `pnpm typecheck` | TypeScript check across all packages |
+| `pnpm lint` | Lint all packages |
+| `pnpm format` / `pnpm format:check` | Prettier |
+| `pnpm db:generate` | Generate a new Drizzle migration from schema changes |
+| `pnpm db:migrate` | Apply pending migrations |
+| `pnpm db:studio` | Open Drizzle Studio |
+| `pnpm infra:up` / `infra:down` / `infra:logs` | Manage local Postgres + Redis |
 
-Admin View
+## Git workflow
 
-Admin can:
+- All feature work on `feature/<scope>-<short-desc>` branches.
+- Open PRs against `develop`. Squash-merge.
+- `develop` → `main` via a release PR.
+- Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/).
 
-- Monitor all orders, drivers, and pharmacies
-- Reassign deliveries
-- Export data
-- Track delivery status in real time
+## Project phases
 
-Final Deliverables:
+1. **Phase 1 — Foundations**: scaffold, auth, CSV upload, audit log _(in progress)_
+2. **Phase 2 — Patient comms + assignment**: WhatsApp address collection, driver assignment
+3. **Phase 3 — OTP + delivery**: pickup/delivery OTP, GPS, POD photo
+4. **Phase 4 — Admin polish + launch**: exports, analytics, white-label, security pass
 
-- Fully deployed and functional system on our cloud server
-- Pharmacy dashboard
-- Admin dashboard
-- Driver interface (web or mobile web)
-- Automated address collection logic
-- OTP functionality for both pickup and delivery
-- Excel/CSV parser and order uploader
-- White-labeled design (our logo, branding)
-- Simple documentation for maintenance and usage
+## License
 
-Tools You Can Use (Not Mandatory):
-
-- FleetBase (preferred if it reduces time and cost)
-- Laravel, Node.js, or any other efficient backend
-- Ember.js, React, or any modern frontend
-- Communication or messaging APIs of your choice (compliant with platform policies)
-
-Requirements:
-
-- Full-stack development experience
-- Experience with API-based messaging or notifications
-- Secure user and data management
-- Ability to deliver in less than one month
-
-To Apply:
-
-- Briefly explain how you would approach the project
-- Confirm that you can complete it in less than a month
-- Share any relevant experience or examples of similar work
+Proprietary / internal — not open source.
