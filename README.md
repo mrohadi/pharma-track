@@ -44,15 +44,25 @@ pnpm infra:up
 # 3. Copy env
 cp .env.example .env
 
-# 4. Generate + apply DB migrations (once schema is final)
-pnpm db:generate
+# 4. Apply DB migrations
 pnpm db:migrate
 
 # 5. Run dev server
 pnpm dev
+
+# 6. (In another terminal) seed local dev users
+pnpm db:seed
 ```
 
 App runs at http://localhost:3000.
+
+### Seed users (dev only)
+
+| Email | Password | Role |
+|---|---|---|
+| `admin@pharmatrack.local` | `admin12345` | admin → redirects to `/a` |
+| `pharmacy@pharmatrack.local` | `pharmacy12345` | pharmacy → redirects to `/p` |
+| `driver@pharmatrack.local` | `driver12345` | driver → redirects to `/d` |
 
 ## Scripts
 
@@ -65,6 +75,7 @@ App runs at http://localhost:3000.
 | `pnpm format` / `pnpm format:check` | Prettier |
 | `pnpm db:generate` | Generate a new Drizzle migration from schema changes |
 | `pnpm db:migrate` | Apply pending migrations |
+| `pnpm db:seed` | Seed dev users + demo pharmacy (requires dev server running) |
 | `pnpm db:studio` | Open Drizzle Studio |
 | `pnpm infra:up` / `infra:down` / `infra:logs` | Manage local Postgres + Redis |
 
