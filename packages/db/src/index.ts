@@ -19,3 +19,5 @@ export * from './queries/address-requests';
 export * from './queries/batches';
 export * from './queries/batchable-orders';
 export * from './queries/delivery-otp';
+export * from './queries/export-orders';
+export * from './queries/export-pharmacy-orders';
