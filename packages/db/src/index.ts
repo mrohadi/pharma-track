@@ -12,3 +12,4 @@ export * from './schema';
 export { schema };
 export * from './queries/orders';
 export * from './queries/insert-orders';
+export * from './queries/admin-orders';

@@ -1,23 +1,7 @@
 import Link from 'next/link';
 import { listRecentOrdersForPharmacy } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
-
-const STATUS_LABELS: Record<string, string> = {
-  pending_address: 'Pending address',
-  address_collected: 'Address collected',
-  assigned: 'Assigned',
-  picked_up: 'Picked up',
-  in_transit: 'In transit',
-  delivered: 'Delivered',
-  failed: 'Failed',
-  cancelled: 'Cancelled',
-};
-
-function maskPhone(phone: string): string {
-  // Show country code + first 2 + last 2 digits; mask the middle.
-  if (phone.length <= 6) return phone;
-  return `${phone.slice(0, 4)}••••${phone.slice(-2)}`;
-}
+import { ORDER_STATUS_LABELS, maskPhone } from '@/lib/format';
 
 export default async function PharmacyHome() {
   const session = await requireRole('pharmacy');
@@ -64,7 +48,7 @@ export default async function PharmacyHome() {
                   <td className="px-3 py-2 font-mono text-xs text-slate-600">
                     {maskPhone(o.patientPhone)}
                   </td>
-                  <td className="px-3 py-2">{STATUS_LABELS[o.status] ?? o.status}</td>
+                  <td className="px-3 py-2">{ORDER_STATUS_LABELS[o.status] ?? o.status}</td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(o.createdAt).toLocaleString()}
                   </td>
