@@ -18,3 +18,4 @@ export * from './queries/assign';
 export * from './queries/address-requests';
 export * from './queries/batches';
 export * from './queries/batchable-orders';
+export * from './queries/delivery-otp';
