@@ -2,6 +2,7 @@ import { getDriverByUserId, listDriverQueue, listBatchesForDriver } from '@pharm
 import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE } from '@/lib/format';
 import { PickupForm } from './pickup-form';
+import { DeliveryControls } from './delivery-controls';
 
 const BATCH_STATUS_BADGE: Record<string, string> = {
   assigned: 'bg-indigo-100 text-indigo-800',
@@ -103,6 +104,7 @@ export default async function DriverHome() {
               {!o.deliveryAddress && (
                 <p className="mt-1 text-xs italic text-amber-600">Address not yet collected</p>
               )}
+              <DeliveryControls orderId={o.id} status={o.status} />
             </li>
           ))}
         </ul>
