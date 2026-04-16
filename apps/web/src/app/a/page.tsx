@@ -1,8 +1,11 @@
 import Link from 'next/link';
-import { listOrdersForAdmin, listPharmaciesForFilter } from '@pharmatrack/db';
+import { listOrdersForAdmin, listPharmaciesForFilter, listDrivers } from '@pharmatrack/db';
 import { OrderStatus } from '@pharmatrack/shared';
 import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE, maskPhone } from '@/lib/format';
+import { AssignCell } from './assign-cell';
+
+const TERMINAL_STATUSES = new Set(['delivered', 'failed', 'cancelled']);
 
 type SearchParams = {
   status?: string;
@@ -42,9 +45,10 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
   const sp = await searchParams;
   const { status, pharmacyId, page } = parseFilters(sp);
 
-  const [{ rows, total, pageSize }, allPharmacies] = await Promise.all([
+  const [{ rows, total, pageSize }, allPharmacies, allDrivers] = await Promise.all([
     listOrdersForAdmin({ status, pharmacyId, page }),
     listPharmaciesForFilter(),
+    listDrivers(),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -121,6 +125,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                 <th className="px-3 py-2">Phone</th>
                 <th className="px-3 py-2">Pharmacy</th>
                 <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">Driver</th>
                 <th className="px-3 py-2">Created</th>
               </tr>
             </thead>
@@ -140,6 +145,15 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                     >
                       {ORDER_STATUS_LABELS[o.status] ?? o.status}
                     </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    <AssignCell
+                      orderId={o.id}
+                      drivers={allDrivers}
+                      currentDriverId={o.assignedDriverId}
+                      currentDriverName={o.assignedDriverName}
+                      disabled={TERMINAL_STATUSES.has(o.status)}
+                    />
                   </td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(o.createdAt).toLocaleString()}

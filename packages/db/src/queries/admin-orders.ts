@@ -1,6 +1,7 @@
 import { and, desc, eq, sql } from 'drizzle-orm';
+import { alias } from 'drizzle-orm/pg-core';
 import { db } from '../index';
-import { orders, pharmacies } from '../schema';
+import { orders, pharmacies, drivers, users } from '../schema';
 import type { OrderStatus } from '@pharmatrack/shared';
 
 export type AdminOrderFilters = {
@@ -19,6 +20,8 @@ export type AdminOrderRow = {
   status: OrderStatus;
   pharmacyId: string;
   pharmacyName: string;
+  assignedDriverId: string | null;
+  assignedDriverName: string | null;
   createdAt: Date;
 };
 
@@ -47,6 +50,8 @@ export async function listOrdersForAdmin(
   if (filters.pharmacyId) conditions.push(eq(orders.pharmacyId, filters.pharmacyId));
   const where = conditions.length > 0 ? and(...conditions) : undefined;
 
+  const driverUser = alias(users, 'driver_user');
+
   const [rows, totalRow] = await Promise.all([
     db
       .select({
@@ -57,10 +62,14 @@ export async function listOrdersForAdmin(
         status: orders.status,
         pharmacyId: orders.pharmacyId,
         pharmacyName: pharmacies.name,
+        assignedDriverId: orders.assignedDriverId,
+        assignedDriverName: driverUser.name,
         createdAt: orders.createdAt,
       })
       .from(orders)
       .innerJoin(pharmacies, eq(orders.pharmacyId, pharmacies.id))
+      .leftJoin(drivers, eq(orders.assignedDriverId, drivers.id))
+      .leftJoin(driverUser, eq(drivers.userId, driverUser.id))
       .where(where)
       .orderBy(desc(orders.createdAt))
       .limit(pageSize)
