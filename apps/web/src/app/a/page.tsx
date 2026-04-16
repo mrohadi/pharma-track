@@ -4,6 +4,7 @@ import { OrderStatus } from '@pharmatrack/shared';
 import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE, maskPhone } from '@/lib/format';
 import { AssignCell } from './assign-cell';
+import { sendAddressRequestAction } from './send-address-request';
 
 const TERMINAL_STATUSES = new Set(['delivered', 'failed', 'cancelled']);
 
@@ -126,6 +127,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                 <th className="px-3 py-2">Pharmacy</th>
                 <th className="px-3 py-2">Status</th>
                 <th className="px-3 py-2">Driver</th>
+                <th className="px-3 py-2">Actions</th>
                 <th className="px-3 py-2">Created</th>
               </tr>
             </thead>
@@ -154,6 +156,19 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                       currentDriverName={o.assignedDriverName}
                       disabled={TERMINAL_STATUSES.has(o.status)}
                     />
+                  </td>
+                  <td className="px-3 py-2">
+                    {o.status === 'pending_address' && (
+                      <form action={sendAddressRequestAction}>
+                        <input type="hidden" name="orderId" value={o.id} />
+                        <button
+                          type="submit"
+                          className="rounded bg-teal-600 px-2 py-1 text-xs font-medium text-white hover:bg-teal-700"
+                        >
+                          Request address
+                        </button>
+                      </form>
+                    )}
                   </td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(o.createdAt).toLocaleString()}

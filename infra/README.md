@@ -10,7 +10,7 @@ pnpm infra:down   # stop containers (data persists in ./.data)
 
 Data is persisted under `infra/.data/` (gitignored). Delete that folder to reset.
 
-## Production (PoC): AWS Lightsail
+## Production: AWS Lightsail
 
 Target: single $5 instance, Ubuntu 22.04, Docker + Docker Compose. Services: Postgres, Redis, Next.js, BullMQ worker, Caddy (TLS).
 

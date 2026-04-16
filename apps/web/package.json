@@ -12,6 +12,7 @@
   "dependencies": {
     "@pharmatrack/db": "workspace:*",
     "@pharmatrack/shared": "workspace:*",
+    "@pharmatrack/whatsapp": "workspace:*",
     "better-auth": "^1.6.4",
     "next": "15.0.3",
     "papaparse": "^5.5.3",

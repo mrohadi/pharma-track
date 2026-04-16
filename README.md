@@ -1,6 +1,6 @@
 # PharmaTrack
 
-Pharmacy delivery management PoC — pharmacy uploads orders, patients confirm addresses via WhatsApp, drivers pick up and deliver with OTP-based confirmation, admin monitors in real time.
+Pharmacy delivery management — pharmacy uploads orders, patients confirm addresses via WhatsApp, drivers pick up and deliver with OTP-based confirmation, admin monitors in real time.
 
 
 ## Stack
@@ -10,7 +10,7 @@ Pharmacy delivery management PoC — pharmacy uploads orders, patients confirm a
 - **Redis** + **BullMQ** (background jobs — added in Phase 2)
 - **Better-Auth** (added in Phase 1 completion)
 - **Meta WhatsApp Cloud API** (Phase 2)
-- Docker Compose for local infra; AWS Lightsail for PoC deploy
+- Docker Compose for local infra; AWS Lightsail for deploy
 
 ## Repo layout
 

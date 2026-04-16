@@ -26,6 +26,9 @@ importers:
       '@pharmatrack/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      '@pharmatrack/whatsapp':
+        specifier: workspace:*
+        version: link:../../packages/whatsapp
       better-auth:
         specifier: ^1.6.4
         version: 1.6.4(@opentelemetry/api@1.9.1)(next@15.0.3(@opentelemetry/api@1.9.1)(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106))(react-dom@19.0.0-rc-66855b96-20241106(react@19.0.0-rc-66855b96-20241106))(react@19.0.0-rc-66855b96-20241106)
@@ -107,6 +110,15 @@ importers:
         specifier: ^3.23.8
         version: 3.25.76
     devDependencies:
+      typescript:
+        specifier: ^5.6.3
+        version: 5.9.3
+
+  packages/whatsapp:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.9.0
+        version: 22.19.17
       typescript:
         specifier: ^5.6.3
         version: 5.9.3
