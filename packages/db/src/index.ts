@@ -15,3 +15,4 @@ export * from './queries/insert-orders';
 export * from './queries/admin-orders';
 export * from './queries/drivers';
 export * from './queries/assign';
+export * from './queries/address-requests';
