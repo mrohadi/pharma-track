@@ -3,6 +3,7 @@ import { listRecentOrdersForPharmacy } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, maskPhone } from '@/lib/format';
 import { PodPhotoLink } from '@/components/pod-photo-link';
+import { PharmacyExportButton } from './export-button';
 
 export default async function PharmacyHome() {
   const session = await requireRole('pharmacy');
@@ -14,12 +15,15 @@ export default async function PharmacyHome() {
     <main className="mx-auto max-w-4xl p-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Pharmacy portal</h1>
-        <Link
-          href="/p/upload"
-          className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
-        >
-          Upload CSV
-        </Link>
+        <div className="flex items-center gap-2">
+          <PharmacyExportButton />
+          <Link
+            href="/p/upload"
+            className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+          >
+            Upload CSV
+          </Link>
+        </div>
       </div>
 
       <h2 className="mb-2 text-lg font-semibold">Recent orders</h2>

@@ -6,6 +6,7 @@ import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE, maskPhone } from '@/lib/format
 import { AssignCell } from './assign-cell';
 import { sendAddressRequestAction } from './send-address-request';
 import { PodPhotoLink } from '@/components/pod-photo-link';
+import { ExportButton } from './export-button';
 
 const TERMINAL_STATUSES = new Set(['delivered', 'failed', 'cancelled']);
 
@@ -13,6 +14,8 @@ type SearchParams = {
   status?: string;
   pharmacyId?: string;
   page?: string;
+  from?: string;
+  to?: string;
 };
 
 function parseFilters(sp: SearchParams) {
@@ -60,12 +63,15 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
     <main className="mx-auto max-w-6xl p-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">Orders</h1>
-        <Link
-          href="/a/batches"
-          className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
-        >
-          Manage batches
-        </Link>
+        <div className="flex items-center gap-2">
+          <ExportButton status={sp.status} pharmacyId={sp.pharmacyId} />
+          <Link
+            href="/a/batches"
+            className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+          >
+            Manage batches
+          </Link>
+        </div>
       </div>
 
       <form className="mb-4 flex flex-wrap items-end gap-3 text-sm" action="/a" method="get">
