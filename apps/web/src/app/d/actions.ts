@@ -111,11 +111,22 @@ export async function verifyDeliveryOtpAction(formData: FormData): Promise<Verif
 
   const orderId = String(formData.get('orderId') ?? '');
   const otp = String(formData.get('otp') ?? '');
+  const podPhotoUrl = String(formData.get('podPhotoUrl') ?? '').trim() || undefined;
 
   if (!UUID_RE.test(orderId)) return { ok: false, reason: 'Invalid order' };
   if (!PIN_RE.test(otp)) return { ok: false, reason: 'OTP must be 6 digits' };
 
-  const result = await verifyDeliveryOtp({ orderId, otp, actorUserId: session.user.id });
+  // Validate podPhotoUrl looks like an S3 key (not arbitrary input)
+  if (podPhotoUrl && !podPhotoUrl.startsWith('pod-photos/')) {
+    return { ok: false, reason: 'Invalid photo URL' };
+  }
+
+  const result = await verifyDeliveryOtp({
+    orderId,
+    otp,
+    actorUserId: session.user.id,
+    podPhotoUrl,
+  });
 
   if (!result.ok) {
     if (result.reason === 'locked') {

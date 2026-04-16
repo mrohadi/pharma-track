@@ -5,6 +5,7 @@ import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE, maskPhone } from '@/lib/format';
 import { AssignCell } from './assign-cell';
 import { sendAddressRequestAction } from './send-address-request';
+import { PodPhotoLink } from '@/components/pod-photo-link';
 
 const TERMINAL_STATUSES = new Set(['delivered', 'failed', 'cancelled']);
 
@@ -136,6 +137,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                 <th className="px-3 py-2">Status</th>
                 <th className="px-3 py-2">Driver</th>
                 <th className="px-3 py-2">Actions</th>
+                <th className="px-3 py-2">POD</th>
                 <th className="px-3 py-2">Created</th>
               </tr>
             </thead>
@@ -177,6 +179,9 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
                         </button>
                       </form>
                     )}
+                  </td>
+                  <td className="px-3 py-2">
+                    {o.podPhotoUrl ? <PodPhotoLink photoKey={o.podPhotoUrl} /> : null}
                   </td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(o.createdAt).toLocaleString()}

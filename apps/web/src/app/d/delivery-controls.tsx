@@ -9,6 +9,7 @@ import {
   type VerifyOtpActionResult,
   type FailDeliveryActionResult,
 } from './actions';
+import { PodPhotoInput } from './pod-photo-input';
 
 const FAILURE_REASONS = [
   { value: 'no_answer', label: 'No answer' },
@@ -20,11 +21,20 @@ const FAILURE_REASONS = [
 
 type Phase = 'idle' | 'otp_sent' | 'delivered' | 'failed' | 'fail_form';
 
-export function DeliveryControls({ orderId, status }: { orderId: string; status: string }) {
+export function DeliveryControls({
+  orderId,
+  status,
+  podPhotoRequired,
+}: {
+  orderId: string;
+  status: string;
+  podPhotoRequired: boolean;
+}) {
   const [phase, setPhase] = useState<Phase>(status === 'in_transit' ? 'otp_sent' : 'idle');
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+  const [podPhotoKey, setPodPhotoKey] = useState<string>('');
 
   // Only show for deliverable statuses
   if (status !== 'picked_up' && status !== 'in_transit') return null;
@@ -46,8 +56,13 @@ export function DeliveryControls({ orderId, status }: { orderId: string; status:
 
   function verifyOtp(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (podPhotoRequired && !podPhotoKey) {
+      setError('Proof of delivery photo is required');
+      return;
+    }
     const form = new FormData(e.currentTarget);
     form.set('orderId', orderId);
+    if (podPhotoKey) form.set('podPhotoUrl', podPhotoKey);
     startTransition(async () => {
       setError(null);
       const r: VerifyOtpActionResult = await verifyDeliveryOtpAction(form);
@@ -97,6 +112,11 @@ export function DeliveryControls({ orderId, status }: { orderId: string; status:
       {phase === 'otp_sent' && (
         <>
           {info && <p className="text-xs text-blue-600">{info}</p>}
+          <PodPhotoInput
+            orderId={orderId}
+            required={podPhotoRequired}
+            onUploaded={setPodPhotoKey}
+          />
           <form onSubmit={verifyOtp} className="flex items-center gap-2">
             <input
               name="otp"

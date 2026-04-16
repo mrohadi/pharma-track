@@ -104,7 +104,11 @@ export default async function DriverHome() {
               {!o.deliveryAddress && (
                 <p className="mt-1 text-xs italic text-amber-600">Address not yet collected</p>
               )}
-              <DeliveryControls orderId={o.id} status={o.status} />
+              <DeliveryControls
+                orderId={o.id}
+                status={o.status}
+                podPhotoRequired={o.podPhotoRequired}
+              />
             </li>
           ))}
         </ul>
