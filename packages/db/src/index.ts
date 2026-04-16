@@ -13,3 +13,5 @@ export { schema };
 export * from './queries/orders';
 export * from './queries/insert-orders';
 export * from './queries/admin-orders';
+export * from './queries/drivers';
+export * from './queries/assign';

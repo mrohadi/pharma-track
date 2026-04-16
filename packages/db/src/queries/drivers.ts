@@ -1,0 +1,69 @@
+import { asc, desc, eq } from 'drizzle-orm';
+import { db } from '../index';
+import { drivers, users, orders } from '../schema';
+import type { OrderStatus } from '@pharmatrack/shared';
+
+export type DriverRow = {
+  id: string;
+  name: string | null;
+  email: string;
+  vehicle: string | null;
+  licensePlate: string | null;
+  status: 'offline' | 'available' | 'on_delivery';
+};
+
+/** List drivers joined with their user record — name + email for display. */
+export async function listDrivers(): Promise<DriverRow[]> {
+  const rows = await db
+    .select({
+      id: drivers.id,
+      name: users.name,
+      email: users.email,
+      vehicle: drivers.vehicle,
+      licensePlate: drivers.licensePlate,
+      status: drivers.status,
+    })
+    .from(drivers)
+    .innerJoin(users, eq(drivers.userId, users.id))
+    .orderBy(asc(users.name));
+  return rows;
+}
+
+/** Look up the driver row for a given user id (driver's own user account). */
+export async function getDriverByUserId(userId: string) {
+  const row = (await db.select().from(drivers).where(eq(drivers.userId, userId)).limit(1)).at(0);
+  return row ?? null;
+}
+
+export type AssignedOrderRow = {
+  id: string;
+  patientName: string;
+  patientPhone: string;
+  medicineText: string;
+  deliveryAddress: string | null;
+  status: OrderStatus;
+  createdAt: Date;
+};
+
+/**
+ * Orders the driver should see on their dashboard — anything assigned to
+ * them that isn't already terminal (delivered / failed / cancelled).
+ */
+export async function listDriverQueue(driverId: string): Promise<AssignedOrderRow[]> {
+  const rows = await db
+    .select({
+      id: orders.id,
+      patientName: orders.patientName,
+      patientPhone: orders.patientPhone,
+      medicineText: orders.medicineText,
+      deliveryAddress: orders.deliveryAddress,
+      status: orders.status,
+      createdAt: orders.createdAt,
+    })
+    .from(orders)
+    .where(eq(orders.assignedDriverId, driverId))
+    .orderBy(desc(orders.createdAt));
+  return rows.filter(
+    (r) => !(r.status === 'delivered' || r.status === 'failed' || r.status === 'cancelled'),
+  );
+}
