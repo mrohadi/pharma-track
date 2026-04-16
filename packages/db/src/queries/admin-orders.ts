@@ -22,6 +22,7 @@ export type AdminOrderRow = {
   pharmacyName: string;
   assignedDriverId: string | null;
   assignedDriverName: string | null;
+  podPhotoUrl: string | null;
   createdAt: Date;
 };
 
@@ -64,6 +65,7 @@ export async function listOrdersForAdmin(
         pharmacyName: pharmacies.name,
         assignedDriverId: orders.assignedDriverId,
         assignedDriverName: driverUser.name,
+        podPhotoUrl: orders.podPhotoUrl,
         createdAt: orders.createdAt,
       })
       .from(orders)

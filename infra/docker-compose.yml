@@ -40,3 +40,22 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+
+  localstack:
+    image: localstack/localstack:3
+    restart: unless-stopped
+    environment:
+      SERVICES: s3
+      DEFAULT_REGION: ap-southeast-1
+      # Automatically create the pharmatrack-uploads bucket on startup
+      AWS_DEFAULT_REGION: ap-southeast-1
+    ports:
+      - '4566:4566'
+    volumes:
+      - ./.data/localstack:/var/lib/localstack
+      - ./localstack-init:/etc/localstack/init/ready.d
+    healthcheck:
+      test: ['CMD', 'curl', '-f', 'http://localhost:4566/_localstack/health']
+      interval: 5s
+      timeout: 5s
+      retries: 10

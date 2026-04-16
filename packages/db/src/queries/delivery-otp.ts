@@ -139,8 +139,9 @@ export async function verifyDeliveryOtp(opts: {
   orderId: string;
   otp: string;
   actorUserId: string;
+  podPhotoUrl?: string;
 }): Promise<VerifyDeliveryOtpResult> {
-  const { orderId, otp, actorUserId } = opts;
+  const { orderId, otp, actorUserId, podPhotoUrl } = opts;
 
   return db.transaction(async (tx) => {
     const order = (
@@ -221,6 +222,7 @@ export async function verifyDeliveryOtp(opts: {
         status: 'delivered',
         deliveredAt: now,
         deliveryOtpHash: null, // Clear after use
+        podPhotoUrl: podPhotoUrl ?? null,
         updatedAt: now,
       })
       .where(eq(orders.id, orderId));
@@ -230,7 +232,9 @@ export async function verifyDeliveryOtp(opts: {
       entityType: 'order',
       entityId: orderId,
       action: 'order.delivered',
-      diff: {} as Record<string, unknown>,
+      diff: {
+        ...(podPhotoUrl ? { podPhotoUrl } : {}),
+      } as Record<string, unknown>,
     });
 
     return { ok: true };

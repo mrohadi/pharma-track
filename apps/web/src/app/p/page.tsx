@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { listRecentOrdersForPharmacy } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
 import { ORDER_STATUS_LABELS, maskPhone } from '@/lib/format';
+import { PodPhotoLink } from '@/components/pod-photo-link';
 
 export default async function PharmacyHome() {
   const session = await requireRole('pharmacy');
@@ -38,6 +39,7 @@ export default async function PharmacyHome() {
                 <th className="px-3 py-2">Patient</th>
                 <th className="px-3 py-2">Phone</th>
                 <th className="px-3 py-2">Status</th>
+                <th className="px-3 py-2">POD</th>
                 <th className="px-3 py-2">Created</th>
               </tr>
             </thead>
@@ -49,6 +51,9 @@ export default async function PharmacyHome() {
                     {maskPhone(o.patientPhone)}
                   </td>
                   <td className="px-3 py-2">{ORDER_STATUS_LABELS[o.status] ?? o.status}</td>
+                  <td className="px-3 py-2">
+                    {o.podPhotoUrl ? <PodPhotoLink photoKey={o.podPhotoUrl} /> : null}
+                  </td>
                   <td className="px-3 py-2 text-slate-500">
                     {new Date(o.createdAt).toLocaleString()}
                   </td>

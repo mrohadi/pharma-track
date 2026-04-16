@@ -1,6 +1,6 @@
 import { asc, desc, eq } from 'drizzle-orm';
 import { db } from '../index';
-import { drivers, users, orders } from '../schema';
+import { drivers, users, orders, pharmacies } from '../schema';
 import type { OrderStatus } from '@pharmatrack/shared';
 
 export type DriverRow = {
@@ -42,6 +42,8 @@ export type AssignedOrderRow = {
   medicineText: string;
   deliveryAddress: string | null;
   status: OrderStatus;
+  pharmacyId: string;
+  podPhotoRequired: boolean;
   createdAt: Date;
 };
 
@@ -58,12 +60,26 @@ export async function listDriverQueue(driverId: string): Promise<AssignedOrderRo
       medicineText: orders.medicineText,
       deliveryAddress: orders.deliveryAddress,
       status: orders.status,
+      pharmacyId: orders.pharmacyId,
+      pharmacySettings: pharmacies.settings,
       createdAt: orders.createdAt,
     })
     .from(orders)
+    .innerJoin(pharmacies, eq(orders.pharmacyId, pharmacies.id))
     .where(eq(orders.assignedDriverId, driverId))
     .orderBy(desc(orders.createdAt));
-  return rows.filter(
-    (r) => !(r.status === 'delivered' || r.status === 'failed' || r.status === 'cancelled'),
-  );
+  return rows
+    .filter((r) => !(r.status === 'delivered' || r.status === 'failed' || r.status === 'cancelled'))
+    .map((r) => ({
+      id: r.id,
+      patientName: r.patientName,
+      patientPhone: r.patientPhone,
+      medicineText: r.medicineText,
+      deliveryAddress: r.deliveryAddress,
+      status: r.status as OrderStatus,
+      pharmacyId: r.pharmacyId,
+      podPhotoRequired:
+        (r.pharmacySettings as Record<string, unknown> | null)?.podPhotoRequired === true,
+      createdAt: r.createdAt,
+    }));
 }

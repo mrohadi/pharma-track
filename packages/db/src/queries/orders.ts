@@ -15,6 +15,7 @@ export async function listRecentOrdersForPharmacy(pharmacyId: string, limit = 25
       patientName: orders.patientName,
       patientPhone: orders.patientPhone,
       status: orders.status,
+      podPhotoUrl: orders.podPhotoUrl,
       createdAt: orders.createdAt,
     })
     .from(orders)
