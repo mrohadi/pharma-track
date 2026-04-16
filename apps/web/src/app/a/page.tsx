@@ -57,7 +57,15 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
 
   return (
     <main className="mx-auto max-w-6xl p-8">
-      <h1 className="mb-4 text-2xl font-bold">Orders</h1>
+      <div className="mb-4 flex items-center justify-between">
+        <h1 className="text-2xl font-bold">Orders</h1>
+        <Link
+          href="/a/batches"
+          className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+        >
+          Manage batches
+        </Link>
+      </div>
 
       <form className="mb-4 flex flex-wrap items-end gap-3 text-sm" action="/a" method="get">
         <div>
