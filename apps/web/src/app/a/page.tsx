@@ -66,6 +66,12 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
         <div className="flex items-center gap-2">
           <ExportButton status={sp.status} pharmacyId={sp.pharmacyId} />
           <Link
+            href="/a/analytics"
+            className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          >
+            Analytics
+          </Link>
+          <Link
             href="/a/batches"
             className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
           >
