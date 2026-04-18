@@ -1,0 +1,16 @@
+# Caddy auto-provisions TLS via Let's Encrypt for any hostname it serves.
+#
+# Free domain options (no purchase needed):
+#   sslip.io  — replace dots with dashes: 13-250-20-97.sslip.io
+#   DuckDNS   — register a free subdomain at duckdns.org
+#
+# Replace the placeholder below with your chosen hostname.
+
+pharmatrack.example.com {
+    reverse_proxy web:3000
+}
+
+# Add more apps here as you deploy them, e.g.:
+# portfolio.example.com {
+#     reverse_proxy portfolio-web:4000
+# }
