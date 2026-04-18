@@ -25,3 +25,4 @@ export * from './queries/analytics';
 export * from './queries/audit-log';
 export * from './queries/pharmacy-settings';
 export * from './queries/push-subscriptions';
+export * from './queries/address-reminders';
