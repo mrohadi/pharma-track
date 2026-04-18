@@ -1,6 +1,6 @@
 services:
   web:
-    image: ${WEB_IMAGE:?WEB_IMAGE is required}
+    image: ${WEB_IMAGE:-ghcr.io/mrohadi/pharma-track:latest}
     restart: unless-stopped
     environment:
       DATABASE_URL: ${DATABASE_URL}
@@ -52,7 +52,7 @@ services:
     networks: [pharmatrack]
 
   migrator:
-    image: ${WEB_IMAGE:?WEB_IMAGE is required}
+    image: ${WEB_IMAGE:-ghcr.io/mrohadi/pharma-track:latest}
     command: ['node', 'migrate.js']
     restart: 'no'
     environment:

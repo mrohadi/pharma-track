@@ -66,9 +66,9 @@ jobs:
             REPO=/opt/pharmatrack
             COMPOSE="$REPO/infra/docker-compose.prod.yml"
 
-            # Generate a comment-free .env from .env.prod so docker compose
-            # auto-discovers it without --env-file (which rejects comment lines).
-            grep -v '^\s*#' "$REPO/.env.prod" | grep -v '^\s*$' > "$REPO/.env"
+            # Generate a comment-free infra/.env from .env.prod — docker compose
+            # reads .env from the compose file's directory, not the repo root.
+            grep -v '^\s*#' "$REPO/.env.prod" | grep -v '^\s*$' > "$REPO/infra/.env"
 
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             docker pull "$IMAGE"
