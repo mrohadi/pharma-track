@@ -92,7 +92,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
             className="rounded border border-slate-300 p-1.5"
           >
             <option value="">All</option>
-            {OrderStatus.options.map((s) => (
+            {OrderStatus.options.map((s: string) => (
               <option key={s} value={s}>
                 {ORDER_STATUS_LABELS[s] ?? s}
               </option>

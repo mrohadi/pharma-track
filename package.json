@@ -23,6 +23,7 @@
     "infra:logs": "docker compose -f infra/docker-compose.yml logs -f"
   },
   "devDependencies": {
+    "esbuild": "^0.28.0",
     "prettier": "^3.3.3",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "typescript": "^5.6.3"
