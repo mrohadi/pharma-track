@@ -70,10 +70,9 @@ jobs:
             docker pull "$IMAGE"
 
             # Run DB migrations before swapping traffic
-            docker run --rm \
-              --network pharmatrack_pharmatrack \
-              --env-file "$ENV_FILE" \
-              "$IMAGE" node migrate.js
+            # (docker compose handles comments in env files; docker run --env-file does not)
+            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$ENV_FILE" \
+              run --rm migrator
 
             # Hot-swap web container only; keep postgres + redis running
             WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$ENV_FILE" \
