@@ -28,9 +28,7 @@ export type AdminAnalytics = {
   byPharmacy: PharmacyStat[];
 };
 
-export async function getAdminAnalytics(
-  filters: AnalyticsFilters = {},
-): Promise<AdminAnalytics> {
+export async function getAdminAnalytics(filters: AnalyticsFilters = {}): Promise<AdminAnalytics> {
   const conditions = [];
   if (filters.from) conditions.push(gte(orders.createdAt, new Date(filters.from)));
   if (filters.to) {
