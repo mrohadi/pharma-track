@@ -63,8 +63,8 @@ jobs:
             set -e
 
             IMAGE=ghcr.io/${{ github.repository }}:${{ needs.build-push.outputs.image_tag }}
-            REPO=/pharmatrack
-            COMPOSE="$REPO/infra/docker-compose.prod.yml"
+            APP_DIR=/home/ec2-user/pharma-track
+            COMPOSE="$APP_DIR/infra/docker-compose.prod.yml"
 
             # Normalise .env.prod → infra/.env so docker compose can read it.
             # Handles: comment lines, blank lines, "export KEY=VALUE", "KEY = VALUE".
@@ -73,14 +73,14 @@ jobs:
               -e '/^[[:space:]]*$/d' \
               -e 's/^[[:space:]]*export[[:space:]]+//' \
               -e 's/^([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*/\1=/' \
-              "$REPO/.env.prod" \
+              "$APP_DIR/.env.prod" \
               | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' \
-              > "$REPO/infra/.env"
+              > "$APP_DIR/infra/.env"
 
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             docker pull "$IMAGE"
 
-            cd "$REPO"
+            cd "$APP_DIR"
 
             # Run DB migrations before swapping traffic
             WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" run --rm migrator
