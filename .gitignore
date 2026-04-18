@@ -9,6 +9,10 @@ build/
 out/
 *.tsbuildinfo
 
+# claude
+CLAUDE.md
+/ai-context/*
+
 # env
 .env
 .env.local
