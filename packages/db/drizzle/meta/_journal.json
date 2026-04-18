@@ -15,6 +15,13 @@
       "when": 1776295616409,
       "tag": "0001_elite_sandman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1745004000000,
+      "tag": "0002_push_subscriptions",
+      "breakpoints": true
     }
   ]
 }
