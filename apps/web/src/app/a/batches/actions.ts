@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache';
 import { createBatch } from '@pharmatrack/db';
 import { getSession } from '@/lib/session';
+import { sendPushToDriver } from '@/lib/push';
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 
@@ -42,6 +43,12 @@ export async function createBatchAction(formData: FormData): Promise<CreateBatch
   });
 
   if (!result.ok) return { ok: false, reason: result.reason };
+
+  // Fire-and-forget push notification to the assigned driver
+  sendPushToDriver(driverId, {
+    title: 'New batch assigned',
+    body: `A batch of ${result.orderCount} order${result.orderCount === 1 ? '' : 's'} is ready for pickup.`,
+  }).catch(console.error);
 
   revalidatePath('/a');
   revalidatePath('/a/batches');

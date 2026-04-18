@@ -13,6 +13,7 @@ export const addressRequests = pgTable('address_requests', {
   sentAt: timestamp('sent_at', { withTimezone: true }).defaultNow().notNull(),
   respondedAt: timestamp('responded_at', { withTimezone: true }),
   reminderCount: integer('reminder_count').default(0).notNull(),
+  lastReminderSentAt: timestamp('last_reminder_sent_at', { withTimezone: true }),
   expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
 });
 

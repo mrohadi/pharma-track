@@ -15,6 +15,20 @@
       "when": 1776295616409,
       "tag": "0001_elite_sandman",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776527214757,
+      "tag": "0002_lyrical_mastermind",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776527269012,
+      "tag": "0003_chubby_shen",
+      "breakpoints": true
     }
   ]
 }

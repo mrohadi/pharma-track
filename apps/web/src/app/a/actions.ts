@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { assignOrderToDriver } from '@pharmatrack/db';
 import { getSession } from '@/lib/session';
+import { sendPushToDriver } from '@/lib/push';
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 
@@ -35,6 +36,12 @@ export async function assignOrderAction(formData: FormData): Promise<void> {
   if (!result.ok) {
     redirect(`/a?error=${result.reason}`);
   }
+
+  // Fire-and-forget push notification to the assigned driver
+  sendPushToDriver(result.driverId, {
+    title: 'New order assigned',
+    body: 'You have a new delivery order. Open PharmaTrack to view details.',
+  }).catch(console.error);
 
   revalidatePath('/a');
   revalidatePath('/d');

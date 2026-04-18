@@ -7,3 +7,4 @@ export * from './batches';
 export * from './address-requests';
 export * from './otp-attempts';
 export * from './audit-log';
+export * from './push-subscriptions';
