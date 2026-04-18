@@ -9,10 +9,13 @@
 #   ./infra/dc.sh up -d --no-deps --wait web
 set -euo pipefail
 
-REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ENV_FILE="$REPO_ROOT/.env.prod"
-COMPOSE="$REPO_ROOT/infra/docker-compose.prod.yml"
+COMPOSE="$SCRIPT_DIR/docker-compose.prod.yml"
 
-grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' > "$REPO_ROOT/.env"
+# Write comment-free env to infra/.env — docker compose reads .env from the
+# directory of the first compose file, not from the working directory.
+grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' > "$SCRIPT_DIR/.env"
 
 exec docker compose -f "$COMPOSE" "$@"
