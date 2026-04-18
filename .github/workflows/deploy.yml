@@ -66,16 +66,21 @@ jobs:
             COMPOSE=/opt/pharmatrack/infra/docker-compose.prod.yml
             ENV_FILE=/opt/pharmatrack/.env.prod
 
+            # docker compose --env-file rejects comment lines on older versions;
+            # strip them into a temp file used for all compose calls.
+            CLEAN_ENV=$(mktemp)
+            grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' > "$CLEAN_ENV"
+            trap 'rm -f "$CLEAN_ENV"' EXIT
+
             echo "$GITHUB_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
             docker pull "$IMAGE"
 
             # Run DB migrations before swapping traffic
-            # (docker compose handles comments in env files; docker run --env-file does not)
-            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$ENV_FILE" \
+            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$CLEAN_ENV" \
               run --rm migrator
 
             # Hot-swap web container only; keep postgres + redis running
-            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$ENV_FILE" \
+            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --env-file "$CLEAN_ENV" \
               up -d --no-deps --wait web
 
             docker image prune -f
