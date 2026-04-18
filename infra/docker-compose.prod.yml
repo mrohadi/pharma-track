@@ -22,7 +22,7 @@ services:
       redis:
         condition: service_started
     healthcheck:
-      test: ["CMD-SHELL", "wget -qO/dev/null http://localhost:3000 || exit 1"]
+      test: ['CMD-SHELL', 'wget -qO/dev/null http://localhost:3000 || exit 1']
       interval: 30s
       timeout: 5s
       retries: 3
@@ -39,7 +39,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks: [pharmatrack]
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "pharmatrack"]
+      test: ['CMD', 'pg_isready', '-U', '${POSTGRES_USER}', '-d', 'pharmatrack']
       interval: 5s
       retries: 10
 
