@@ -22,4 +22,5 @@ export * from './queries/delivery-otp';
 export * from './queries/export-orders';
 export * from './queries/export-pharmacy-orders';
 export * from './queries/analytics';
+export * from './queries/audit-log';
 export * from './queries/pharmacy-settings';
