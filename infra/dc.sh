@@ -14,12 +14,14 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ENV_FILE="$REPO_ROOT/.env.prod"
 COMPOSE="$SCRIPT_DIR/docker-compose.prod.yml"
 
-# Normalise .env.prod → infra/.env:
-#   - strip comment lines and blank lines
-#   - strip leading "export " prefix (common in shell-sourceable env files)
-#   - keep only valid KEY=VALUE lines
-# docker compose reads .env from the compose file's directory.
-sed -E '/^\s*#/d; /^\s*$/d; s/^\s*export\s+//' "$ENV_FILE" \
+# Normalise .env.prod → infra/.env so docker compose can read it.
+# Handles: comment lines, blank lines, "export KEY=VALUE", "KEY = VALUE".
+sed -E \
+  -e '/^[[:space:]]*#/d' \
+  -e '/^[[:space:]]*$/d' \
+  -e 's/^[[:space:]]*export[[:space:]]+//' \
+  -e 's/^([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*/\1=/' \
+  "$ENV_FILE" \
   | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' \
   > "$SCRIPT_DIR/.env"
 
