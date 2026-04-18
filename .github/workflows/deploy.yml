@@ -63,7 +63,7 @@ jobs:
             set -e
 
             IMAGE=ghcr.io/${{ github.repository }}:${{ needs.build-push.outputs.image_tag }}
-            REPO=/opt/pharmatrack
+            REPO=/pharmatrack
             COMPOSE="$REPO/infra/docker-compose.prod.yml"
 
             # Normalise .env.prod → infra/.env so docker compose can read it.
