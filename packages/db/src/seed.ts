@@ -109,7 +109,22 @@ async function main() {
   if (driverUser) {
     await db
       .insert(drivers)
-      .values({ userId: driverUser.id, vehicle: 'Honda Beat', licensePlate: 'B 1234 ABC' })
+      .values({
+        userId: driverUser.id,
+        vehicle: 'Honda Beat',
+        licensePlate: 'B 1234 ABC',
+        nik: '3171012345678901',
+        province: 'DKI Jakarta',
+        vehicleType: 'motorcycle',
+        vehicleModel: 'Honda Beat 2022',
+        simClass: 'C',
+        simNumber: 'SIM/DEMO/2024/001',
+        simExpiresAt: '2027-12-31',
+        payoutBank: 'BCA',
+        payoutAccountNumber: '1234567890',
+        payoutAccountName: 'Driver One',
+        verificationStatus: 'active',
+      })
       .onConflictDoNothing();
   }
 

@@ -2,6 +2,7 @@ import { asc, desc, eq } from 'drizzle-orm';
 import { db } from '../index';
 import { drivers, users, orders, pharmacies } from '../schema';
 import type { OrderStatus } from '@pharmatrack/shared';
+import type { DriverVerificationStatus } from '../schema/drivers';
 
 export type DriverRow = {
   id: string;
@@ -10,6 +11,7 @@ export type DriverRow = {
   vehicle: string | null;
   licensePlate: string | null;
   status: 'offline' | 'available' | 'on_delivery';
+  verificationStatus: DriverVerificationStatus;
 };
 
 /** List drivers joined with their user record — name + email for display. */
@@ -22,11 +24,22 @@ export async function listDrivers(): Promise<DriverRow[]> {
       vehicle: drivers.vehicle,
       licensePlate: drivers.licensePlate,
       status: drivers.status,
+      verificationStatus: drivers.verificationStatus,
     })
     .from(drivers)
     .innerJoin(users, eq(drivers.userId, users.id))
     .orderBy(asc(users.name));
   return rows;
+}
+
+export async function setDriverVerification(
+  id: string,
+  status: DriverVerificationStatus,
+): Promise<void> {
+  await db
+    .update(drivers)
+    .set({ verificationStatus: status, updatedAt: new Date() })
+    .where(eq(drivers.id, id));
 }
 
 /** Look up the driver row for a given user id (driver's own user account). */
