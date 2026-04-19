@@ -66,7 +66,18 @@ async function main() {
   console.log('→ Creating seed pharmacy…');
   const [pharmacy] = await db
     .insert(pharmacies)
-    .values({ name: 'Demo Pharmacy', phone: '+6281234567890', address: 'Jakarta, Indonesia' })
+    .values({
+      name: 'Demo Pharmacy',
+      phone: '+6281234567890',
+      address: 'Jakarta, Indonesia',
+      picName: 'Demo PIC',
+      npwp: '00.000.000.0-000.000',
+      siaNumber: 'SIA/DEMO/2024/001',
+      sipaNumber: 'SIPA/DEMO/2024/001',
+      province: 'DKI Jakarta',
+      city: 'Jakarta Selatan',
+      verificationStatus: 'active',
+    })
     .onConflictDoNothing()
     .returning();
 
