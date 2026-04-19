@@ -8,3 +8,5 @@ export * from './address-requests';
 export * from './otp-attempts';
 export * from './audit-log';
 export * from './push-subscriptions';
+export * from './order-items';
+export * from './order-ratings';

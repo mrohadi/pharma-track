@@ -1,8 +1,16 @@
 import Papa from 'papaparse';
 import { CSV_HEADERS, CsvOrderRow, ALL_CSV_HEADERS, type CsvRowError } from '@pharmatrack/shared';
 
+export type ParsedCsvItem = {
+  name: string;
+  quantity: number;
+  position: number;
+};
+
+export type ParsedCsvOrder = CsvOrderRow & { items: ParsedCsvItem[] };
+
 export type ParsedCsv = {
-  valid: CsvOrderRow[];
+  valid: ParsedCsvOrder[];
   errors: CsvRowError[];
 };
 
@@ -20,7 +28,7 @@ export type ParsedCsv = {
  */
 export function parseOrderCsv(text: string): ParsedCsv {
   const errors: CsvRowError[] = [];
-  const valid: CsvOrderRow[] = [];
+  const valid: ParsedCsvOrder[] = [];
 
   const parsed = Papa.parse<Record<string, string>>(text, {
     header: true,
@@ -51,7 +59,10 @@ export function parseOrderCsv(text: string): ParsedCsv {
     const rowNum = idx + 2; // +1 for header, +1 to make 1-based
     const result = CsvOrderRow.safeParse(rawRow);
     if (result.success) {
-      valid.push(result.data);
+      valid.push({
+        ...result.data,
+        items: [{ name: result.data.medicine, quantity: 1, position: 0 }],
+      });
     } else {
       for (const issue of result.error.issues) {
         errors.push({
