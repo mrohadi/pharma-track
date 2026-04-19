@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, pgEnum, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, pgEnum, boolean, jsonb } from 'drizzle-orm/pg-core';
 import { pharmacies } from './pharmacies';
 
 export const roleEnum = pgEnum('user_role', ['admin', 'pharmacy', 'driver']);
@@ -16,6 +16,7 @@ export const users = pgTable('users', {
   phone: text('phone'),
   role: roleEnum('role').notNull(),
   pharmacyId: uuid('pharmacy_id').references(() => pharmacies.id, { onDelete: 'set null' }),
+  preferences: jsonb('preferences').default({}).notNull(),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
 });

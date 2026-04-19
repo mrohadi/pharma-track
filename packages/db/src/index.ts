@@ -27,3 +27,4 @@ export * from './queries/pharmacy-settings';
 export * from './queries/push-subscriptions';
 export * from './queries/address-reminders';
 export * from './queries/pharmacies';
+export * from './queries/users';
