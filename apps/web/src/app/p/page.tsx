@@ -59,7 +59,9 @@ export default async function PharmacyHome() {
                   <td className="px-3 py-2 font-mono text-xs text-slate-600">
                     {maskPhone(o.patientPhone)}
                   </td>
-                  <td className="px-3 py-2">{tStatus(o.status as Parameters<typeof tStatus>[0]) ?? o.status}</td>
+                  <td className="px-3 py-2">
+                    {tStatus(o.status as Parameters<typeof tStatus>[0]) ?? o.status}
+                  </td>
                   <td className="px-3 py-2">
                     {o.podPhotoUrl ? <PodPhotoLink photoKey={o.podPhotoUrl} /> : null}
                   </td>

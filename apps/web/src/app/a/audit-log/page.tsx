@@ -141,7 +141,9 @@ export default async function AuditLogPage({
                       {new Date(entry.at).toLocaleString()}
                     </td>
                     <td className="px-3 py-2 text-slate-700">
-                      {entry.actorEmail ?? <span className="text-slate-400">{tCommon('system')}</span>}
+                      {entry.actorEmail ?? (
+                        <span className="text-slate-400">{tCommon('system')}</span>
+                      )}
                     </td>
                     <td className="px-3 py-2">
                       <span className="font-medium text-slate-800">{entry.entityType}</span>
@@ -184,9 +186,7 @@ export default async function AuditLogPage({
                   {tCommon('prev')}
                 </Link>
               )}
-              <span className="text-slate-500">
-                {tCommon('page', { page, total: totalPages })}
-              </span>
+              <span className="text-slate-500">{tCommon('page', { page, total: totalPages })}</span>
               {page < totalPages && (
                 <Link
                   href={buildQuery({ page: String(page + 1) }, sp)}

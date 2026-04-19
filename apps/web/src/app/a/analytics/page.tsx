@@ -108,11 +108,15 @@ export default async function AdminAnalyticsPage({
 
       <div className="mb-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('cards.total')}</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            {t('cards.total')}
+          </div>
           <div className="mt-1 text-3xl font-bold text-slate-900">{total}</div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('cards.active')}</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            {t('cards.active')}
+          </div>
           <div className="mt-1 text-3xl font-bold text-blue-700">{active}</div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4">
@@ -120,12 +124,18 @@ export default async function AdminAnalyticsPage({
             {t('cards.delivered')}
           </div>
           <div className="mt-1 text-3xl font-bold text-green-700">{delivered}</div>
-          <div className="text-xs text-slate-400">{t('cards.ofTotal', { pct: pct(delivered, total) })}</div>
+          <div className="text-xs text-slate-400">
+            {t('cards.ofTotal', { pct: pct(delivered, total) })}
+          </div>
         </div>
         <div className="rounded-lg border border-slate-200 bg-white p-4">
-          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">{t('cards.failed')}</div>
+          <div className="text-xs font-medium uppercase tracking-wide text-slate-500">
+            {t('cards.failed')}
+          </div>
           <div className="mt-1 text-3xl font-bold text-red-700">{failed}</div>
-          <div className="text-xs text-slate-400">{t('cards.ofTotal', { pct: pct(failed, total) })}</div>
+          <div className="text-xs text-slate-400">
+            {t('cards.ofTotal', { pct: pct(failed, total) })}
+          </div>
         </div>
       </div>
 

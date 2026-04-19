@@ -135,9 +135,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
             {tCommon('clear')}
           </Link>
         )}
-        <div className="ml-auto text-xs text-slate-500">
-          {t('orderCount', { count: total })}
-        </div>
+        <div className="ml-auto text-xs text-slate-500">{t('orderCount', { count: total })}</div>
       </form>
 
       {rows.length === 0 ? (
@@ -211,9 +209,7 @@ export default async function AdminHome({ searchParams }: { searchParams: Promis
 
       {totalPages > 1 && (
         <div className="mt-4 flex items-center justify-between text-sm">
-          <div className="text-slate-500">
-            {tCommon('page', { page, total: totalPages })}
-          </div>
+          <div className="text-slate-500">{tCommon('page', { page, total: totalPages })}</div>
           <div className="flex gap-2">
             {page > 1 && (
               <Link

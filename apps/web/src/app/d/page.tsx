@@ -61,9 +61,7 @@ export default async function DriverHome() {
                     {b.status === 'assigned' ? t('awaitingPickup') : t('pickedUp')}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500">
-                  {t('orderCount', { count: b.orderCount })}
-                </p>
+                <p className="text-xs text-slate-500">{t('orderCount', { count: b.orderCount })}</p>
                 {b.status === 'assigned' && (
                   <div className="mt-3">
                     <p className="mb-1 text-xs text-slate-500">{t('pickupPinPrompt')}</p>
