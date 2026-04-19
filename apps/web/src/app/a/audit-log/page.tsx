@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { listAuditLog, listAuditLogEntityTypes } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
 
@@ -37,9 +38,11 @@ export default async function AuditLogPage({
   const sp = await searchParams;
   const { entityType, from, to, page } = parseFilters(sp);
 
-  const [{ rows, total, pageSize }, entityTypes] = await Promise.all([
+  const [{ rows, total, pageSize }, entityTypes, t, tCommon] = await Promise.all([
     listAuditLog({ entityType, from, to, page }),
     listAuditLogEntityTypes(),
+    getTranslations('AuditLog'),
+    getTranslations('Common'),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -50,17 +53,16 @@ export default async function AuditLogPage({
       <div className="mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
           <Link href="/a" className="text-sm text-slate-500 hover:underline">
-            ← Orders
+            {t('backToOrders')}
           </Link>
-          <h1 className="mt-1 text-2xl font-bold">Audit log</h1>
-          <p className="text-sm text-slate-500">{total.toLocaleString()} entries</p>
+          <h1 className="mt-1 text-2xl font-bold">{t('heading')}</h1>
+          <p className="text-sm text-slate-500">{t('entries', { count: total })}</p>
         </div>
 
-        {/* Filters */}
         <form className="flex flex-wrap items-end gap-2 text-sm" action="/a/audit-log" method="get">
           <div>
             <label htmlFor="entityType" className="mb-1 block text-xs text-slate-500">
-              Entity type
+              {t('filterEntityType')}
             </label>
             <select
               id="entityType"
@@ -68,7 +70,7 @@ export default async function AuditLogPage({
               defaultValue={entityType ?? ''}
               className="rounded border border-slate-300 p-1.5 text-sm"
             >
-              <option value="">All</option>
+              <option value="">{tCommon('all')}</option>
               {entityTypes.map((et) => (
                 <option key={et} value={et}>
                   {et}
@@ -78,7 +80,7 @@ export default async function AuditLogPage({
           </div>
           <div>
             <label htmlFor="from" className="mb-1 block text-xs text-slate-500">
-              From
+              {t('filterFrom')}
             </label>
             <input
               id="from"
@@ -90,7 +92,7 @@ export default async function AuditLogPage({
           </div>
           <div>
             <label htmlFor="to" className="mb-1 block text-xs text-slate-500">
-              To
+              {t('filterTo')}
             </label>
             <input
               id="to"
@@ -104,32 +106,32 @@ export default async function AuditLogPage({
             type="submit"
             className="rounded border border-slate-300 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50"
           >
-            Apply
+            {tCommon('apply')}
           </button>
           {hasFilters && (
             <Link
               href="/a/audit-log"
               className="rounded px-3 py-1.5 text-slate-500 hover:text-slate-700 hover:underline"
             >
-              Clear
+              {tCommon('clear')}
             </Link>
           )}
         </form>
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-slate-500">No audit log entries found.</p>
+        <p className="text-sm text-slate-500">{t('noEntries')}</p>
       ) : (
         <>
           <div className="overflow-x-auto rounded border border-slate-200">
             <table className="min-w-full text-sm">
               <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
                 <tr>
-                  <th className="px-3 py-2">Time</th>
-                  <th className="px-3 py-2">Actor</th>
-                  <th className="px-3 py-2">Entity</th>
-                  <th className="px-3 py-2">Action</th>
-                  <th className="px-3 py-2">Diff</th>
+                  <th className="px-3 py-2">{t('cols.time')}</th>
+                  <th className="px-3 py-2">{t('cols.actor')}</th>
+                  <th className="px-3 py-2">{t('cols.entity')}</th>
+                  <th className="px-3 py-2">{t('cols.action')}</th>
+                  <th className="px-3 py-2">{t('cols.diff')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -139,7 +141,7 @@ export default async function AuditLogPage({
                       {new Date(entry.at).toLocaleString()}
                     </td>
                     <td className="px-3 py-2 text-slate-700">
-                      {entry.actorEmail ?? <span className="text-slate-400">system</span>}
+                      {entry.actorEmail ?? <span className="text-slate-400">{tCommon('system')}</span>}
                     </td>
                     <td className="px-3 py-2">
                       <span className="font-medium text-slate-800">{entry.entityType}</span>
@@ -156,7 +158,7 @@ export default async function AuditLogPage({
                       {entry.diff ? (
                         <details className="cursor-pointer">
                           <summary className="text-xs text-slate-400 hover:text-slate-600">
-                            view diff
+                            {tCommon('viewDiff')}
                           </summary>
                           <pre className="mt-1 max-h-48 overflow-auto rounded bg-slate-50 p-2 text-xs text-slate-700">
                             {JSON.stringify(entry.diff, null, 2)}
@@ -172,7 +174,6 @@ export default async function AuditLogPage({
             </table>
           </div>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="mt-4 flex items-center gap-2 text-sm">
               {page > 1 && (
@@ -180,18 +181,18 @@ export default async function AuditLogPage({
                   href={buildQuery({ page: String(page - 1) }, sp)}
                   className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-50"
                 >
-                  ← Prev
+                  {tCommon('prev')}
                 </Link>
               )}
               <span className="text-slate-500">
-                Page {page} of {totalPages}
+                {tCommon('page', { page, total: totalPages })}
               </span>
               {page < totalPages && (
                 <Link
                   href={buildQuery({ page: String(page + 1) }, sp)}
                   className="rounded border border-slate-300 px-3 py-1.5 hover:bg-slate-50"
                 >
-                  Next →
+                  {tCommon('next')}
                 </Link>
               )}
             </div>

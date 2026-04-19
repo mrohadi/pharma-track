@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import {
   listBatchesForAdmin,
   listBatchableOrders,
@@ -7,14 +8,6 @@ import {
 } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
 import { CreateBatchForm } from './create-batch-form';
-
-const BATCH_STATUS_LABELS: Record<string, string> = {
-  draft: 'Draft',
-  assigned: 'Assigned',
-  picked_up: 'Picked up',
-  completed: 'Completed',
-  cancelled: 'Cancelled',
-};
 
 const BATCH_STATUS_BADGE: Record<string, string> = {
   draft: 'bg-slate-100 text-slate-700',
@@ -32,33 +25,33 @@ export default async function BatchesPage({
   await requireRole('admin');
   const sp = await searchParams;
 
-  const [allBatches, allDrivers, allPharmacies] = await Promise.all([
+  const [allBatches, allDrivers, allPharmacies, t, tBatch] = await Promise.all([
     listBatchesForAdmin(),
     listDrivers(),
     listPharmaciesForFilter(),
+    getTranslations('BatchesPage'),
+    getTranslations('BatchStatus'),
   ]);
 
-  // Load batchable orders for the selected pharmacy (or first pharmacy)
   const selectedPharmacyId = sp.pharmacyId ?? allPharmacies[0]?.id;
   const batchableOrders = selectedPharmacyId ? await listBatchableOrders(selectedPharmacyId) : [];
 
   return (
     <main className="mx-auto max-w-5xl p-8">
       <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Batches</h1>
+        <h1 className="text-2xl font-bold">{t('heading')}</h1>
         <Link href="/a" className="text-brand-700 text-sm hover:underline">
-          ← Back to orders
+          {t('backToOrders')}
         </Link>
       </div>
 
-      {/* Batch creation */}
       <section className="mb-8 rounded border border-slate-200 p-4">
-        <h2 className="mb-3 text-lg font-semibold">Create batch</h2>
+        <h2 className="mb-3 text-lg font-semibold">{t('createBatch')}</h2>
         <div className="mb-3">
           <form action="/a/batches" method="get" className="flex items-end gap-2">
             <div>
               <label htmlFor="pharmacyId" className="mb-1 block text-xs text-slate-500">
-                Pharmacy
+                {t('filterPharmacy')}
               </label>
               <select
                 id="pharmacyId"
@@ -77,7 +70,7 @@ export default async function BatchesPage({
               type="submit"
               className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
             >
-              Load orders
+              {t('loadOrders')}
             </button>
           </form>
         </div>
@@ -90,21 +83,20 @@ export default async function BatchesPage({
         )}
       </section>
 
-      {/* Batch list */}
-      <h2 className="mb-2 text-lg font-semibold">All batches</h2>
+      <h2 className="mb-2 text-lg font-semibold">{t('allBatches')}</h2>
       {allBatches.length === 0 ? (
-        <p className="text-sm text-slate-600">No batches created yet.</p>
+        <p className="text-sm text-slate-600">{t('noBatches')}</p>
       ) : (
         <div className="overflow-x-auto rounded border border-slate-200">
           <table className="min-w-full text-sm">
             <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
               <tr>
-                <th className="px-3 py-2">Pharmacy</th>
-                <th className="px-3 py-2">Driver</th>
-                <th className="px-3 py-2">Orders</th>
-                <th className="px-3 py-2">Status</th>
-                <th className="px-3 py-2">Picked up</th>
-                <th className="px-3 py-2">Created</th>
+                <th className="px-3 py-2">{t('cols.pharmacy')}</th>
+                <th className="px-3 py-2">{t('cols.driver')}</th>
+                <th className="px-3 py-2">{t('cols.orders')}</th>
+                <th className="px-3 py-2">{t('cols.status')}</th>
+                <th className="px-3 py-2">{t('cols.pickedUp')}</th>
+                <th className="px-3 py-2">{t('cols.created')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
@@ -119,7 +111,7 @@ export default async function BatchesPage({
                         BATCH_STATUS_BADGE[b.status] ?? 'bg-slate-100 text-slate-700'
                       }`}
                     >
-                      {BATCH_STATUS_LABELS[b.status] ?? b.status}
+                      {tBatch(b.status as Parameters<typeof tBatch>[0]) ?? b.status}
                     </span>
                   </td>
                   <td className="px-3 py-2 text-slate-500">
