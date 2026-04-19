@@ -1,6 +1,7 @@
+import { getTranslations } from 'next-intl/server';
 import { getDriverByUserId, listDriverQueue, listBatchesForDriver } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
-import { ORDER_STATUS_LABELS, ORDER_STATUS_BADGE } from '@/lib/format';
+import { ORDER_STATUS_BADGE } from '@/lib/format';
 import { PickupForm } from './pickup-form';
 import { DeliveryControls } from './delivery-controls';
 
@@ -11,14 +12,18 @@ const BATCH_STATUS_BADGE: Record<string, string> = {
 };
 
 export default async function DriverHome() {
-  const session = await requireRole('driver');
+  const [session, t, tStatus] = await Promise.all([
+    requireRole('driver'),
+    getTranslations('DriverPage'),
+    getTranslations('OrderStatus'),
+  ]);
 
   const driver = await getDriverByUserId(session.user.id);
   if (!driver) {
     return (
       <main className="mx-auto max-w-md p-6">
-        <h1 className="mb-2 text-2xl font-bold">Driver</h1>
-        <p className="text-red-600">No driver profile found for your account. Contact admin.</p>
+        <h1 className="mb-2 text-2xl font-bold">{t('noDriver')}</h1>
+        <p className="text-red-600">{t('noDriverError')}</p>
       </main>
     );
   }
@@ -34,16 +39,15 @@ export default async function DriverHome() {
 
   return (
     <main className="mx-auto max-w-lg p-6">
-      <h1 className="mb-1 text-2xl font-bold">Your deliveries</h1>
+      <h1 className="mb-1 text-2xl font-bold">{t('heading')}</h1>
       <p className="mb-4 text-sm text-slate-500">
         {driver.vehicle && `${driver.vehicle} · `}
         {driver.licensePlate ?? ''}
       </p>
 
-      {/* Batches needing pickup */}
       {activeBatches.length > 0 && (
         <section className="mb-6">
-          <h2 className="mb-2 text-lg font-semibold">Batches</h2>
+          <h2 className="mb-2 text-lg font-semibold">{t('batches')}</h2>
           <ul className="space-y-3">
             {activeBatches.map((b) => (
               <li key={b.id} className="rounded border border-slate-200 p-4">
@@ -54,23 +58,19 @@ export default async function DriverHome() {
                       BATCH_STATUS_BADGE[b.status] ?? 'bg-slate-100 text-slate-700'
                     }`}
                   >
-                    {b.status === 'assigned' ? 'Awaiting pickup' : 'Picked up'}
+                    {b.status === 'assigned' ? t('awaitingPickup') : t('pickedUp')}
                   </span>
                 </div>
-                <p className="text-xs text-slate-500">
-                  {b.orderCount} order{b.orderCount === 1 ? '' : 's'}
-                </p>
+                <p className="text-xs text-slate-500">{t('orderCount', { count: b.orderCount })}</p>
                 {b.status === 'assigned' && (
                   <div className="mt-3">
-                    <p className="mb-1 text-xs text-slate-500">
-                      Enter the 6-digit pickup PIN from the pharmacy:
-                    </p>
+                    <p className="mb-1 text-xs text-slate-500">{t('pickupPinPrompt')}</p>
                     <PickupForm batchId={b.id} />
                   </div>
                 )}
                 {b.status === 'picked_up' && b.pickupConfirmedAt && (
                   <p className="mt-1 text-xs text-green-600">
-                    Picked up at {new Date(b.pickupConfirmedAt).toLocaleString()}
+                    {t('pickedUpAt', { time: new Date(b.pickupConfirmedAt).toLocaleString() })}
                   </p>
                 )}
               </li>
@@ -79,10 +79,9 @@ export default async function DriverHome() {
         </section>
       )}
 
-      {/* Individual orders */}
-      <h2 className="mb-2 text-lg font-semibold">Orders</h2>
+      <h2 className="mb-2 text-lg font-semibold">{t('orders')}</h2>
       {queue.length === 0 ? (
-        <p className="text-sm text-slate-600">No orders assigned to you right now.</p>
+        <p className="text-sm text-slate-600">{t('noOrders')}</p>
       ) : (
         <ul className="space-y-3">
           {queue.map((o) => (
@@ -94,7 +93,7 @@ export default async function DriverHome() {
                     ORDER_STATUS_BADGE[o.status] ?? 'bg-slate-100 text-slate-700'
                   }`}
                 >
-                  {ORDER_STATUS_LABELS[o.status] ?? o.status}
+                  {tStatus(o.status as Parameters<typeof tStatus>[0]) ?? o.status}
                 </span>
               </div>
               <p className="text-sm text-slate-600">{o.medicineText}</p>
@@ -102,7 +101,7 @@ export default async function DriverHome() {
                 <p className="mt-1 text-sm text-slate-500">{o.deliveryAddress}</p>
               )}
               {!o.deliveryAddress && (
-                <p className="mt-1 text-xs italic text-amber-600">Address not yet collected</p>
+                <p className="mt-1 text-xs italic text-amber-600">{t('addressNotCollected')}</p>
               )}
               <DeliveryControls
                 orderId={o.id}

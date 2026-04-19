@@ -1,0 +1,202 @@
+{
+  "Common": {
+    "apply": "Apply",
+    "clear": "Clear",
+    "all": "All",
+    "signOut": "Sign out",
+    "prev": "← Prev",
+    "next": "Next →",
+    "back": "← Back",
+    "page": "Page {page} of {total}",
+    "viewDiff": "view diff",
+    "system": "system"
+  },
+  "HomePage": {
+    "title": "PharmaTrack",
+    "description": "Pharmacy delivery management system — scaffold ready.",
+    "pharmacy": {
+      "title": "Pharmacy",
+      "subtitle": "Upload orders, track status"
+    },
+    "admin": {
+      "title": "Admin",
+      "subtitle": "Assign, monitor, export"
+    },
+    "driver": {
+      "title": "Driver",
+      "subtitle": "Pickup & delivery OTP"
+    }
+  },
+  "LoginPage": {
+    "title": "PharmaTrack",
+    "subtitle": "Sign in to continue"
+  },
+  "LoginForm": {
+    "email": "Email",
+    "password": "Password",
+    "submit": "Sign in",
+    "submitting": "Signing in…"
+  },
+  "PharmacyLayout": {
+    "brand": "PharmaTrack · Pharmacy",
+    "settings": "Settings"
+  },
+  "PharmacyPage": {
+    "heading": "Pharmacy portal",
+    "uploadCsv": "Upload CSV",
+    "recentOrders": "Recent orders",
+    "noOrders": "No orders yet.",
+    "uploadToStart": "Upload a CSV",
+    "toGetStarted": "to get started.",
+    "cols": {
+      "patient": "Patient",
+      "phone": "Phone",
+      "status": "Status",
+      "pod": "POD",
+      "created": "Created"
+    }
+  },
+  "PharmacySettings": {
+    "heading": "Settings",
+    "deliveryOptions": "Delivery options"
+  },
+  "PharmacyUpload": {
+    "back": "← Back",
+    "heading": "Upload orders (CSV)",
+    "description": "Upload a CSV of today's orders. Rows are validated before anything is saved — fix any errors and re-upload the whole file.",
+    "downloadTemplate": "Download template"
+  },
+  "AdminLayout": {
+    "brand": "PharmaTrack · Admin",
+    "auditLog": "Audit log"
+  },
+  "AdminPage": {
+    "heading": "Orders",
+    "analytics": "Analytics",
+    "manageBatches": "Manage batches",
+    "filterStatus": "Status",
+    "filterPharmacy": "Pharmacy",
+    "requestAddress": "Request address",
+    "noOrders": "No orders match.",
+    "orderCount": "{count, plural, one {# order} other {# orders}}",
+    "cols": {
+      "patient": "Patient",
+      "phone": "Phone",
+      "pharmacy": "Pharmacy",
+      "status": "Status",
+      "driver": "Driver",
+      "actions": "Actions",
+      "pod": "POD",
+      "created": "Created"
+    }
+  },
+  "AdminAnalytics": {
+    "backToOrders": "← Orders",
+    "heading": "Analytics",
+    "filterFrom": "From",
+    "filterTo": "To",
+    "cards": {
+      "total": "Total",
+      "active": "Active",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "ofTotal": "{pct} of total"
+    },
+    "statusBreakdown": "Status breakdown",
+    "byPharmacy": "By pharmacy",
+    "noOrders": "No orders.",
+    "cols": {
+      "pharmacy": "Pharmacy",
+      "total": "Total",
+      "delivered": "Delivered",
+      "failed": "Failed",
+      "rate": "Rate"
+    }
+  },
+  "AuditLog": {
+    "backToOrders": "← Orders",
+    "heading": "Audit log",
+    "entries": "{count} entries",
+    "filterEntityType": "Entity type",
+    "filterFrom": "From",
+    "filterTo": "To",
+    "noEntries": "No audit log entries found.",
+    "cols": {
+      "time": "Time",
+      "actor": "Actor",
+      "entity": "Entity",
+      "action": "Action",
+      "diff": "Diff"
+    }
+  },
+  "BatchesPage": {
+    "heading": "Batches",
+    "backToOrders": "← Back to orders",
+    "createBatch": "Create batch",
+    "filterPharmacy": "Pharmacy",
+    "loadOrders": "Load orders",
+    "allBatches": "All batches",
+    "noBatches": "No batches created yet.",
+    "cols": {
+      "pharmacy": "Pharmacy",
+      "driver": "Driver",
+      "orders": "Orders",
+      "status": "Status",
+      "pickedUp": "Picked up",
+      "created": "Created"
+    }
+  },
+  "DriverLayout": {
+    "brand": "PharmaTrack"
+  },
+  "DriverPage": {
+    "heading": "Your deliveries",
+    "noDriver": "Driver",
+    "noDriverError": "No driver profile found for your account. Contact admin.",
+    "batches": "Batches",
+    "orders": "Orders",
+    "noOrders": "No orders assigned to you right now.",
+    "awaitingPickup": "Awaiting pickup",
+    "pickedUp": "Picked up",
+    "orderCount": "{count, plural, one {# order} other {# orders}}",
+    "pickupPinPrompt": "Enter the 6-digit pickup PIN from the pharmacy:",
+    "pickedUpAt": "Picked up at {time}",
+    "addressNotCollected": "Address not yet collected"
+  },
+  "AddressPage": {
+    "invalidLink": "Invalid link",
+    "invalidLinkDesc": "This address confirmation link is invalid. Please check the link from your WhatsApp message, or contact your pharmacy.",
+    "linkExpired": "Link expired",
+    "linkExpiredDesc": "This link has expired. Please contact your pharmacy to request a new one.",
+    "alreadySubmitted": "Already submitted",
+    "alreadySubmittedDesc": "Your delivery address has already been saved. Your medication will be delivered soon.",
+    "heading": "Confirm delivery address",
+    "greeting": "Hi {name}, please enter the delivery address for your order from {pharmacy}."
+  },
+  "AddressForm": {
+    "label": "Delivery address",
+    "placeholder": "Enter your full delivery address including street, RT/RW, kelurahan, kecamatan, city, postal code",
+    "submit": "Confirm address",
+    "submitting": "Submitting...",
+    "successTitle": "Thank you!",
+    "successDesc": "Your delivery address has been saved. Your medication will be delivered soon.",
+    "errorFallback": "An error occurred. Please try again."
+  },
+  "OrderStatus": {
+    "pending_address": "Pending address",
+    "address_collected": "Address collected",
+    "assigned": "Assigned",
+    "picked_up": "Picked up",
+    "in_transit": "In transit",
+    "delivered": "Delivered",
+    "failed": "Failed",
+    "cancelled": "Cancelled"
+  },
+  "BatchStatus": {
+    "draft": "Draft",
+    "assigned": "Assigned",
+    "picked_up": "Picked up",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  }
+}

@@ -1,0 +1,202 @@
+{
+  "Common": {
+    "apply": "Terapkan",
+    "clear": "Hapus Filter",
+    "all": "Semua",
+    "signOut": "Keluar",
+    "prev": "← Sebelumnya",
+    "next": "Berikutnya →",
+    "back": "← Kembali",
+    "page": "Halaman {page} dari {total}",
+    "viewDiff": "lihat diff",
+    "system": "sistem"
+  },
+  "HomePage": {
+    "title": "PharmaTrack",
+    "description": "Sistem manajemen pengiriman farmasi — siap digunakan.",
+    "pharmacy": {
+      "title": "Apotek",
+      "subtitle": "Unggah pesanan, pantau status"
+    },
+    "admin": {
+      "title": "Admin",
+      "subtitle": "Tugaskan, pantau, ekspor"
+    },
+    "driver": {
+      "title": "Driver",
+      "subtitle": "Ambil & OTP pengiriman"
+    }
+  },
+  "LoginPage": {
+    "title": "PharmaTrack",
+    "subtitle": "Masuk untuk melanjutkan"
+  },
+  "LoginForm": {
+    "email": "Email",
+    "password": "Kata Sandi",
+    "submit": "Masuk",
+    "submitting": "Sedang masuk…"
+  },
+  "PharmacyLayout": {
+    "brand": "PharmaTrack · Apotek",
+    "settings": "Pengaturan"
+  },
+  "PharmacyPage": {
+    "heading": "Portal Apotek",
+    "uploadCsv": "Unggah CSV",
+    "recentOrders": "Pesanan Terbaru",
+    "noOrders": "Belum ada pesanan.",
+    "uploadToStart": "Unggah CSV",
+    "toGetStarted": "untuk memulai.",
+    "cols": {
+      "patient": "Pasien",
+      "phone": "Telepon",
+      "status": "Status",
+      "pod": "Bukti",
+      "created": "Dibuat"
+    }
+  },
+  "PharmacySettings": {
+    "heading": "Pengaturan",
+    "deliveryOptions": "Opsi Pengiriman"
+  },
+  "PharmacyUpload": {
+    "back": "← Kembali",
+    "heading": "Unggah Pesanan (CSV)",
+    "description": "Unggah CSV pesanan hari ini. Baris divalidasi sebelum disimpan — perbaiki kesalahan dan unggah ulang seluruh file.",
+    "downloadTemplate": "Unduh template"
+  },
+  "AdminLayout": {
+    "brand": "PharmaTrack · Admin",
+    "auditLog": "Log Audit"
+  },
+  "AdminPage": {
+    "heading": "Pesanan",
+    "analytics": "Analitik",
+    "manageBatches": "Kelola Batch",
+    "filterStatus": "Status",
+    "filterPharmacy": "Apotek",
+    "requestAddress": "Minta Alamat",
+    "noOrders": "Tidak ada pesanan yang cocok.",
+    "orderCount": "{count, plural, one {# pesanan} other {# pesanan}}",
+    "cols": {
+      "patient": "Pasien",
+      "phone": "Telepon",
+      "pharmacy": "Apotek",
+      "status": "Status",
+      "driver": "Driver",
+      "actions": "Aksi",
+      "pod": "Bukti",
+      "created": "Dibuat"
+    }
+  },
+  "AdminAnalytics": {
+    "backToOrders": "← Pesanan",
+    "heading": "Analitik",
+    "filterFrom": "Dari",
+    "filterTo": "Sampai",
+    "cards": {
+      "total": "Total",
+      "active": "Aktif",
+      "delivered": "Terkirim",
+      "failed": "Gagal",
+      "ofTotal": "{pct} dari total"
+    },
+    "statusBreakdown": "Rincian Status",
+    "byPharmacy": "Per Apotek",
+    "noOrders": "Tidak ada pesanan.",
+    "cols": {
+      "pharmacy": "Apotek",
+      "total": "Total",
+      "delivered": "Terkirim",
+      "failed": "Gagal",
+      "rate": "Tingkat"
+    }
+  },
+  "AuditLog": {
+    "backToOrders": "← Pesanan",
+    "heading": "Log Audit",
+    "entries": "{count} entri",
+    "filterEntityType": "Tipe Entitas",
+    "filterFrom": "Dari",
+    "filterTo": "Sampai",
+    "noEntries": "Tidak ada entri log audit.",
+    "cols": {
+      "time": "Waktu",
+      "actor": "Aktor",
+      "entity": "Entitas",
+      "action": "Aksi",
+      "diff": "Perubahan"
+    }
+  },
+  "BatchesPage": {
+    "heading": "Batch",
+    "backToOrders": "← Kembali ke pesanan",
+    "createBatch": "Buat Batch",
+    "filterPharmacy": "Apotek",
+    "loadOrders": "Muat Pesanan",
+    "allBatches": "Semua Batch",
+    "noBatches": "Belum ada batch yang dibuat.",
+    "cols": {
+      "pharmacy": "Apotek",
+      "driver": "Driver",
+      "orders": "Pesanan",
+      "status": "Status",
+      "pickedUp": "Waktu Pengambilan",
+      "created": "Dibuat"
+    }
+  },
+  "DriverLayout": {
+    "brand": "PharmaTrack"
+  },
+  "DriverPage": {
+    "heading": "Pengiriman Anda",
+    "noDriver": "Driver",
+    "noDriverError": "Profil driver tidak ditemukan untuk akun Anda. Hubungi admin.",
+    "batches": "Batch",
+    "orders": "Pesanan",
+    "noOrders": "Tidak ada pesanan yang ditugaskan saat ini.",
+    "awaitingPickup": "Menunggu Pengambilan",
+    "pickedUp": "Sudah Diambil",
+    "orderCount": "{count, plural, one {# pesanan} other {# pesanan}}",
+    "pickupPinPrompt": "Masukkan PIN pengambilan 6 digit dari apotek:",
+    "pickedUpAt": "Diambil pukul {time}",
+    "addressNotCollected": "Alamat belum terkumpul"
+  },
+  "AddressPage": {
+    "invalidLink": "Tautan Tidak Valid",
+    "invalidLinkDesc": "Tautan konfirmasi alamat ini tidak valid. Periksa tautan dari pesan WhatsApp Anda, atau hubungi apotek.",
+    "linkExpired": "Tautan Kedaluwarsa",
+    "linkExpiredDesc": "Tautan ini telah kedaluwarsa. Hubungi apotek Anda untuk meminta tautan baru.",
+    "alreadySubmitted": "Sudah Dikirim",
+    "alreadySubmittedDesc": "Alamat pengiriman Anda telah disimpan. Obat Anda akan segera dikirim.",
+    "heading": "Konfirmasi Alamat Pengiriman",
+    "greeting": "Halo {name}, masukkan alamat pengiriman untuk pesanan Anda dari {pharmacy}."
+  },
+  "AddressForm": {
+    "label": "Alamat Pengiriman",
+    "placeholder": "Masukkan alamat lengkap Anda termasuk jalan, RT/RW, kelurahan, kecamatan, kota, kode pos",
+    "submit": "Konfirmasi Alamat",
+    "submitting": "Mengirim...",
+    "successTitle": "Terima kasih!",
+    "successDesc": "Alamat pengiriman Anda telah disimpan. Obat Anda akan segera dikirim.",
+    "errorFallback": "Terjadi kesalahan. Silakan coba lagi."
+  },
+  "OrderStatus": {
+    "pending_address": "Menunggu Alamat",
+    "address_collected": "Alamat Terkumpul",
+    "assigned": "Ditugaskan",
+    "picked_up": "Sudah Diambil",
+    "in_transit": "Dalam Perjalanan",
+    "delivered": "Terkirim",
+    "failed": "Gagal",
+    "cancelled": "Dibatalkan"
+  },
+  "BatchStatus": {
+    "draft": "Draft",
+    "assigned": "Ditugaskan",
+    "picked_up": "Sudah Diambil",
+    "completed": "Selesai",
+    "cancelled": "Dibatalkan"
+  }
+}
