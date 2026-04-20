@@ -27,9 +27,7 @@ export function AuthForm({ next }: { next?: string }) {
             type="button"
             onClick={() => setTab(id)}
             className={`flex-1 rounded-md px-3 py-1.5 font-medium transition-colors ${
-              tab === id
-                ? 'bg-brand-600 text-white'
-                : 'text-slate-500 hover:text-slate-800'
+              tab === id ? 'bg-brand-600 text-white' : 'text-slate-500 hover:text-slate-800'
             }`}
           >
             {label}

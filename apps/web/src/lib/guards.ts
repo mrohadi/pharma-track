@@ -37,10 +37,7 @@ export async function requireRole(role: Role) {
 
   if (role === 'driver') {
     const driver = await getDriverByUserId(session.user.id);
-    if (
-      driver?.verificationStatus === 'pending' ||
-      driver?.verificationStatus === 'suspended'
-    ) {
+    if (driver?.verificationStatus === 'pending' || driver?.verificationStatus === 'suspended') {
       redirect('/pending-verification');
     }
   }

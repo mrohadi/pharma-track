@@ -33,7 +33,10 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       phone: String(formData.get('phone') ?? '').trim(),
     };
     const res = DriverSignupStep1Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
     merge(res.data);
     setStep(1);
   }
@@ -45,7 +48,10 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       province: String(formData.get('province') ?? '').trim(),
     };
     const res = DriverSignupStep2Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
     merge(res.data);
     setStep(2);
   }
@@ -61,7 +67,10 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       simExpiresAt: String(formData.get('simExpiresAt') ?? '').trim(),
     };
     const res = DriverSignupStep3Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
     merge(res.data);
     setStep(3);
   }
@@ -74,7 +83,10 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       payoutAccountName: String(formData.get('payoutAccountName') ?? '').trim(),
     };
     const res = DriverSignupStep4Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
 
     const payload = { ...fields, ...res.data } as DriverSignupInput;
 
@@ -84,7 +96,7 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const json = await response.json() as { success?: boolean; error?: string };
+      const json = (await response.json()) as { success?: boolean; error?: string };
       if (!response.ok || json.error) {
         setError(json.error ?? 'Pendaftaran gagal');
         return;
@@ -125,7 +137,9 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
             >
               {i + 1}
             </span>
-            <span className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}>
+            <span
+              className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}
+            >
               {label}
             </span>
             {i < STEPS.length - 1 && <span className="text-slate-300">›</span>}
@@ -138,8 +152,19 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       {/* Step 1 — Account */}
       {step === 0 && (
         <form action={handleStep1} className="flex flex-col gap-4">
-          <Field label="Email" name="email" type="email" autoComplete="email" defaultValue={fields.email} />
-          <Field label="Kata Sandi (min. 8 karakter)" name="password" type="password" autoComplete="new-password" />
+          <Field
+            label="Email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            defaultValue={fields.email}
+          />
+          <Field
+            label="Kata Sandi (min. 8 karakter)"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+          />
           <Field label="Nama Lengkap" name="name" defaultValue={fields.name} />
           <Field label="Nomor HP (+62 / 08…)" name="phone" defaultValue={fields.phone} />
           <Next />
@@ -152,7 +177,12 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
           <NikField defaultValue={fields.nik} />
           <Field label="Provinsi domisili" name="province" defaultValue={fields.province} />
           <div className="flex gap-2">
-            <Back onClick={() => { setError(null); setStep(0); }} />
+            <Back
+              onClick={() => {
+                setError(null);
+                setStep(0);
+              }}
+            />
             <Next />
           </div>
         </form>
@@ -185,9 +215,19 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
             ]}
           />
           <Field label="Nomor SIM" name="simNumber" defaultValue={fields.simNumber} />
-          <Field label="Tanggal Kadaluarsa SIM" name="simExpiresAt" type="date" defaultValue={fields.simExpiresAt} />
+          <Field
+            label="Tanggal Kadaluarsa SIM"
+            name="simExpiresAt"
+            type="date"
+            defaultValue={fields.simExpiresAt}
+          />
           <div className="flex gap-2">
-            <Back onClick={() => { setError(null); setStep(1); }} />
+            <Back
+              onClick={() => {
+                setError(null);
+                setStep(1);
+              }}
+            />
             <Next />
           </div>
         </form>
@@ -197,10 +237,23 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
       {step === 3 && (
         <form action={handleStep4} className="flex flex-col gap-4">
           <Field label="Nama Bank" name="payoutBank" defaultValue={fields.payoutBank} />
-          <Field label="Nomor Rekening" name="payoutAccountNumber" defaultValue={fields.payoutAccountNumber} />
-          <Field label="Nama Pemilik Rekening" name="payoutAccountName" defaultValue={fields.payoutAccountName} />
+          <Field
+            label="Nomor Rekening"
+            name="payoutAccountNumber"
+            defaultValue={fields.payoutAccountNumber}
+          />
+          <Field
+            label="Nama Pemilik Rekening"
+            name="payoutAccountName"
+            defaultValue={fields.payoutAccountName}
+          />
           <div className="flex gap-2">
-            <Back onClick={() => { setError(null); setStep(2); }} />
+            <Back
+              onClick={() => {
+                setError(null);
+                setStep(2);
+              }}
+            />
             <button
               type="submit"
               disabled={pending}
@@ -282,9 +335,13 @@ function SelectField({
         defaultValue={defaultValue ?? ''}
         className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
       >
-        <option value="" disabled>Pilih…</option>
+        <option value="" disabled>
+          Pilih…
+        </option>
         {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
         ))}
       </select>
     </label>

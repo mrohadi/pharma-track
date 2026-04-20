@@ -33,7 +33,10 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
       phone: String(formData.get('phone') ?? '').trim(),
     };
     const res = PharmacySignupStep1Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
     merge(res.data);
     setStep(1);
   }
@@ -48,7 +51,10 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
       city: String(formData.get('city') ?? '').trim(),
     };
     const res = PharmacySignupStep2Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
     merge(res.data);
     setStep(2);
   }
@@ -62,7 +68,10 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
       sipaNumber: String(formData.get('sipaNumber') ?? '').trim() || undefined,
     };
     const res = PharmacySignupStep3Schema.safeParse(data);
-    if (!res.success) { setError(res.error.errors[0]?.message ?? 'Validasi gagal'); return; }
+    if (!res.success) {
+      setError(res.error.errors[0]?.message ?? 'Validasi gagal');
+      return;
+    }
 
     const payload = { ...fields, ...res.data } as PharmacySignupInput;
 
@@ -72,7 +81,7 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
-      const json = await response.json() as { success?: boolean; error?: string };
+      const json = (await response.json()) as { success?: boolean; error?: string };
       if (!response.ok || json.error) {
         setError(json.error ?? 'Pendaftaran gagal');
         return;
@@ -113,7 +122,9 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
             >
               {i + 1}
             </span>
-            <span className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}>
+            <span
+              className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}
+            >
               {label}
             </span>
             {i < STEPS.length - 1 && <span className="text-slate-300">›</span>}
@@ -126,8 +137,19 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
       {/* Step 1 — Account */}
       {step === 0 && (
         <form action={handleStep1} className="flex flex-col gap-4">
-          <Field label="Email" name="email" type="email" autoComplete="email" defaultValue={fields.email} />
-          <Field label="Kata Sandi (min. 8 karakter)" name="password" type="password" autoComplete="new-password" />
+          <Field
+            label="Email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            defaultValue={fields.email}
+          />
+          <Field
+            label="Kata Sandi (min. 8 karakter)"
+            name="password"
+            type="password"
+            autoComplete="new-password"
+          />
           <Field label="Nama PIC (penanggung jawab)" name="picName" defaultValue={fields.picName} />
           <Field label="Nomor HP (+62 / 08…)" name="phone" defaultValue={fields.phone} />
           <Next />
@@ -138,12 +160,25 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
       {step === 1 && (
         <form action={handleStep2} className="flex flex-col gap-4">
           <Field label="Nama Apotek" name="pharmacyName" defaultValue={fields.pharmacyName} />
-          <Field label="Alamat Apotek" name="pharmacyAddress" defaultValue={fields.pharmacyAddress} />
-          <Field label="Telepon Apotek (+62 / 08…)" name="pharmacyPhone" defaultValue={fields.pharmacyPhone} />
+          <Field
+            label="Alamat Apotek"
+            name="pharmacyAddress"
+            defaultValue={fields.pharmacyAddress}
+          />
+          <Field
+            label="Telepon Apotek (+62 / 08…)"
+            name="pharmacyPhone"
+            defaultValue={fields.pharmacyPhone}
+          />
           <Field label="Provinsi" name="province" defaultValue={fields.province} />
           <Field label="Kota / Kabupaten" name="city" defaultValue={fields.city} />
           <div className="flex gap-2">
-            <Back onClick={() => { setError(null); setStep(0); }} />
+            <Back
+              onClick={() => {
+                setError(null);
+                setStep(0);
+              }}
+            />
             <Next />
           </div>
         </form>
@@ -156,7 +191,12 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
           <Field label="Nomor SIA (opsional)" name="siaNumber" defaultValue={fields.siaNumber} />
           <Field label="Nomor SIPA (opsional)" name="sipaNumber" defaultValue={fields.sipaNumber} />
           <div className="flex gap-2">
-            <Back onClick={() => { setError(null); setStep(1); }} />
+            <Back
+              onClick={() => {
+                setError(null);
+                setStep(1);
+              }}
+            />
             <button
               type="submit"
               disabled={pending}

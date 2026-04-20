@@ -1,10 +1,6 @@
 import { insertPharmacySignup, insertDriverSignup } from '@pharmatrack/db';
 import { auth } from '@/lib/auth';
-import {
-  type PharmacySignupInput,
-  type DriverSignupInput,
-  stripNpwp,
-} from '@pharmatrack/shared';
+import { type PharmacySignupInput, type DriverSignupInput, stripNpwp } from '@pharmatrack/shared';
 
 /**
  * Create a pharmacy account:

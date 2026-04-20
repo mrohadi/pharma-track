@@ -75,10 +75,7 @@ export async function insertPharmacySignup(
  * Transactionally insert a driver row and write an audit entry.
  * Returns the new driver id.
  */
-export async function insertDriverSignup(
-  userId: string,
-  data: DriverSignupData,
-): Promise<string> {
+export async function insertDriverSignup(userId: string, data: DriverSignupData): Promise<string> {
   return db.transaction(async (tx) => {
     const [driver] = await tx
       .insert(drivers)

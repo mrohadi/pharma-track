@@ -1,13 +1,9 @@
 import { z } from 'zod';
 
 // Indonesian validation helpers
-const phoneID = z
-  .string()
-  .regex(/^(\+62|08)\d{7,12}$/, 'Nomor telepon harus diawali +62 atau 08');
+const phoneID = z.string().regex(/^(\+62|08)\d{7,12}$/, 'Nomor telepon harus diawali +62 atau 08');
 
-const nik = z
-  .string()
-  .regex(/^\d{16}$/, 'NIK harus 16 digit angka');
+const nik = z.string().regex(/^\d{16}$/, 'NIK harus 16 digit angka');
 
 // NPWP formatted: ##.###.###.#-###.### (stored without separators)
 const npwpFormatted = z
@@ -49,9 +45,8 @@ export const PharmacySignupStep3Schema = z.object({
   sipaNumber: z.string().optional(),
 });
 
-export const PharmacySignupSchema = PharmacySignupStep1Schema.merge(PharmacySignupStep2Schema).merge(
-  PharmacySignupStep3Schema,
-);
+export const PharmacySignupSchema =
+  PharmacySignupStep1Schema.merge(PharmacySignupStep2Schema).merge(PharmacySignupStep3Schema);
 
 export type PharmacySignupInput = z.infer<typeof PharmacySignupSchema>;
 
