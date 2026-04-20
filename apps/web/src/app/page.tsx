@@ -1,34 +1,27 @@
-import { getTranslations } from 'next-intl/server';
+import dynamic from 'next/dynamic';
+import { Hero } from '@/components/landing/hero';
+import { Stats } from '@/components/landing/stats';
+import { Footer } from '@/components/landing/footer';
 
-export default async function HomePage() {
-  const t = await getTranslations('HomePage');
+const Features = dynamic(() => import('@/components/landing/features').then((m) => m.Features), {
+  ssr: true,
+});
+const Steps = dynamic(() => import('@/components/landing/steps').then((m) => m.Steps), {
+  ssr: true,
+});
+const Cta = dynamic(() => import('@/components/landing/cta').then((m) => m.Cta), {
+  ssr: true,
+});
+
+export default function HomePage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-3xl flex-col justify-center gap-6 p-8">
-      <h1 className="text-brand-700 text-4xl font-bold tracking-tight">{t('title')}</h1>
-      <p className="text-lg text-slate-600">{t('description')}</p>
-      <div className="grid gap-3 sm:grid-cols-3">
-        <a
-          href="/p"
-          className="hover:border-brand-500 rounded-lg border border-slate-200 p-4 transition"
-        >
-          <div className="font-semibold">{t('pharmacy.title')}</div>
-          <div className="text-sm text-slate-500">{t('pharmacy.subtitle')}</div>
-        </a>
-        <a
-          href="/a"
-          className="hover:border-brand-500 rounded-lg border border-slate-200 p-4 transition"
-        >
-          <div className="font-semibold">{t('admin.title')}</div>
-          <div className="text-sm text-slate-500">{t('admin.subtitle')}</div>
-        </a>
-        <a
-          href="/d"
-          className="hover:border-brand-500 rounded-lg border border-slate-200 p-4 transition"
-        >
-          <div className="font-semibold">{t('driver.title')}</div>
-          <div className="text-sm text-slate-500">{t('driver.subtitle')}</div>
-        </a>
-      </div>
+    <main>
+      <Hero />
+      <Stats />
+      <Features />
+      <Steps />
+      <Cta />
+      <Footer />
     </main>
   );
 }

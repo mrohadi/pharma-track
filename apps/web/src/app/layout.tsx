@@ -4,8 +4,27 @@ import { getLocale, getMessages } from 'next-intl/server';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'PharmaTrack',
-  description: 'Pharmacy delivery management system',
+  title: {
+    default: 'PharmaTrack — Pharmacy Delivery Platform',
+    template: '%s | PharmaTrack',
+  },
+  description:
+    'PharmaTrack connects pharmacies, drivers, and patients with real-time order tracking, OTP delivery verification, and WhatsApp notifications.',
+  keywords: ['pharmacy delivery', 'last-mile delivery', 'medication delivery', 'pharma logistics'],
+  openGraph: {
+    type: 'website',
+    siteName: 'PharmaTrack',
+    title: 'PharmaTrack — Pharmacy Delivery Platform',
+    description:
+      'Real-time order tracking, OTP handoffs, and WhatsApp notifications for pharmacy last-mile delivery.',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'PharmaTrack — Pharmacy Delivery Platform',
+    description: 'Real-time order tracking, OTP handoffs, and WhatsApp notifications.',
+  },
+  metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://pharmatrack.app'),
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
