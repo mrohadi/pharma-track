@@ -40,7 +40,7 @@ export default async function BatchesPage({
     <main className="mx-auto max-w-5xl p-8">
       <div className="mb-4 flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t('heading')}</h1>
-        <Link href="/a" className="text-brand-700 text-sm hover:underline">
+        <Link href="/a/orders" className="text-brand-700 text-sm hover:underline">
           {t('backToOrders')}
         </Link>
       </div>
