@@ -17,6 +17,13 @@ export default async function PharmacyLayout({ children }: { children: React.Rea
         <div className="flex items-center gap-3 text-sm">
           <LocaleSwitcher locale={locale} />
           <span className="text-slate-300">|</span>
+          <Link
+            href="/p/orders/new"
+            className="bg-brand-600 hover:bg-brand-700 rounded px-3 py-1 text-sm font-medium text-white"
+          >
+            Order Baru
+          </Link>
+          <span className="text-slate-300">|</span>
           <Link href="/p/settings" className="text-slate-500 hover:text-slate-800">
             {t('settings')}
           </Link>
