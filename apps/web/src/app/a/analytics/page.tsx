@@ -58,7 +58,7 @@ export default async function AdminAnalyticsPage({
     <main className="mx-auto max-w-5xl p-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <Link href="/a" className="text-sm text-slate-500 hover:underline">
+          <Link href="/a/orders" className="text-sm text-slate-500 hover:underline">
             {t('backToOrders')}
           </Link>
           <h1 className="mt-1 text-2xl font-bold">{t('heading')}</h1>
