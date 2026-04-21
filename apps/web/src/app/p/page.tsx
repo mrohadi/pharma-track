@@ -24,9 +24,15 @@ export default async function PharmacyHome() {
           <PharmacyExportButton />
           <Link
             href="/p/upload"
-            className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+            className="rounded border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
           >
             {t('uploadCsv')}
+          </Link>
+          <Link
+            href="/p/orders/new"
+            className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
+          >
+            + Order Baru
           </Link>
         </div>
       </div>
