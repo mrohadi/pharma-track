@@ -29,3 +29,4 @@ export * from './queries/address-reminders';
 export * from './queries/pharmacies';
 export * from './queries/users';
 export * from './queries/signup';
+export * from './queries/verification';
