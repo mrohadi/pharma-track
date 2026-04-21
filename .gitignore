@@ -41,3 +41,5 @@ coverage/
 
 # docker volumes (local)
 infra/.data/
+# Added by code-review-graph
+.code-review-graph/
