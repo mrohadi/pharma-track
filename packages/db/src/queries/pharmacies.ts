@@ -16,6 +16,10 @@ export async function listPendingPharmacies() {
     .orderBy(pharmacies.createdAt);
 }
 
+export async function listAllPharmacies() {
+  return db.select().from(pharmacies).orderBy(pharmacies.createdAt);
+}
+
 export async function setPharmacyVerification(
   id: string,
   status: PharmacyVerificationStatus,

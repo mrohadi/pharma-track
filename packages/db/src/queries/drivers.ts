@@ -32,6 +32,23 @@ export async function listDrivers(): Promise<DriverRow[]> {
   return rows;
 }
 
+export async function listAllDrivers(): Promise<DriverRow[]> {
+  const rows = await db
+    .select({
+      id: drivers.id,
+      name: users.name,
+      email: users.email,
+      vehicle: drivers.vehicle,
+      licensePlate: drivers.licensePlate,
+      status: drivers.status,
+      verificationStatus: drivers.verificationStatus,
+    })
+    .from(drivers)
+    .innerJoin(users, eq(drivers.userId, users.id))
+    .orderBy(asc(users.name));
+  return rows;
+}
+
 export async function setDriverVerification(
   id: string,
   status: DriverVerificationStatus,
