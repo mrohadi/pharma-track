@@ -1,7 +1,4 @@
-import {
-  setPharmacyVerificationAudit,
-  setDriverVerificationAudit,
-} from '@pharmatrack/db';
+import { setPharmacyVerificationAudit, setDriverVerificationAudit } from '@pharmatrack/db';
 import { getSession } from '@/lib/session';
 
 async function actorId(): Promise<string | null> {

@@ -25,7 +25,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <div className="flex items-center gap-3 text-sm">
           <LocaleSwitcher locale={locale} />
           <span className="text-slate-300">|</span>
-          <Link href="/a/users" className="flex items-center gap-1 text-slate-500 hover:text-slate-800">
+          <Link
+            href="/a/users"
+            className="flex items-center gap-1 text-slate-500 hover:text-slate-800"
+          >
             Users
             {pendingCount > 0 && (
               <span className="rounded-full bg-yellow-500 px-1.5 py-0.5 text-xs font-semibold leading-none text-white">
