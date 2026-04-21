@@ -198,5 +198,77 @@
     "picked_up": "Sudah Diambil",
     "completed": "Selesai",
     "cancelled": "Dibatalkan"
+  },
+  "Landing": {
+    "hero": {
+      "eyebrow": "Platform Pengiriman Apotek",
+      "heading": "Antar Obat. Tepat Waktu. Setiap Saat.",
+      "subheading": "PharmaTrack menghubungkan apotek, driver, dan pasien dengan pelacakan pesanan real-time, verifikasi pengiriman OTP, dan notifikasi WhatsApp — semua dalam satu platform.",
+      "ctaPrimary": "Mulai Sekarang",
+      "ctaSecondary": "Cara kerja"
+    },
+    "features": {
+      "heading": "Semua yang dibutuhkan untuk pengiriman farmasi last-mile",
+      "items": [
+        {
+          "title": "Manajemen pesanan",
+          "desc": "Unggah pesanan CSV massal. Validasi, pantau, dan ekspor dengan satu klik."
+        },
+        {
+          "title": "Notifikasi real-time",
+          "desc": "Notifikasi WhatsApp memberi tahu pasien di setiap tahap."
+        },
+        {
+          "title": "Pengumpulan alamat",
+          "desc": "Tautan bertoken aman memungkinkan pasien konfirmasi alamat pengiriman via WhatsApp."
+        },
+        {
+          "title": "Dashboard analitik",
+          "desc": "Pantau tingkat pengiriman, tren kegagalan, dan kinerja apotek sekilas."
+        },
+        {
+          "title": "Aplikasi driver (PWA)",
+          "desc": "UI driver mobile-first dengan konfirmasi batch, OTP, dan foto bukti pengiriman."
+        },
+        {
+          "title": "Akses berbasis peran",
+          "desc": "Portal terpisah untuk apotek, admin, dan driver dengan onboarding terverifikasi."
+        }
+      ]
+    },
+    "stats": {
+      "items": [
+        { "value": "99%", "label": "Tingkat keberhasilan pengiriman" },
+        { "value": "<2 mnt", "label": "Rata-rata waktu pengiriman" },
+        { "value": "3 peran", "label": "Apotek, admin, driver" },
+        { "value": "100%", "label": "Serah terima terverifikasi OTP" }
+      ]
+    },
+    "steps": {
+      "heading": "Cara kerja",
+      "items": [
+        {
+          "title": "Apotek unggah pesanan",
+          "desc": "Unggah CSV resep hari ini. PharmaTrack memvalidasi setiap baris secara instan."
+        },
+        {
+          "title": "Admin tugaskan ke driver",
+          "desc": "Kelompokkan pesanan dalam batch dan tugaskan ke driver terverifikasi dengan satu ketukan."
+        },
+        {
+          "title": "Driver antar dengan OTP",
+          "desc": "Driver konfirmasi pengambilan dengan PIN, lalu serah terima menggunakan OTP pasien — tanpa sengketa."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Siap memperlancar pengiriman Anda?",
+      "subheading": "Daftarkan apotek Anda sekarang dan mulai beroperasi dalam hitungan menit.",
+      "button": "Mulai gratis"
+    },
+    "footer": {
+      "tagline": "Pengiriman last-mile yang andal untuk apotek di Asia Tenggara.",
+      "copyright": "© {year} PharmaTrack. Hak cipta dilindungi."
+    }
   }
 }

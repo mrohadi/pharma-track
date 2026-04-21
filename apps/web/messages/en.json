@@ -198,5 +198,77 @@
     "picked_up": "Picked up",
     "completed": "Completed",
     "cancelled": "Cancelled"
+  },
+  "Landing": {
+    "hero": {
+      "eyebrow": "Pharmacy Delivery Platform",
+      "heading": "Deliver Medicine. On Time. Every Time.",
+      "subheading": "PharmaTrack connects pharmacies, drivers, and patients with real-time order tracking, OTP delivery verification, and WhatsApp notifications — all in one platform.",
+      "ctaPrimary": "Get Started",
+      "ctaSecondary": "How it works"
+    },
+    "features": {
+      "heading": "Everything you need to run last-mile pharma delivery",
+      "items": [
+        {
+          "title": "Order management",
+          "desc": "Upload CSV orders in bulk. Validate, track, and export with a click."
+        },
+        {
+          "title": "Real-time notifications",
+          "desc": "WhatsApp alerts keep patients informed at every stage."
+        },
+        {
+          "title": "Address collection",
+          "desc": "Secure tokenised links let patients confirm delivery addresses on WhatsApp."
+        },
+        {
+          "title": "Analytics dashboard",
+          "desc": "Track delivery rates, failure trends, and pharmacy performance at a glance."
+        },
+        {
+          "title": "Driver app (PWA)",
+          "desc": "Mobile-first driver UI with batch pickup, OTP confirmation, and photo proof."
+        },
+        {
+          "title": "Role-based access",
+          "desc": "Separate portals for pharmacies, admins, and drivers with verified onboarding."
+        }
+      ]
+    },
+    "stats": {
+      "items": [
+        { "value": "99%", "label": "Delivery success rate" },
+        { "value": "<2 min", "label": "Average dispatch time" },
+        { "value": "3 roles", "label": "Pharmacies, admins, drivers" },
+        { "value": "100%", "label": "OTP-verified handoffs" }
+      ]
+    },
+    "steps": {
+      "heading": "How it works",
+      "items": [
+        {
+          "title": "Pharmacy uploads orders",
+          "desc": "Upload a CSV of today's prescriptions. PharmaTrack validates every row instantly."
+        },
+        {
+          "title": "Admin assigns to drivers",
+          "desc": "Group orders into batches and assign to verified drivers with one tap."
+        },
+        {
+          "title": "Driver delivers with OTP",
+          "desc": "Driver confirms pickup with a PIN, then hands off using a patient OTP — no disputes."
+        }
+      ]
+    },
+    "cta": {
+      "heading": "Ready to streamline your deliveries?",
+      "subheading": "Sign up your pharmacy today and go live in minutes.",
+      "button": "Start for free"
+    },
+    "footer": {
+      "tagline": "Reliable last-mile delivery for pharmacies across Southeast Asia.",
+      "copyright": "© {year} PharmaTrack. All rights reserved."
+    }
   }
 }
