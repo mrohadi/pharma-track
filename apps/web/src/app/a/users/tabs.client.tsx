@@ -70,7 +70,10 @@ export function UsersTabs({
               <button
                 key={t}
                 type="button"
-                onClick={() => { setTab(t); setSearch(''); }}
+                onClick={() => {
+                  setTab(t);
+                  setSearch('');
+                }}
                 style={{
                   padding: '14px 20px',
                   border: 'none',

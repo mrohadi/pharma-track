@@ -6,17 +6,17 @@ import { PTLogo } from '@/components/logo';
 import { SignOutButton } from '@/components/sign-out-button';
 
 const PT = {
-  sidebar:       'oklch(0.15 0.04 255)',
-  sidebarHover:  'rgba(255,255,255,0.07)',
+  sidebar: 'oklch(0.15 0.04 255)',
+  sidebarHover: 'rgba(255,255,255,0.07)',
   sidebarActive: 'rgba(255,255,255,0.13)',
-  danger:        'oklch(0.55 0.2 25)',
+  danger: 'oklch(0.55 0.2 25)',
 };
 
 const NAV = [
-  { href: '/a',          icon: '📊', label: 'Dashboard' },
-  { href: '/a/orders',   icon: '📦', label: 'Orders' },
-  { href: '/a/users',    icon: '👥', label: 'Users' },
-  { href: '/a/analytics',icon: '📈', label: 'Analytics' },
+  { href: '/a', icon: '📊', label: 'Dashboard' },
+  { href: '/a/orders', icon: '📦', label: 'Orders' },
+  { href: '/a/users', icon: '👥', label: 'Users' },
+  { href: '/a/analytics', icon: '📈', label: 'Analytics' },
   { href: '/a/settings', icon: '⚙️', label: 'Settings' },
 ];
 
@@ -176,9 +176,7 @@ export function AdminSidebar({
             {userEmail}
           </div>
         </div>
-        <SignOutButton
-          className="text-[11px] text-white/40 hover:text-white/70 transition-colors border-none bg-transparent cursor-pointer p-0"
-        />
+        <SignOutButton className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-white/40 transition-colors hover:text-white/70" />
       </div>
     </div>
   );

@@ -11,22 +11,22 @@ type SearchParams = {
 };
 
 const PT = {
-  primary:      'oklch(0.52 0.18 250)',
+  primary: 'oklch(0.52 0.18 250)',
   primaryLight: 'oklch(0.94 0.04 250)',
-  primaryText:  'oklch(0.36 0.14 250)',
-  success:      'oklch(0.52 0.15 145)',
+  primaryText: 'oklch(0.36 0.14 250)',
+  success: 'oklch(0.52 0.15 145)',
   successLight: 'oklch(0.94 0.05 145)',
-  warning:      'oklch(0.68 0.14 75)',
+  warning: 'oklch(0.68 0.14 75)',
   warningLight: 'oklch(0.96 0.05 75)',
-  danger:       'oklch(0.55 0.2 25)',
-  dangerLight:  'oklch(0.95 0.05 25)',
-  teal:         'oklch(0.52 0.15 195)',
-  tealLight:    'oklch(0.94 0.05 195)',
-  bg:           'oklch(0.97 0.008 250)',
-  card:         '#ffffff',
-  text:         'oklch(0.18 0.02 250)',
-  muted:        'oklch(0.58 0.03 250)',
-  border:       'oklch(0.92 0.012 250)',
+  danger: 'oklch(0.55 0.2 25)',
+  dangerLight: 'oklch(0.95 0.05 25)',
+  teal: 'oklch(0.52 0.15 195)',
+  tealLight: 'oklch(0.94 0.05 195)',
+  bg: 'oklch(0.97 0.008 250)',
+  card: '#ffffff',
+  text: 'oklch(0.18 0.02 250)',
+  muted: 'oklch(0.58 0.03 250)',
+  border: 'oklch(0.92 0.012 250)',
 };
 
 const STATUS_ORDER = [
@@ -41,14 +41,14 @@ const STATUS_ORDER = [
 ];
 
 const STATUS_BAR_COLOR: Record<string, string> = {
-  delivered:         PT.success,
-  in_transit:        PT.warning,
-  pending_address:   PT.primary,
+  delivered: PT.success,
+  in_transit: PT.warning,
+  pending_address: PT.primary,
   address_collected: PT.primary,
-  assigned:          PT.primary,
-  picked_up:         PT.primary,
-  failed:            PT.danger,
-  cancelled:         PT.muted,
+  assigned: PT.primary,
+  picked_up: PT.primary,
+  failed: PT.danger,
+  cancelled: PT.muted,
 };
 
 function pct(part: number, total: number) {
@@ -361,9 +361,7 @@ export default async function AdminAnalyticsPage({
             }}
           >
             <div>
-              <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>
-                Order per Apotek
-              </div>
+              <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>Order per Apotek</div>
               <div style={{ fontSize: 12, color: PT.muted, marginTop: 2 }}>
                 {total} total order
                 {hasDateFilter ? ` · ${sp.from ?? ''}–${sp.to ?? ''}` : ''}
@@ -385,7 +383,16 @@ export default async function AdminAnalyticsPage({
           {chartData.length > 0 ? (
             <BarChart data={chartData} height={100} color={PT.primary} />
           ) : (
-            <div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', color: PT.muted, fontSize: 13 }}>
+            <div
+              style={{
+                height: 100,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: PT.muted,
+                fontSize: 13,
+              }}
+            >
               {t('noOrders')}
             </div>
           )}
@@ -406,9 +413,9 @@ export default async function AdminAnalyticsPage({
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
             {[
-              { label: 'Terkirim',   value: successRate, color: PT.success },
-              { label: 'Aktif',      value: activeRate,  color: PT.primary },
-              { label: 'Gagal',      value: failRate,    color: PT.danger  },
+              { label: 'Terkirim', value: successRate, color: PT.success },
+              { label: 'Aktif', value: activeRate, color: PT.primary },
+              { label: 'Gagal', value: failRate, color: PT.danger },
             ].map((s) => (
               <div key={s.label}>
                 <div
@@ -422,9 +429,7 @@ export default async function AdminAnalyticsPage({
                   <span style={{ fontWeight: 500, color: PT.text }}>{s.label}</span>
                   <span style={{ fontWeight: 700, color: PT.text }}>{s.value}%</span>
                 </div>
-                <div
-                  style={{ height: 7, background: PT.bg, borderRadius: 99, overflow: 'hidden' }}
-                >
+                <div style={{ height: 7, background: PT.bg, borderRadius: 99, overflow: 'hidden' }}>
                   <div
                     style={{
                       height: '100%',
@@ -446,12 +451,8 @@ export default async function AdminAnalyticsPage({
               borderRadius: 10,
             }}
           >
-            <div style={{ fontSize: 11, color: PT.muted, fontWeight: 500 }}>
-              Tingkat pengiriman
-            </div>
-            <div
-              style={{ fontSize: 22, fontWeight: 800, color: PT.success, marginTop: 2 }}
-            >
+            <div style={{ fontSize: 11, color: PT.muted, fontWeight: 500 }}>Tingkat pengiriman</div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: PT.success, marginTop: 2 }}>
               {successRate}%
             </div>
           </div>
@@ -540,9 +541,7 @@ export default async function AdminAnalyticsPage({
           }}
         >
           <div style={{ padding: '16px 20px', borderBottom: `1px solid ${PT.border}` }}>
-            <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>
-              {t('byPharmacy')}
-            </div>
+            <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>{t('byPharmacy')}</div>
           </div>
           {byPharmacy.length === 0 ? (
             <p style={{ padding: '32px 20px', textAlign: 'center', fontSize: 13, color: PT.muted }}>
@@ -554,11 +553,11 @@ export default async function AdminAnalyticsPage({
                 <thead>
                   <tr style={{ background: 'oklch(0.96 0.008 250)' }}>
                     {[
-                      { key: 'pharmacy', label: t('cols.pharmacy'), align: 'left'  },
-                      { key: 'total',    label: t('cols.total'),    align: 'right' },
-                      { key: 'ok',       label: t('cols.delivered'),align: 'right' },
-                      { key: 'fail',     label: t('cols.failed'),   align: 'right' },
-                      { key: 'rate',     label: t('cols.rate'),     align: 'right' },
+                      { key: 'pharmacy', label: t('cols.pharmacy'), align: 'left' },
+                      { key: 'total', label: t('cols.total'), align: 'right' },
+                      { key: 'ok', label: t('cols.delivered'), align: 'right' },
+                      { key: 'fail', label: t('cols.failed'), align: 'right' },
+                      { key: 'rate', label: t('cols.rate'), align: 'right' },
                     ].map((h) => (
                       <th
                         key={h.key}
@@ -584,10 +583,7 @@ export default async function AdminAnalyticsPage({
                     const terminal = p.delivered + p.failed;
                     const rate = pct(p.delivered, terminal);
                     return (
-                      <tr
-                        key={p.pharmacyId}
-                        style={{ borderBottom: `1px solid ${PT.border}` }}
-                      >
+                      <tr key={p.pharmacyId} style={{ borderBottom: `1px solid ${PT.border}` }}>
                         <td
                           style={{
                             padding: '11px 16px',

@@ -13,8 +13,7 @@ export function SignOutButton({ className }: { className?: string }) {
         router.refresh();
       }}
       className={
-        className ??
-        'rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-50'
+        className ?? 'rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-50'
       }
     >
       Sign out

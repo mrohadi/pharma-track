@@ -105,10 +105,7 @@ export function OrderList({ orders }: { orders: RecentOrderRow[] }) {
               minute: '2-digit',
             });
             return (
-              <li
-                key={o.id}
-                className="rounded-[14px] border border-slate-200 bg-white px-5 py-4"
-              >
+              <li key={o.id} className="rounded-[14px] border border-slate-200 bg-white px-5 py-4">
                 {/* Top row */}
                 <div className="mb-2 flex items-start justify-between">
                   <div className="flex items-center gap-2.5">

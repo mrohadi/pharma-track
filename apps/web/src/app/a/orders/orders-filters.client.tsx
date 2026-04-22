@@ -5,11 +5,11 @@ import { useTransition } from 'react';
 import { ExportButton } from '../export-button';
 
 const TABS = [
-  { label: 'Semua',           value: '' },
-  { label: 'Menunggu',        value: 'pending_address' },
-  { label: 'Dalam Perjalanan',value: 'in_transit' },
-  { label: 'Terkirim',        value: 'delivered' },
-  { label: 'Dibatalkan',      value: 'cancelled' },
+  { label: 'Semua', value: '' },
+  { label: 'Menunggu', value: 'pending_address' },
+  { label: 'Dalam Perjalanan', value: 'in_transit' },
+  { label: 'Terkirim', value: 'delivered' },
+  { label: 'Dibatalkan', value: 'cancelled' },
 ];
 
 export function OrdersFilters() {
@@ -29,7 +29,9 @@ export function OrdersFilters() {
   }
 
   return (
-    <div style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}>
+    <div
+      style={{ display: 'flex', gap: 12, marginBottom: 20, alignItems: 'center', flexWrap: 'wrap' }}
+    >
       {/* Status tabs */}
       <div
         style={{

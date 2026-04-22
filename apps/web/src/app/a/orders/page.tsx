@@ -58,14 +58,14 @@ function formatRelativeTime(date: Date): string {
 }
 
 const STATUS_DOT: Record<string, string> = {
-  pending_address:    'bg-amber-400',
-  address_collected:  'bg-sky-400',
-  assigned:           'bg-indigo-400',
-  picked_up:          'bg-violet-400',
-  in_transit:         'bg-blue-400',
-  delivered:          'bg-green-400',
-  failed:             'bg-red-400',
-  cancelled:          'bg-slate-400',
+  pending_address: 'bg-amber-400',
+  address_collected: 'bg-sky-400',
+  assigned: 'bg-indigo-400',
+  picked_up: 'bg-violet-400',
+  in_transit: 'bg-blue-400',
+  delivered: 'bg-green-400',
+  failed: 'bg-red-400',
+  cancelled: 'bg-slate-400',
 };
 
 export default async function AdminOrdersPage({
@@ -187,10 +187,7 @@ export default async function AdminOrdersPage({
                   const isTerminal = TERMINAL_STATUSES.has(o.status);
 
                   return (
-                    <tr
-                      key={o.id}
-                      style={{ borderBottom: '1px solid #f1f5f9' }}
-                    >
+                    <tr key={o.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                       {/* Order ID */}
                       <td
                         style={{
@@ -210,9 +207,7 @@ export default async function AdminOrdersPage({
                       </td>
 
                       {/* Apotek */}
-                      <td style={{ padding: '12px 16px', color: '#475569' }}>
-                        {o.pharmacyName}
-                      </td>
+                      <td style={{ padding: '12px 16px', color: '#475569' }}>{o.pharmacyName}</td>
 
                       {/* Driver */}
                       <td style={{ padding: '12px 16px' }}>
@@ -230,9 +225,7 @@ export default async function AdminOrdersPage({
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}`}
                         >
-                          <span
-                            className={`inline-block h-1.5 w-1.5 rounded-full ${dotClass}`}
-                          />
+                          <span className={`inline-block h-1.5 w-1.5 rounded-full ${dotClass}`} />
                           {statusLabel}
                         </span>
                       </td>
@@ -319,7 +312,11 @@ export default async function AdminOrdersPage({
             {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
               const p = i + 1;
               return (
-                <Link key={p} href={buildQuery(baseParams, { page: String(p) })} style={pageBtnStyle(p === page)}>
+                <Link
+                  key={p}
+                  href={buildQuery(baseParams, { page: String(p) })}
+                  style={pageBtnStyle(p === page)}
+                >
                   {p}
                 </Link>
               );

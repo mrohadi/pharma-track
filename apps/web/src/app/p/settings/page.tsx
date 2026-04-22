@@ -20,69 +20,71 @@ export default async function PharmacySettingsPage() {
   return (
     <div className="p-7">
       <div className="mx-auto max-w-2xl space-y-8">
-      <div>
-        <h1 className="text-xl font-bold text-slate-800">Pengaturan</h1>
-        <p className="mt-1 text-[13.5px] text-slate-500">Kelola profil apotek dan preferensi akun</p>
-      </div>
-
-      {/* Pharmacy identity banner */}
-      <div className="flex items-center gap-4 rounded-[14px] border border-slate-200 bg-white p-5">
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-teal-50 text-3xl">
-          🏥
+        <div>
+          <h1 className="text-xl font-bold text-slate-800">Pengaturan</h1>
+          <p className="mt-1 text-[13.5px] text-slate-500">
+            Kelola profil apotek dan preferensi akun
+          </p>
         </div>
-        <div className="min-w-0">
-          <div className="truncate text-base font-bold text-slate-800">
-            {pharmacy?.name ?? '—'}
+
+        {/* Pharmacy identity banner */}
+        <div className="flex items-center gap-4 rounded-[14px] border border-slate-200 bg-white p-5">
+          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[14px] bg-teal-50 text-3xl">
+            🏥
           </div>
-          <div className="truncate text-sm text-slate-500">{session.user.email}</div>
-          <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700">
-            ✓ Terverifikasi
-          </span>
+          <div className="min-w-0">
+            <div className="truncate text-base font-bold text-slate-800">
+              {pharmacy?.name ?? '—'}
+            </div>
+            <div className="truncate text-sm text-slate-500">{session.user.email}</div>
+            <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-green-50 px-2.5 py-0.5 text-xs font-semibold text-green-700">
+              ✓ Terverifikasi
+            </span>
+          </div>
         </div>
+
+        <SectionHeader>Informasi Apotek</SectionHeader>
+        <ProfileSection
+          initial={{
+            name: pharmacy?.name ?? '',
+            picName: pharmacy?.picName ?? '',
+            phone: pharmacy?.phone ?? '',
+            npwp: pharmacy?.npwp ?? '',
+          }}
+        />
+
+        <SectionHeader>Dokumen Legalitas</SectionHeader>
+        <LegalSection
+          initial={{
+            siaNumber: pharmacy?.siaNumber ?? '',
+            sipaNumber: pharmacy?.sipaNumber ?? '',
+          }}
+        />
+
+        <SectionHeader>Alamat Apotek</SectionHeader>
+        <AddressSection
+          initial={{
+            province: pharmacy?.province ?? '',
+            city: pharmacy?.city ?? '',
+            address: pharmacy?.address ?? '',
+          }}
+        />
+
+        <SectionHeader>Notifikasi</SectionHeader>
+        <NotificationsSection
+          initial={{
+            pushNotifications: prefs.pushNotifications ?? true,
+          }}
+        />
+
+        <SectionHeader>Pengiriman</SectionHeader>
+        <section className="rounded-xl border border-slate-200 bg-white p-6">
+          <SettingsForm initial={settings} />
+        </section>
+
+        <SectionHeader>Keamanan Akun</SectionHeader>
+        <SecuritySection />
       </div>
-
-      <SectionHeader>Informasi Apotek</SectionHeader>
-      <ProfileSection
-        initial={{
-          name: pharmacy?.name ?? '',
-          picName: pharmacy?.picName ?? '',
-          phone: pharmacy?.phone ?? '',
-          npwp: pharmacy?.npwp ?? '',
-        }}
-      />
-
-      <SectionHeader>Dokumen Legalitas</SectionHeader>
-      <LegalSection
-        initial={{
-          siaNumber: pharmacy?.siaNumber ?? '',
-          sipaNumber: pharmacy?.sipaNumber ?? '',
-        }}
-      />
-
-      <SectionHeader>Alamat Apotek</SectionHeader>
-      <AddressSection
-        initial={{
-          province: pharmacy?.province ?? '',
-          city: pharmacy?.city ?? '',
-          address: pharmacy?.address ?? '',
-        }}
-      />
-
-      <SectionHeader>Notifikasi</SectionHeader>
-      <NotificationsSection
-        initial={{
-          pushNotifications: prefs.pushNotifications ?? true,
-        }}
-      />
-
-      <SectionHeader>Pengiriman</SectionHeader>
-      <section className="rounded-xl border border-slate-200 bg-white p-6">
-        <SettingsForm initial={settings} />
-      </section>
-
-      <SectionHeader>Keamanan Akun</SectionHeader>
-      <SecuritySection />
-    </div>
     </div>
   );
 }

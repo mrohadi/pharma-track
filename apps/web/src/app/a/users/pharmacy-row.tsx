@@ -5,17 +5,17 @@ import { useState } from 'react';
 import type { Pharmacy } from '@pharmatrack/db';
 
 const STATUS_STYLE: Record<string, { badge: string; dot: string }> = {
-  pending:   { badge: 'bg-amber-100 text-amber-800',  dot: 'bg-amber-400' },
-  active:    { badge: 'bg-green-100 text-green-800',  dot: 'bg-green-400' },
-  suspended: { badge: 'bg-red-100 text-red-800',      dot: 'bg-red-400'   },
-  rejected:  { badge: 'bg-slate-100 text-slate-600',  dot: 'bg-slate-400' },
+  pending: { badge: 'bg-amber-100 text-amber-800', dot: 'bg-amber-400' },
+  active: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-400' },
+  suspended: { badge: 'bg-red-100 text-red-800', dot: 'bg-red-400' },
+  rejected: { badge: 'bg-slate-100 text-slate-600', dot: 'bg-slate-400' },
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  pending:   'Menunggu',
-  active:    'Aktif',
+  pending: 'Menunggu',
+  active: 'Aktif',
   suspended: 'Disuspend',
-  rejected:  'Ditolak',
+  rejected: 'Ditolak',
 };
 
 const BTN: React.CSSProperties = {

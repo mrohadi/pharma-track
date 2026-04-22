@@ -3,10 +3,10 @@ import { listAllPharmacies, listAllDrivers } from '@pharmatrack/db';
 import { UsersTabs } from './tabs.client';
 
 const STAT_COLORS = {
-  teal:  { icon: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
+  teal: { icon: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
   green: { icon: '#16a34a', bg: '#f0fdf4', border: '#bbf7d0' },
   amber: { icon: '#d97706', bg: '#fffbeb', border: '#fde68a' },
-  red:   { icon: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
+  red: { icon: '#dc2626', bg: '#fef2f2', border: '#fecaca' },
 };
 
 function StatCard({
@@ -50,10 +50,20 @@ function StatCard({
         {icon}
       </div>
       <div>
-        <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+        <div
+          style={{
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#64748b',
+            textTransform: 'uppercase',
+            letterSpacing: '0.06em',
+          }}
+        >
           {label}
         </div>
-        <div style={{ fontSize: 26, fontWeight: 800, color: '#0f172a', lineHeight: 1.2, marginTop: 2 }}>
+        <div
+          style={{ fontSize: 26, fontWeight: 800, color: '#0f172a', lineHeight: 1.2, marginTop: 2 }}
+        >
           {value}
         </div>
       </div>
@@ -67,7 +77,7 @@ export default async function AdminUsersPage() {
   const [pharmacies, drivers] = await Promise.all([listAllPharmacies(), listAllDrivers()]);
 
   const totalPharmacies = pharmacies.length;
-  const activeDrivers   = drivers.filter((d) => d.verificationStatus === 'active').length;
+  const activeDrivers = drivers.filter((d) => d.verificationStatus === 'active').length;
   const pendingApprovals =
     pharmacies.filter((p) => p.verificationStatus === 'pending').length +
     drivers.filter((d) => d.verificationStatus === 'pending').length;
@@ -121,10 +131,10 @@ export default async function AdminUsersPage() {
           marginBottom: 24,
         }}
       >
-        <StatCard label="Total Apotek"          value={totalPharmacies}  icon="🏥" color="teal"  />
-        <StatCard label="Driver Aktif"          value={activeDrivers}    icon="🚴" color="green" />
-        <StatCard label="Menunggu Persetujuan"  value={pendingApprovals} icon="⏳" color="amber" />
-        <StatCard label="Pengguna Disuspend"    value={suspendedUsers}   icon="🚫" color="red"   />
+        <StatCard label="Total Apotek" value={totalPharmacies} icon="🏥" color="teal" />
+        <StatCard label="Driver Aktif" value={activeDrivers} icon="🚴" color="green" />
+        <StatCard label="Menunggu Persetujuan" value={pendingApprovals} icon="⏳" color="amber" />
+        <StatCard label="Pengguna Disuspend" value={suspendedUsers} icon="🚫" color="red" />
       </div>
 
       {/* Tabs + tables */}

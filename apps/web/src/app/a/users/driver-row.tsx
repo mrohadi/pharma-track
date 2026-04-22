@@ -5,22 +5,22 @@ import { useState } from 'react';
 import type { DriverRow } from '@pharmatrack/db';
 
 const STATUS_STYLE: Record<string, { badge: string; dot: string }> = {
-  pending:   { badge: 'bg-amber-100 text-amber-800',  dot: 'bg-amber-400' },
-  active:    { badge: 'bg-green-100 text-green-800',  dot: 'bg-green-400' },
-  suspended: { badge: 'bg-red-100 text-red-800',      dot: 'bg-red-400'   },
-  rejected:  { badge: 'bg-slate-100 text-slate-600',  dot: 'bg-slate-400' },
+  pending: { badge: 'bg-amber-100 text-amber-800', dot: 'bg-amber-400' },
+  active: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-400' },
+  suspended: { badge: 'bg-red-100 text-red-800', dot: 'bg-red-400' },
+  rejected: { badge: 'bg-slate-100 text-slate-600', dot: 'bg-slate-400' },
 };
 
 const STATUS_LABEL: Record<string, string> = {
-  pending:   'Menunggu',
-  active:    'Aktif',
+  pending: 'Menunggu',
+  active: 'Aktif',
   suspended: 'Disuspend',
-  rejected:  'Ditolak',
+  rejected: 'Ditolak',
 };
 
 const ONLINE_LABEL: Record<string, string> = {
-  offline:     'Offline',
-  available:   'Online',
+  offline: 'Offline',
+  available: 'Online',
   on_delivery: 'Antar',
 };
 
@@ -76,9 +76,7 @@ export function DriverRowComponent({ driver }: { driver: DriverRow }) {
       </td>
 
       {/* Telepon (email as fallback) */}
-      <td style={{ padding: '12px 16px', color: '#475569', fontSize: 12 }}>
-        {driver.email}
-      </td>
+      <td style={{ padding: '12px 16px', color: '#475569', fontSize: 12 }}>{driver.email}</td>
 
       {/* Kendaraan */}
       <td style={{ padding: '12px 16px', color: '#475569' }}>
@@ -99,9 +97,7 @@ export function DriverRowComponent({ driver }: { driver: DriverRow }) {
       </td>
 
       {/* Bergabung — no createdAt on DriverRow; show status instead */}
-      <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>
-        —
-      </td>
+      <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>—</td>
 
       {/* Actions */}
       <td style={{ padding: '12px 16px' }}>

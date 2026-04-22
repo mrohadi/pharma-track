@@ -25,15 +25,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         fontFamily: "'Plus Jakarta Sans', sans-serif",
       }}
     >
-      <AdminSidebar
-        userName={userName}
-        userEmail={userEmail}
-        pendingCount={pendingCount}
-      />
+      <AdminSidebar userName={userName} userEmail={userEmail} pendingCount={pendingCount} />
       {/* offset for fixed sidebar */}
-      <div style={{ marginLeft: 240, flex: 1, overflowY: 'auto', minWidth: 0 }}>
-        {children}
-      </div>
+      <div style={{ marginLeft: 240, flex: 1, overflowY: 'auto', minWidth: 0 }}>{children}</div>
     </div>
   );
 }

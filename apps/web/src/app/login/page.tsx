@@ -17,12 +17,12 @@ export default async function LoginPage({
   }
 
   return (
-    <div
-      className="flex min-h-screen"
-      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-    >
+    <div className="flex min-h-screen" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
       {/* LEFT PANEL */}
-      <div className="relative hidden w-[400px] flex-shrink-0 flex-col justify-center overflow-hidden px-9 py-12 lg:flex" style={{ background: 'oklch(0.15 0.04 255)' }}>
+      <div
+        className="relative hidden w-[400px] flex-shrink-0 flex-col justify-center overflow-hidden px-9 py-12 lg:flex"
+        style={{ background: 'oklch(0.15 0.04 255)' }}
+      >
         {/* decorative circles */}
         <div className="absolute -right-20 -top-20 h-[300px] w-[300px] rounded-full bg-white/[0.03]" />
         <div className="absolute -bottom-10 -left-10 h-[200px] w-[200px] rounded-full bg-white/[0.03]" />
@@ -36,7 +36,10 @@ export default async function LoginPage({
           <h2 className="mb-3 text-[26px] font-extrabold leading-[1.3] tracking-[-0.5px] text-white">
             Platform pengiriman obat terpercaya di Indonesia.
           </h2>
-          <p className="mb-9 text-[13.5px] leading-[1.7]" style={{ color: 'rgba(255,255,255,0.45)' }}>
+          <p
+            className="mb-9 text-[13.5px] leading-[1.7]"
+            style={{ color: 'rgba(255,255,255,0.45)' }}
+          >
             Menghubungkan apotek, driver, dan administrator dalam satu platform cerdas.
           </p>
 
@@ -51,7 +54,9 @@ export default async function LoginPage({
                 <div className="flex h-[34px] w-[34px] flex-shrink-0 items-center justify-center rounded-[9px] bg-white/10 text-base">
                   {item.icon}
                 </div>
-                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.62)' }}>{item.text}</span>
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.62)' }}>
+                  {item.text}
+                </span>
               </div>
             ))}
           </div>
@@ -59,7 +64,10 @@ export default async function LoginPage({
       </div>
 
       {/* RIGHT PANEL */}
-      <div className="flex flex-1 items-start justify-center overflow-y-auto px-10 py-10" style={{ background: 'oklch(0.97 0.008 250)' }}>
+      <div
+        className="flex flex-1 items-start justify-center overflow-y-auto px-10 py-10"
+        style={{ background: 'oklch(0.97 0.008 250)' }}
+      >
         <div className="w-full max-w-[440px]">
           <AuthForm next={next} />
         </div>
