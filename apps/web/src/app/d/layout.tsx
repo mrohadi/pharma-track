@@ -1,27 +1,25 @@
-import { getLocale, getTranslations } from 'next-intl/server';
+import type { Metadata } from 'next';
 import { requireRole } from '@/lib/guards';
-import { SignOutButton } from '@/components/sign-out-button';
-import { LocaleSwitcher } from '@/components/locale-switcher';
 import { PushSubscriptionManager } from './push-subscription-manager';
 
+export const metadata: Metadata = {
+  title: 'PharmaTrack Driver',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'PharmaTrack',
+  },
+};
+
 export default async function DriverLayout({ children }: { children: React.ReactNode }) {
-  const [session, t, locale] = await Promise.all([
-    requireRole('driver'),
-    getTranslations('DriverLayout'),
-    getLocale(),
-  ]);
+  await requireRole('driver');
   return (
-    <div className="min-h-screen">
-      <header className="flex items-center justify-between border-b border-slate-200 px-4 py-3">
-        <div className="text-brand-700 font-semibold">{t('brand')}</div>
-        <div className="flex items-center gap-3 text-sm">
-          <LocaleSwitcher locale={locale} />
-          <PushSubscriptionManager />
-          <span className="text-slate-500">{session.user.email}</span>
-          <SignOutButton />
-        </div>
-      </header>
-      {children}
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      {/* keeps push subscription alive */}
+      <div className="sr-only">
+        <PushSubscriptionManager />
+      </div>
+      <main className="flex flex-1 flex-col">{children}</main>
     </div>
   );
 }
