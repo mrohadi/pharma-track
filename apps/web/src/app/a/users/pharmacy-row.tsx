@@ -4,11 +4,29 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { Pharmacy } from '@pharmatrack/db';
 
-const STATUS_BADGE: Record<string, string> = {
-  pending: 'bg-yellow-100 text-yellow-800',
-  active: 'bg-green-100 text-green-800',
-  suspended: 'bg-red-100 text-red-800',
-  rejected: 'bg-slate-100 text-slate-600',
+const STATUS_STYLE: Record<string, { badge: string; dot: string }> = {
+  pending: { badge: 'bg-amber-100 text-amber-800', dot: 'bg-amber-400' },
+  active: { badge: 'bg-green-100 text-green-800', dot: 'bg-green-400' },
+  suspended: { badge: 'bg-red-100 text-red-800', dot: 'bg-red-400' },
+  rejected: { badge: 'bg-slate-100 text-slate-600', dot: 'bg-slate-400' },
+};
+
+const STATUS_LABEL: Record<string, string> = {
+  pending: 'Menunggu',
+  active: 'Aktif',
+  suspended: 'Disuspend',
+  rejected: 'Ditolak',
+};
+
+const BTN: React.CSSProperties = {
+  borderRadius: 6,
+  padding: '4px 10px',
+  fontSize: 11,
+  fontWeight: 600,
+  cursor: 'pointer',
+  fontFamily: 'inherit',
+  border: 'none',
+  transition: 'opacity 0.15s',
 };
 
 export function PharmacyRow({ pharmacy }: { pharmacy: Pharmacy }) {
@@ -27,53 +45,91 @@ export function PharmacyRow({ pharmacy }: { pharmacy: Pharmacy }) {
   }
 
   async function handleSuspend() {
-    const reason = prompt('Suspend reason:');
+    const reason = prompt('Alasan suspend:');
     if (!reason?.trim()) return;
     await patch('suspend', reason.trim());
   }
 
   const s = pharmacy.verificationStatus;
+  const st = STATUS_STYLE[s] ?? STATUS_STYLE.rejected;
+  const shortId = pharmacy.id.slice(0, 6).toUpperCase();
 
   return (
-    <tr className="align-top hover:bg-slate-50">
-      <td className="px-3 py-2 font-medium text-slate-800">{pharmacy.name}</td>
-      <td className="px-3 py-2 text-slate-500">{pharmacy.city ?? '—'}</td>
-      <td className="px-3 py-2 text-slate-500">{pharmacy.phone ?? '—'}</td>
-      <td className="px-3 py-2">
+    <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+      {/* ID */}
+      <td style={{ padding: '12px 16px', fontFamily: 'monospace', fontSize: 11, color: '#94a3b8' }}>
+        {shortId}
+      </td>
+
+      {/* Apotek name */}
+      <td style={{ padding: '12px 16px', fontWeight: 600, color: '#0f172a' }}>
+        {pharmacy.name}
+        {pharmacy.city && (
+          <div style={{ fontSize: 11, color: '#94a3b8', fontWeight: 400, marginTop: 1 }}>
+            {pharmacy.city}
+          </div>
+        )}
+      </td>
+
+      {/* Kontak */}
+      <td style={{ padding: '12px 16px', color: '#475569' }}>
+        {pharmacy.picName ?? '—'}
+        {pharmacy.phone && (
+          <div style={{ fontSize: 11, color: '#94a3b8', marginTop: 1 }}>{pharmacy.phone}</div>
+        )}
+      </td>
+
+      {/* Status */}
+      <td style={{ padding: '12px 16px' }}>
         <span
-          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_BADGE[s] ?? 'bg-slate-100 text-slate-600'}`}
+          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${st.badge}`}
         >
-          {s}
+          <span className={`inline-block h-1.5 w-1.5 rounded-full ${st.dot}`} />
+          {STATUS_LABEL[s] ?? s}
         </span>
       </td>
-      <td className="px-3 py-2 text-xs text-slate-400">
-        {new Date(pharmacy.createdAt).toLocaleDateString()}
+
+      {/* Bergabung */}
+      <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>
+        {new Date(pharmacy.createdAt).toLocaleDateString('id-ID', {
+          month: 'short',
+          year: 'numeric',
+        })}
       </td>
-      <td className="px-3 py-2">
-        <div className="flex gap-1">
+
+      {/* Actions */}
+      <td style={{ padding: '12px 16px' }}>
+        <div style={{ display: 'flex', gap: 6 }}>
           {s === 'pending' && (
             <button
               disabled={busy}
               onClick={() => patch('approve')}
-              className="rounded bg-green-600 px-2 py-1 text-xs font-medium text-white hover:bg-green-700 disabled:opacity-50"
+              style={{ ...BTN, background: '#16a34a', color: '#fff' }}
             >
-              Approve
+              Setujui
             </button>
           )}
           {s === 'suspended' && (
             <button
               disabled={busy}
               onClick={() => patch('activate')}
-              className="rounded bg-blue-600 px-2 py-1 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50"
+              style={{ ...BTN, background: 'oklch(0.52 0.18 250)', color: '#fff' }}
             >
-              Activate
+              Aktifkan
             </button>
           )}
+          <button
+            disabled={busy}
+            onClick={() => {}}
+            style={{ ...BTN, background: '#fff', color: '#475569', border: '1px solid #e2e8f0' }}
+          >
+            Edit
+          </button>
           {(s === 'pending' || s === 'active') && (
             <button
               disabled={busy}
               onClick={handleSuspend}
-              className="rounded border border-red-300 px-2 py-1 text-xs font-medium text-red-600 hover:bg-red-50 disabled:opacity-50"
+              style={{ ...BTN, background: '#fff', color: '#dc2626', border: '1px solid #fecaca' }}
             >
               Suspend
             </button>

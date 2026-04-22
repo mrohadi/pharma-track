@@ -8,8 +8,22 @@ import {
   type PharmacySignupInput,
   formatNpwp,
 } from '@pharmatrack/shared';
+import { PT, AuthField, PrimaryButton, GhostButton } from './auth-form.client';
 
-const STEPS = ['Akun', 'Info Apotek', 'Dokumen KYC'] as const;
+const ID_PROVINCES = [
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
+  'Banten',
+  'Sumatera Utara',
+  'Sulawesi Selatan',
+  'Bali',
+  'Kalimantan Timur',
+  'Yogyakarta',
+];
+
+const STEPS = ['Akun', 'Data Apotek', 'Konfirmasi'] as const;
 
 type Fields = Partial<PharmacySignupInput>;
 
@@ -74,7 +88,6 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
     }
 
     const payload = { ...fields, ...res.data } as PharmacySignupInput;
-
     startTransition(async () => {
       const response = await fetch('/api/signup/pharmacy', {
         method: 'POST',
@@ -92,118 +105,211 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
 
   if (done) {
     return (
-      <div className="flex flex-col gap-4 rounded-lg bg-green-50 p-6 text-center">
-        <p className="font-semibold text-green-800">Pendaftaran berhasil!</p>
-        <p className="text-sm text-green-700">
-          Akun apotek Anda sedang menunggu verifikasi admin. Anda akan dihubungi setelah akun
-          disetujui. Silakan masuk setelah mendapat konfirmasi.
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          background: PT.successLight,
+          borderRadius: 12,
+          padding: 24,
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 32 }}>✅</div>
+        <p style={{ fontWeight: 700, color: PT.success, margin: 0 }}>Pendaftaran berhasil!</p>
+        <p style={{ fontSize: 13, color: PT.success, margin: 0, opacity: 0.8 }}>
+          Akun apotek Anda sedang menunggu verifikasi admin dalam 1×24 jam.
         </p>
-        <button
-          type="button"
-          onClick={onSuccess}
-          className="bg-brand-600 hover:bg-brand-700 rounded-md px-4 py-2 text-sm font-medium text-white"
-        >
-          Ke halaman masuk
-        </button>
+        <PrimaryButton onClick={onSuccess}>Ke halaman masuk</PrimaryButton>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Step indicator */}
-      <div className="flex items-center gap-2">
-        {STEPS.map((label, i) => (
-          <div key={label} className="flex items-center gap-2">
-            <span
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                i <= step ? 'bg-brand-600 text-white' : 'bg-slate-200 text-slate-500'
-              }`}
-            >
-              {i + 1}
-            </span>
-            <span
-              className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}
-            >
-              {label}
-            </span>
-            {i < STEPS.length - 1 && <span className="text-slate-300">›</span>}
-          </div>
-        ))}
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <StepIndicator steps={STEPS} current={step} />
 
-      {error && <p className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-
-      {/* Step 1 — Account */}
       {step === 0 && (
-        <form action={handleStep1} className="flex flex-col gap-4">
-          <Field
-            label="Email"
+        <div
+          style={{
+            padding: '10px 14px',
+            background: PT.primaryLight,
+            borderRadius: 10,
+            fontSize: 12.5,
+            color: PT.primaryText,
+            fontWeight: 500,
+          }}
+        >
+          📋 Daftarkan apotek Anda. Pendaftaran akan diverifikasi oleh admin dalam 1×24 jam.
+        </div>
+      )}
+
+      {error && (
+        <p
+          style={{
+            background: PT.dangerLight,
+            color: PT.danger,
+            borderRadius: 8,
+            padding: '8px 12px',
+            fontSize: 13,
+            margin: 0,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
+      {step === 0 && (
+        <form action={handleStep1} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+          <AuthField
+            label="Nama PIC / Apoteker *"
+            name="picName"
+            placeholder="dr. Siti Rahayu, S.Farm"
+            icon="👤"
+            defaultValue={fields.picName}
+          />
+          <AuthField
+            label="Email *"
             name="email"
             type="email"
+            placeholder="apotek@example.co.id"
+            icon="✉️"
             autoComplete="email"
             defaultValue={fields.email}
           />
-          <Field
-            label="Kata Sandi (min. 8 karakter)"
+          <AuthField
+            label="No. Telepon / WhatsApp *"
+            name="phone"
+            placeholder="+62 812 3456 7890"
+            icon="📱"
+            defaultValue={fields.phone}
+          />
+          <AuthField
+            label="Password *"
             name="password"
             type="password"
+            placeholder="Min. 8 karakter"
+            icon="🔒"
             autoComplete="new-password"
           />
-          <Field label="Nama PIC (penanggung jawab)" name="picName" defaultValue={fields.picName} />
-          <Field label="Nomor HP (+62 / 08…)" name="phone" defaultValue={fields.phone} />
-          <Next />
+          <PrimaryButton>Lanjut →</PrimaryButton>
         </form>
       )}
 
-      {/* Step 2 — Pharmacy info */}
       {step === 1 && (
-        <form action={handleStep2} className="flex flex-col gap-4">
-          <Field label="Nama Apotek" name="pharmacyName" defaultValue={fields.pharmacyName} />
-          <Field
-            label="Alamat Apotek"
-            name="pharmacyAddress"
-            defaultValue={fields.pharmacyAddress}
+        <form action={handleStep2} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+          <AuthField
+            label="Nama Apotek *"
+            name="pharmacyName"
+            placeholder="Apotek Sehat Sejahtera"
+            icon="🏥"
+            defaultValue={fields.pharmacyName}
           />
-          <Field
-            label="Telepon Apotek (+62 / 08…)"
+          <AuthField
+            label="Telepon Apotek *"
             name="pharmacyPhone"
+            placeholder="+62 21 1234 5678"
+            icon="📱"
             defaultValue={fields.pharmacyPhone}
           />
-          <Field label="Provinsi" name="province" defaultValue={fields.province} />
-          <Field label="Kota / Kabupaten" name="city" defaultValue={fields.city} />
-          <div className="flex gap-2">
-            <Back
+          <PTSelect
+            label="Provinsi *"
+            name="province"
+            defaultValue={fields.province ?? 'DKI Jakarta'}
+            options={ID_PROVINCES.map((p) => ({ value: p, label: p }))}
+          />
+          <AuthField
+            label="Kota / Kabupaten *"
+            name="city"
+            placeholder="Jakarta Selatan"
+            defaultValue={fields.city}
+          />
+          <AuthField
+            label="Alamat Lengkap *"
+            name="pharmacyAddress"
+            placeholder="Jl. Sudirman No. 12, RT 03/RW 05"
+            icon="📍"
+            defaultValue={fields.pharmacyAddress}
+          />
+          <div style={{ display: 'flex', gap: 10 }}>
+            <GhostButton
               onClick={() => {
                 setError(null);
                 setStep(0);
               }}
-            />
-            <Next />
+            >
+              ← Kembali
+            </GhostButton>
+            <PrimaryButton>Lanjut →</PrimaryButton>
           </div>
         </form>
       )}
 
-      {/* Step 3 — KYC */}
       {step === 2 && (
-        <form action={handleStep3} className="flex flex-col gap-4">
+        <form action={handleStep3} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
           <NpwpField defaultValue={fields.npwp} />
-          <Field label="Nomor SIA (opsional)" name="siaNumber" defaultValue={fields.siaNumber} />
-          <Field label="Nomor SIPA (opsional)" name="sipaNumber" defaultValue={fields.sipaNumber} />
-          <div className="flex gap-2">
-            <Back
+          <AuthField
+            label="No. SIA (opsional)"
+            name="siaNumber"
+            placeholder="SIA/123/IV/2025"
+            icon="📄"
+            defaultValue={fields.siaNumber}
+          />
+          <AuthField
+            label="No. SIPA (opsional)"
+            name="sipaNumber"
+            placeholder="SIPA-JKT/0001/2024"
+            icon="📄"
+            defaultValue={fields.sipaNumber}
+          />
+
+          {/* Summary */}
+          <div
+            style={{
+              padding: '12px 14px',
+              background: PT.bg,
+              borderRadius: 10,
+              border: `1px solid ${PT.border}`,
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 700, color: PT.text, marginBottom: 8 }}>
+              Ringkasan Pendaftaran
+            </div>
+            {[
+              { l: 'Nama PIC', v: fields.picName },
+              { l: 'Email', v: fields.email },
+              { l: 'Apotek', v: fields.pharmacyName },
+              { l: 'Provinsi', v: fields.province },
+            ].map((r) => (
+              <div
+                key={r.l}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: 12,
+                  padding: '4px 0',
+                  borderBottom: `1px solid ${PT.border}`,
+                }}
+              >
+                <span style={{ color: PT.muted }}>{r.l}</span>
+                <span style={{ fontWeight: 600, color: PT.text }}>{r.v ?? '—'}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <GhostButton
               onClick={() => {
                 setError(null);
                 setStep(1);
               }}
-            />
-            <button
-              type="submit"
-              disabled={pending}
-              className="bg-brand-600 hover:bg-brand-700 flex-1 rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {pending ? 'Mendaftar…' : 'Daftar'}
-            </button>
+              ← Kembali
+            </GhostButton>
+            <PrimaryButton pending={pending}>
+              {pending ? 'Mendaftar…' : 'Daftarkan Apotek ✓'}
+            </PrimaryButton>
           </div>
         </form>
       )}
@@ -211,77 +317,148 @@ export function PharmacySignupForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-// ─── Shared sub-components ────────────────────────────────────────────────
+// ── Shared helpers ─────────────────────────────────────────────────────────────
 
-function Field({
-  label,
-  name,
-  type = 'text',
-  autoComplete,
-  defaultValue,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  defaultValue?: string;
-}) {
+function StepIndicator({ steps, current }: { steps: readonly string[]; current: number }) {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">{label}</span>
-      <input
-        type={type}
-        name={name}
-        autoComplete={autoComplete}
-        defaultValue={defaultValue}
-        className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
-      />
-    </label>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+      {steps.map((s, i) => (
+        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 999,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: 13,
+                transition: 'all 0.2s',
+                background: i < current ? PT.success : i === current ? PT.primary : PT.border,
+                color: i <= current ? '#fff' : PT.muted,
+              }}
+            >
+              {i < current ? '✓' : i + 1}
+            </div>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: i === current ? 700 : 500,
+                color: i === current ? PT.primary : PT.muted,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {s}
+            </span>
+          </div>
+          {i < steps.length - 1 && (
+            <div
+              style={{
+                flex: 1,
+                height: 2,
+                background: i < current ? PT.success : PT.border,
+                margin: '0 6px',
+                marginBottom: 16,
+                transition: 'background 0.3s',
+              }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 
 function NpwpField({ defaultValue }: { defaultValue?: string }) {
   const [value, setValue] = useState(defaultValue ?? '');
-
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const digits = e.target.value.replace(/\D/g, '').slice(0, 15);
-    setValue(formatNpwp(digits));
-  }
-
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">NPWP (##.###.###.#-###.###)</span>
-      <input
-        type="text"
-        name="npwp"
-        value={value}
-        onChange={handleChange}
-        placeholder="12.345.678.9-012.345"
-        className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
-      />
-    </label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>NPWP Apotek</span>
+      <div style={{ position: 'relative' }}>
+        <span
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 14,
+            pointerEvents: 'none',
+          }}
+        >
+          🪪
+        </span>
+        <input
+          type="text"
+          name="npwp"
+          value={value}
+          onChange={(e) => {
+            const d = e.target.value.replace(/\D/g, '').slice(0, 15);
+            setValue(formatNpwp(d));
+          }}
+          placeholder="12.345.678.9-012.345"
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            border: `1.5px solid ${PT.border}`,
+            borderRadius: 10,
+            background: '#fff',
+            padding: '10px 12px 10px 36px',
+            fontSize: 13.5,
+            color: PT.text,
+            outline: 'none',
+            fontFamily: 'inherit',
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = PT.primary;
+            e.currentTarget.style.boxShadow = `0 0 0 3px ${PT.primaryLight}`;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = PT.border;
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
-function Next() {
+function PTSelect({
+  label,
+  name,
+  defaultValue,
+  options,
+}: {
+  label: string;
+  name: string;
+  defaultValue?: string;
+  options: { value: string; label: string }[];
+}) {
   return (
-    <button
-      type="submit"
-      className="bg-brand-600 hover:bg-brand-700 rounded-md px-4 py-2 text-sm font-medium text-white"
-    >
-      Lanjut →
-    </button>
-  );
-}
-
-function Back({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-    >
-      ← Kembali
-    </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>{label}</span>
+      <select
+        name={name}
+        defaultValue={defaultValue}
+        style={{
+          border: `1.5px solid ${PT.border}`,
+          borderRadius: 10,
+          background: '#fff',
+          padding: '10px 12px',
+          fontSize: 13.5,
+          color: PT.text,
+          outline: 'none',
+          fontFamily: 'inherit',
+          appearance: 'auto',
+        }}
+      >
+        {options.map((o) => (
+          <option key={o.value} value={o.value}>
+            {o.label}
+          </option>
+        ))}
+      </select>
+    </div>
   );
 }

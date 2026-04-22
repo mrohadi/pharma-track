@@ -1,4 +1,4 @@
-import { asc, desc, eq } from 'drizzle-orm';
+import { asc, desc, eq, and, gte, sum } from 'drizzle-orm';
 import { db } from '../index';
 import { drivers, users, orders, pharmacies } from '../schema';
 import type { OrderStatus } from '@pharmatrack/shared';
@@ -57,6 +57,62 @@ export async function setDriverVerification(
     .update(drivers)
     .set({ verificationStatus: status, updatedAt: new Date() })
     .where(eq(drivers.id, id));
+}
+
+/** Set driver online/offline status. */
+export async function setDriverOnline(userId: string, online: boolean): Promise<void> {
+  await db
+    .update(drivers)
+    .set({ status: online ? 'available' : 'offline', updatedAt: new Date() })
+    .where(eq(drivers.userId, userId));
+}
+
+/** Sum driver_fee_cents for orders delivered today. */
+export async function getTodayEarnings(driverId: string): Promise<number> {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+
+  const [row] = await db
+    .select({ total: sum(orders.driverFeeCents) })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.assignedDriverId, driverId),
+        eq(orders.status, 'delivered'),
+        gte(orders.deliveredAt, todayStart),
+      ),
+    );
+  return Number(row?.total ?? 0);
+}
+
+export type CompletedOrderRow = {
+  id: string;
+  patientName: string;
+  deliveryAddress: string | null;
+  medicineText: string;
+  driverFeeCents: number | null;
+  deliveredAt: Date | null;
+};
+
+/** Completed deliveries for a driver, newest first. */
+export async function listCompletedOrders(
+  driverId: string,
+  limit = 50,
+): Promise<CompletedOrderRow[]> {
+  const rows = await db
+    .select({
+      id: orders.id,
+      patientName: orders.patientName,
+      deliveryAddress: orders.deliveryAddress,
+      medicineText: orders.medicineText,
+      driverFeeCents: orders.driverFeeCents,
+      deliveredAt: orders.deliveredAt,
+    })
+    .from(orders)
+    .where(and(eq(orders.assignedDriverId, driverId), eq(orders.status, 'delivered')))
+    .orderBy(desc(orders.deliveredAt))
+    .limit(limit);
+  return rows;
 }
 
 /** Look up the driver row for a given user id (driver's own user account). */

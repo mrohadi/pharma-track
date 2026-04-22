@@ -5,25 +5,25 @@ import { maskPhone } from '@/lib/format';
 import type { RecentOrderRow } from '@pharmatrack/db';
 
 const STATUS_LABELS: Record<string, string> = {
-  pending_address: 'Menunggu Alamat',
-  address_collected: 'Alamat Terkumpul',
-  assigned: 'Driver Ditugaskan',
-  picked_up: 'Diambil',
+  pending_address: 'Menunggu',
+  address_collected: 'Menunggu',
+  assigned: 'Dalam Perjalanan',
+  picked_up: 'Dalam Perjalanan',
   in_transit: 'Dalam Perjalanan',
   delivered: 'Terkirim',
   failed: 'Gagal',
   cancelled: 'Dibatalkan',
 };
 
-const STATUS_BADGE: Record<string, string> = {
-  pending_address: 'bg-blue-100 text-blue-700',
-  address_collected: 'bg-teal-100 text-teal-700',
-  assigned: 'bg-amber-100 text-amber-700',
-  picked_up: 'bg-amber-100 text-amber-700',
-  in_transit: 'bg-amber-100 text-amber-700',
-  delivered: 'bg-green-100 text-green-700',
-  failed: 'bg-red-100 text-red-700',
-  cancelled: 'bg-slate-100 text-slate-500',
+const STATUS_COLOR: Record<string, { bg: string; text: string; dot: string }> = {
+  pending_address: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
+  address_collected: { bg: 'bg-blue-50', text: 'text-blue-700', dot: 'bg-blue-500' },
+  assigned: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
+  picked_up: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
+  in_transit: { bg: 'bg-amber-50', text: 'text-amber-700', dot: 'bg-amber-500' },
+  delivered: { bg: 'bg-green-50', text: 'text-green-700', dot: 'bg-green-500' },
+  failed: { bg: 'bg-red-50', text: 'text-red-600', dot: 'bg-red-500' },
+  cancelled: { bg: 'bg-slate-100', text: 'text-slate-500', dot: 'bg-slate-400' },
 };
 
 const FILTERS = [
@@ -31,7 +31,7 @@ const FILTERS = [
   { label: 'Menunggu', value: 'pending' },
   { label: 'Dalam Perjalanan', value: 'transit' },
   { label: 'Terkirim', value: 'delivered' },
-  { label: 'Gagal / Batal', value: 'closed' },
+  { label: 'Dibatalkan', value: 'closed' },
 ];
 
 const FILTER_STATUSES: Record<string, string[]> = {
@@ -63,14 +63,18 @@ export function OrderList({ orders }: { orders: RecentOrderRow[] }) {
 
   return (
     <div className="space-y-4">
-      {/* Filter + search bar */}
+      {/* Filter + search */}
       <div className="flex flex-wrap items-center gap-3">
-        <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-white text-sm">
+        <div className="flex overflow-hidden rounded-[10px] border border-slate-200 bg-white">
           {FILTERS.map((f) => (
             <button
               key={f.value}
               onClick={() => setFilter(f.value)}
-              className={`px-4 py-2 font-medium transition-colors ${filter === f.value ? 'bg-brand-600 text-white' : 'text-slate-600 hover:bg-slate-50'}`}
+              className={`px-4 py-[7px] text-[13px] font-semibold transition-colors ${
+                filter === f.value
+                  ? 'bg-blue-600 text-white'
+                  : 'text-slate-500 hover:bg-slate-50 hover:text-slate-800'
+              }`}
             >
               {f.label}
             </button>
@@ -78,75 +82,75 @@ export function OrderList({ orders }: { orders: RecentOrderRow[] }) {
         </div>
         <input
           type="search"
-          placeholder="Cari nama pasien, ID…"
+          placeholder="Cari pasien, ID order…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="focus:ring-brand-500 w-56 rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2"
+          className="w-64 rounded-[10px] border border-slate-200 px-3 py-[7px] text-[13px] text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
       </div>
 
-      {/* Card list */}
+      {/* Cards */}
       {visible.length === 0 ? (
-        <div className="rounded-xl border border-slate-200 bg-white px-6 py-16 text-center text-sm text-slate-400">
+        <div className="rounded-[14px] border border-slate-200 bg-white px-6 py-16 text-center text-sm text-slate-400">
           Tidak ada order ditemukan.
         </div>
       ) : (
-        <ul className="space-y-3">
-          {visible.map((o) => (
-            <li
-              key={o.id}
-              className="space-y-2 rounded-xl border border-slate-200 bg-white px-5 py-4"
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="font-mono text-xs font-semibold text-slate-500">
-                    #{o.id.slice(0, 8)}
-                  </span>
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_BADGE[o.status] ?? 'bg-slate-100 text-slate-500'}`}
-                  >
-                    <span className="h-1.5 w-1.5 rounded-full bg-current opacity-60" />
-                    {STATUS_LABELS[o.status] ?? o.status}
-                  </span>
+        <ul className="flex flex-col gap-2.5">
+          {visible.map((o) => {
+            const sc = STATUS_COLOR[o.status] ?? STATUS_COLOR.cancelled;
+            const time = new Date(o.createdAt).toLocaleString('id-ID', {
+              day: '2-digit',
+              month: 'short',
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+            return (
+              <li key={o.id} className="rounded-[14px] border border-slate-200 bg-white px-5 py-4">
+                {/* Top row */}
+                <div className="mb-2 flex items-start justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <span className="text-[15px] font-extrabold text-slate-800">
+                      #{o.id.slice(0, 6)}
+                    </span>
+                    <span
+                      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${sc.bg} ${sc.text}`}
+                    >
+                      <span className={`h-1.5 w-1.5 rounded-full ${sc.dot}`} />
+                      {STATUS_LABELS[o.status] ?? o.status}
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-xs text-slate-400">{time}</div>
+                  </div>
                 </div>
-                <span className="text-xs text-slate-400">
-                  {new Date(o.createdAt).toLocaleString('id-ID', {
-                    day: '2-digit',
-                    month: 'short',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  })}
-                </span>
-              </div>
 
-              <div className="grid grid-cols-2 gap-x-4 text-sm">
-                <div>
-                  <span className="text-slate-500">👤 </span>
-                  <span className="font-medium text-slate-800">{o.patientName}</span>
+                {/* Detail grid */}
+                <div className="grid grid-cols-2 gap-1.5 text-[13px] text-slate-500">
+                  <div>
+                    👤 <span className="font-medium text-slate-800">{o.patientName}</span>
+                  </div>
+                  <div className="font-mono text-xs">{maskPhone(o.patientPhone)}</div>
+                  {o.items.length > 0 && (
+                    <div className="col-span-2">
+                      💊 {o.items.map((i) => `${i.name} ×${i.quantity}`).join(', ')}
+                    </div>
+                  )}
                 </div>
-                <div className="self-center font-mono text-xs text-slate-500">
-                  {maskPhone(o.patientPhone)}
-                </div>
-              </div>
 
-              {o.items.length > 0 && (
-                <div className="text-xs text-slate-500">
-                  💊 {o.items.map((i) => `${i.name} ×${i.quantity}`).join(', ')}
-                </div>
-              )}
-
-              {o.status === 'delivered' && (
-                <div className="rounded-lg bg-green-50 px-3 py-1.5 text-xs font-medium text-green-700">
-                  ✓ Berhasil dikirim
-                </div>
-              )}
-              {(o.status === 'failed' || o.status === 'cancelled') && (
-                <div className="rounded-lg bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600">
-                  ✕ {STATUS_LABELS[o.status]}
-                </div>
-              )}
-            </li>
-          ))}
+                {/* Status banners */}
+                {o.status === 'delivered' && (
+                  <div className="mt-2.5 rounded-lg bg-green-50 px-3 py-2 text-xs font-semibold text-green-700">
+                    ✓ Berhasil dikirim · {time}
+                  </div>
+                )}
+                {(o.status === 'failed' || o.status === 'cancelled') && (
+                  <div className="mt-2.5 rounded-lg bg-red-50 px-3 py-2 text-xs font-semibold text-red-600">
+                    ✕ {STATUS_LABELS[o.status]}
+                  </div>
+                )}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>

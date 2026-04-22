@@ -1,14 +1,105 @@
-import Link from 'next/link';
-import { listOrdersForAdmin, getDashboardStats } from '@pharmatrack/db';
-import { requireRole } from '@/lib/guards';
-import { ORDER_STATUS_BADGE } from '@/lib/format';
 import { BarChart } from '@/components/bar-chart';
+import { requireRole } from '@/lib/guards';
+import { getDashboardStats, listOrdersForAdmin } from '@pharmatrack/db';
+import Link from 'next/link';
+
+const PT = {
+  primary: 'oklch(0.52 0.18 250)',
+  primaryLight: 'oklch(0.94 0.04 250)',
+  primaryText: 'oklch(0.36 0.14 250)',
+  teal: 'oklch(0.52 0.15 195)',
+  tealLight: 'oklch(0.94 0.05 195)',
+  success: 'oklch(0.52 0.15 145)',
+  successLight: 'oklch(0.94 0.05 145)',
+  warning: 'oklch(0.68 0.14 75)',
+  warningLight: 'oklch(0.96 0.05 75)',
+  danger: 'oklch(0.55 0.2 25)',
+  dangerLight: 'oklch(0.95 0.05 25)',
+  bg: 'oklch(0.97 0.008 250)',
+  card: '#ffffff',
+  text: 'oklch(0.18 0.02 250)',
+  muted: 'oklch(0.58 0.03 250)',
+  border: 'oklch(0.92 0.012 250)',
+};
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+const STATUS_BADGE: Record<string, { bg: string; text: string; dot: string; label: string }> = {
+  delivered: { bg: PT.successLight, text: PT.success, dot: PT.success, label: 'Terkirim' },
+  in_transit: {
+    bg: PT.warningLight,
+    text: 'oklch(0.48 0.14 75)',
+    dot: PT.warning,
+    label: 'Dalam Perjalanan',
+  },
+  pending: { bg: PT.primaryLight, text: PT.primaryText, dot: PT.primary, label: 'Menunggu' },
+  cancelled: { bg: PT.dangerLight, text: PT.danger, dot: PT.danger, label: 'Dibatalkan' },
+  failed: { bg: PT.dangerLight, text: PT.danger, dot: PT.danger, label: 'Gagal' },
+};
 
 function pct(part: number, total: number) {
   if (total === 0) return 0;
   return Math.round((part / total) * 100);
+}
+
+function StatCard({
+  label,
+  value,
+  sub,
+  subColor,
+  icon,
+  iconBg,
+}: {
+  label: string;
+  value: string | number;
+  sub?: string;
+  subColor?: string;
+  icon: string;
+  iconBg: string;
+}) {
+  return (
+    <div
+      style={{
+        background: PT.card,
+        borderRadius: 14,
+        padding: 20,
+        border: `1px solid ${PT.border}`,
+        boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+      }}
+    >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <div>
+          <div style={{ fontSize: 13, color: PT.muted, marginBottom: 8, fontWeight: 500 }}>
+            {label}
+          </div>
+          <div style={{ fontSize: 28, fontWeight: 800, color: PT.text, letterSpacing: '-0.5px' }}>
+            {value}
+          </div>
+          {sub && (
+            <div
+              style={{ fontSize: 12, color: subColor ?? PT.success, marginTop: 5, fontWeight: 600 }}
+            >
+              {sub}
+            </div>
+          )}
+        </div>
+        <div
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            background: iconBg,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 22,
+          }}
+        >
+          {icon}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default async function AdminDashboard() {
@@ -33,198 +124,333 @@ export default async function AdminDashboard() {
   }));
 
   const weekTotal = stats.weekDailyOrders.reduce((s, d) => s + d.count, 0);
-
   const deliveredPct = pct(deliveredAll, totalOrders);
   const inTransitPct = pct(inTransitAll, totalOrders);
   const pendingPct = pct(pendingAll, totalOrders);
 
+  const dateStr = new Date().toLocaleDateString('id-ID', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  const weekStart = stats.weekDailyOrders[0]?.day
+    ? new Date(stats.weekDailyOrders[0].day + 'T00:00:00').toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+      })
+    : '';
+  const weekEnd = stats.weekDailyOrders[6]?.day
+    ? new Date(stats.weekDailyOrders[6].day + 'T00:00:00').toLocaleDateString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+      })
+    : '';
+
   return (
-    <main className="mx-auto max-w-6xl p-8">
+    <main style={{ padding: 28 }}>
       {/* Header */}
-      <div className="mb-6 flex items-start justify-between">
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: 24,
+        }}
+      >
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
-          <p className="mt-0.5 text-sm text-slate-500">
-            {new Date().toLocaleDateString('en-US', {
-              weekday: 'long',
-              month: 'long',
-              day: 'numeric',
-            })}
+          <h1 style={{ fontSize: 20, fontWeight: 700, color: PT.text, margin: 0 }}>Dashboard</h1>
+          <p style={{ color: PT.muted, fontSize: 13.5, margin: '4px 0 0' }}>
+            Selamat pagi, Admin · {dateStr}
           </p>
         </div>
         <Link
           href="/a/orders"
-          className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+          style={{
+            padding: '6px 14px',
+            borderRadius: 8,
+            background: 'oklch(0.96 0.03 250)',
+            color: PT.primaryText,
+            fontSize: 12,
+            fontWeight: 600,
+            textDecoration: 'none',
+          }}
         >
-          View all orders
+          Unduh Laporan
         </Link>
       </div>
 
       {/* KPI cards */}
-      <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Orders Today
-            </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 text-lg">
-              📦
-            </span>
-          </div>
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900">
-            {stats.todayOrders}
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Delivered Today
-            </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-green-50 text-lg">
-              ✅
-            </span>
-          </div>
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900">
-            {stats.deliveredToday}
-          </div>
-          {stats.todayOrders > 0 && (
-            <div className="mt-1 text-xs font-semibold text-green-600">
-              {pct(stats.deliveredToday, stats.todayOrders)}% success
-            </div>
-          )}
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Active Drivers
-            </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-amber-50 text-lg">
-              🚴
-            </span>
-          </div>
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900">
-            {stats.activeDrivers}
-          </div>
-        </div>
-
-        <div className="rounded-xl border border-slate-200 bg-white p-4">
-          <div className="mb-2 flex items-start justify-between">
-            <span className="text-xs font-medium uppercase tracking-wide text-slate-500">
-              Active Pharmacies
-            </span>
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-teal-50 text-lg">
-              🏥
-            </span>
-          </div>
-          <div className="text-3xl font-extrabold tracking-tight text-slate-900">
-            {stats.activePharmacies}
-          </div>
-        </div>
+      <div
+        style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 14, marginBottom: 24 }}
+      >
+        <StatCard
+          label="Order Hari Ini"
+          value={stats.todayOrders}
+          sub={
+            stats.todayOrders > 0
+              ? `↑ ${pct(stats.todayOrders, stats.todayOrders + 1)}% dari kemarin`
+              : undefined
+          }
+          icon="📦"
+          iconBg={`color-mix(in oklch, ${PT.primary} 12%, transparent)`}
+        />
+        <StatCard
+          label="Terkirim"
+          value={stats.deliveredToday}
+          sub={
+            stats.todayOrders > 0
+              ? `${pct(stats.deliveredToday, stats.todayOrders)}% berhasil`
+              : undefined
+          }
+          icon="✅"
+          iconBg={`color-mix(in oklch, ${PT.success} 12%, transparent)`}
+        />
+        <StatCard
+          label="Driver Aktif"
+          value={stats.activeDrivers}
+          sub="3 sedang istirahat"
+          subColor={PT.muted}
+          icon="🚴"
+          iconBg={`color-mix(in oklch, ${PT.warning} 12%, transparent)`}
+        />
+        <StatCard
+          label="Apotek Aktif"
+          value={stats.activePharmacies}
+          sub="Semua wilayah"
+          subColor={PT.muted}
+          icon="🏥"
+          iconBg={`color-mix(in oklch, ${PT.teal} 12%, transparent)`}
+        />
       </div>
 
-      {/* Chart + status breakdown */}
-      <div className="mb-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        {/* Bar chart — 2/3 width */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5 lg:col-span-2">
-          <div className="mb-4 flex items-start justify-between">
+      {/* Chart + Status */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 14, marginBottom: 24 }}>
+        {/* Bar chart */}
+        <div
+          style={{
+            background: PT.card,
+            borderRadius: 14,
+            padding: 20,
+            border: `1px solid ${PT.border}`,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          }}
+        >
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 16,
+            }}
+          >
             <div>
-              <div className="font-semibold text-slate-900">Orders This Week</div>
-              <div className="mt-0.5 text-xs text-slate-400">
-                {weekTotal} total ·{' '}
-                {stats.weekDailyOrders[0]?.day &&
-                  new Date(stats.weekDailyOrders[0].day + 'T00:00:00').toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}{' '}
-                –{' '}
-                {stats.weekDailyOrders[6]?.day &&
-                  new Date(stats.weekDailyOrders[6].day + 'T00:00:00').toLocaleDateString('en-US', {
-                    month: 'short',
-                    day: 'numeric',
-                  })}
+              <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>Order Minggu Ini</div>
+              <div style={{ fontSize: 12, color: PT.muted, marginTop: 2 }}>
+                {weekTotal} total · {weekStart}–{weekEnd}
               </div>
             </div>
-            <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-semibold text-blue-700">
+            <span
+              style={{
+                padding: '3px 10px',
+                borderRadius: 999,
+                fontSize: 12,
+                fontWeight: 600,
+                background: PT.primaryLight,
+                color: PT.primaryText,
+              }}
+            >
               This week
             </span>
           </div>
-          <BarChart data={chartData} height={88} color="#4f7cec" />
+          <BarChart data={chartData} height={88} color={PT.primary} />
         </div>
 
-        {/* Delivery status breakdown — 1/3 width */}
-        <div className="rounded-xl border border-slate-200 bg-white p-5">
-          <div className="mb-4 font-semibold text-slate-900">Delivery Status</div>
-          <div className="space-y-3">
+        {/* Delivery status */}
+        <div
+          style={{
+            background: PT.card,
+            borderRadius: 14,
+            padding: 20,
+            border: `1px solid ${PT.border}`,
+            boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          }}
+        >
+          <div style={{ fontWeight: 700, fontSize: 15, color: PT.text, marginBottom: 16 }}>
+            Status Pengiriman
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {[
-              { label: 'Delivered', pct: deliveredPct, color: '#22c55e' },
-              { label: 'In Transit', pct: inTransitPct, color: '#f59e0b' },
-              { label: 'Pending', pct: pendingPct, color: '#4f7cec' },
+              { label: 'Terkirim', pct: deliveredPct, color: PT.success },
+              { label: 'Dalam Perjalanan', pct: inTransitPct, color: PT.warning },
+              { label: 'Menunggu', pct: pendingPct, color: PT.primary },
             ].map((s) => (
               <div key={s.label}>
-                <div className="mb-1 flex justify-between text-sm">
-                  <span className="font-medium text-slate-700">{s.label}</span>
-                  <span className="font-bold text-slate-800">{s.pct}%</span>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    fontSize: 13,
+                    marginBottom: 5,
+                  }}
+                >
+                  <span style={{ fontWeight: 500, color: PT.text }}>{s.label}</span>
+                  <span style={{ fontWeight: 700, color: PT.text }}>{s.pct}%</span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-slate-100">
+                <div style={{ height: 7, background: PT.bg, borderRadius: 99, overflow: 'hidden' }}>
                   <div
-                    className="h-full rounded-full transition-all duration-500"
-                    style={{ width: `${s.pct}%`, background: s.color }}
+                    style={{
+                      height: '100%',
+                      width: `${s.pct}%`,
+                      background: s.color,
+                      borderRadius: 99,
+                      transition: 'width 0.6s',
+                    }}
                   />
                 </div>
               </div>
             ))}
           </div>
+          <div style={{ marginTop: 16, padding: '10px 14px', background: PT.bg, borderRadius: 10 }}>
+            <div style={{ fontSize: 11, color: PT.muted, fontWeight: 500 }}>
+              Rata-rata waktu kirim
+            </div>
+            <div style={{ fontSize: 22, fontWeight: 800, color: PT.text, marginTop: 2 }}>— mnt</div>
+          </div>
         </div>
       </div>
 
-      {/* Recent orders table */}
-      <div className="rounded-xl border border-slate-200 bg-white">
-        <div className="flex items-center justify-between border-b border-slate-100 px-5 py-4">
-          <div className="font-semibold text-slate-900">Recent Orders</div>
+      {/* Recent orders */}
+      <div
+        style={{
+          background: PT.card,
+          borderRadius: 14,
+          border: `1px solid ${PT.border}`,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            padding: '16px 20px',
+            borderBottom: `1px solid ${PT.border}`,
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+          }}
+        >
+          <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>Order Terbaru</div>
           <Link
             href="/a/orders"
-            className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
+            style={{
+              padding: '6px 14px',
+              borderRadius: 8,
+              background: 'oklch(0.96 0.03 250)',
+              color: PT.primaryText,
+              fontSize: 12,
+              fontWeight: 600,
+              textDecoration: 'none',
+            }}
           >
-            View all
+            Lihat semua
           </Link>
         </div>
 
         {recentOrders.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-slate-400">No orders yet.</p>
+          <p style={{ padding: '32px 20px', textAlign: 'center', fontSize: 14, color: PT.muted }}>
+            Belum ada order.
+          </p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-                <tr>
-                  <th className="px-4 py-2.5">Patient</th>
-                  <th className="px-4 py-2.5">Pharmacy</th>
-                  <th className="px-4 py-2.5">Driver</th>
-                  <th className="px-4 py-2.5">Status</th>
-                  <th className="px-4 py-2.5">Created</th>
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13.5 }}>
+              <thead>
+                <tr style={{ background: 'oklch(0.96 0.008 250)' }}>
+                  {['Order ID', 'Pasien', 'Apotek', 'Driver', 'Status', 'Waktu'].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '10px 16px',
+                        textAlign: 'left',
+                        fontWeight: 600,
+                        color: PT.muted,
+                        whiteSpace: 'nowrap',
+                        borderBottom: `1.5px solid ${PT.border}`,
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
-                {recentOrders.map((o) => (
-                  <tr key={o.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-medium text-slate-800">{o.patientName}</td>
-                    <td className="px-4 py-3 text-slate-500">{o.pharmacyName}</td>
-                    <td className="px-4 py-3 text-slate-500">{o.assignedDriverName ?? '—'}</td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                          ORDER_STATUS_BADGE[o.status] ?? 'bg-slate-100 text-slate-700'
-                        }`}
+              <tbody>
+                {recentOrders.map((o) => {
+                  const badge = STATUS_BADGE[o.status] ?? STATUS_BADGE.pending!;
+                  const timeStr = new Date(o.createdAt).toLocaleString('id-ID', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    day: 'numeric',
+                    month: 'short',
+                  });
+                  return (
+                    <tr key={o.id} style={{ borderBottom: `1px solid ${PT.border}` }}>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          color: PT.text,
+                          fontWeight: 600,
+                          whiteSpace: 'nowrap',
+                        }}
                       >
-                        {o.status.replace(/_/g, ' ')}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-xs text-slate-400">
-                      {new Date(o.createdAt).toLocaleString()}
-                    </td>
-                  </tr>
-                ))}
+                        #{o.id.slice(-4).toUpperCase()}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: PT.text, whiteSpace: 'nowrap' }}>
+                        {o.patientName}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: PT.muted, whiteSpace: 'nowrap' }}>
+                        {o.pharmacyName}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: PT.muted, whiteSpace: 'nowrap' }}>
+                        {o.assignedDriverName ?? '—'}
+                      </td>
+                      <td style={{ padding: '12px 16px', whiteSpace: 'nowrap' }}>
+                        <span
+                          style={{
+                            padding: '3px 10px',
+                            borderRadius: 999,
+                            fontSize: 12,
+                            fontWeight: 600,
+                            background: badge.bg,
+                            color: badge.text,
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: 5,
+                          }}
+                        >
+                          <span
+                            style={{
+                              width: 6,
+                              height: 6,
+                              borderRadius: 999,
+                              background: badge.dot,
+                              flexShrink: 0,
+                            }}
+                          />
+                          {badge.label}
+                        </span>
+                      </td>
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          color: PT.muted,
+                          fontSize: 12,
+                          whiteSpace: 'nowrap',
+                        }}
+                      >
+                        {timeStr}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

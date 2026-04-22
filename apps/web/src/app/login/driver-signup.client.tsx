@@ -8,8 +8,37 @@ import {
   DriverSignupStep4Schema,
   type DriverSignupInput,
 } from '@pharmatrack/shared';
+import { PT, AuthField, PrimaryButton, GhostButton } from './auth-form.client';
 
-const STEPS = ['Akun', 'Data Diri', 'Kendaraan', 'Pembayaran'] as const;
+const ID_PROVINCES = [
+  'DKI Jakarta',
+  'Jawa Barat',
+  'Jawa Tengah',
+  'Jawa Timur',
+  'Banten',
+  'Sumatera Utara',
+  'Sulawesi Selatan',
+  'Bali',
+  'Kalimantan Timur',
+  'Yogyakarta',
+];
+
+const ID_BANKS = [
+  'BCA',
+  'BRI',
+  'BNI',
+  'Mandiri',
+  'BSI',
+  'CIMB Niaga',
+  'Danamon',
+  'Permata',
+  'GoPay',
+  'OVO',
+  'Dana',
+  'ShopeePay',
+];
+
+const STEPS = ['Akun', 'Data Diri', 'Kendaraan', 'Rekening'] as const;
 
 type Fields = Partial<DriverSignupInput>;
 
@@ -89,7 +118,6 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
     }
 
     const payload = { ...fields, ...res.data } as DriverSignupInput;
-
     startTransition(async () => {
       const response = await fetch('/api/signup/driver', {
         method: 'POST',
@@ -107,160 +135,269 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
 
   if (done) {
     return (
-      <div className="flex flex-col gap-4 rounded-lg bg-green-50 p-6 text-center">
-        <p className="font-semibold text-green-800">Pendaftaran berhasil!</p>
-        <p className="text-sm text-green-700">
-          Akun driver Anda sedang menunggu verifikasi admin. Anda akan dihubungi setelah akun
-          disetujui. Silakan masuk setelah mendapat konfirmasi.
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 16,
+          background: PT.successLight,
+          borderRadius: 12,
+          padding: 24,
+          textAlign: 'center',
+        }}
+      >
+        <div style={{ fontSize: 32 }}>✅</div>
+        <p style={{ fontWeight: 700, color: PT.success, margin: 0 }}>Pendaftaran berhasil!</p>
+        <p style={{ fontSize: 13, color: PT.success, margin: 0, opacity: 0.8 }}>
+          Akun driver Anda sedang diverifikasi. Anda akan dihubungi setelah disetujui.
         </p>
-        <button
-          type="button"
-          onClick={onSuccess}
-          className="bg-brand-600 hover:bg-brand-700 rounded-md px-4 py-2 text-sm font-medium text-white"
-        >
-          Ke halaman masuk
-        </button>
+        <PrimaryButton onClick={onSuccess}>Ke halaman masuk</PrimaryButton>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-5">
-      {/* Step indicator */}
-      <div className="flex items-center gap-1.5">
-        {STEPS.map((label, i) => (
-          <div key={label} className="flex items-center gap-1.5">
-            <span
-              className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${
-                i <= step ? 'bg-brand-600 text-white' : 'bg-slate-200 text-slate-500'
-              }`}
-            >
-              {i + 1}
-            </span>
-            <span
-              className={`text-xs ${i === step ? 'font-semibold text-slate-800' : 'text-slate-400'}`}
-            >
-              {label}
-            </span>
-            {i < STEPS.length - 1 && <span className="text-slate-300">›</span>}
-          </div>
-        ))}
-      </div>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <StepIndicator steps={STEPS} current={step} />
 
-      {error && <p className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">{error}</p>}
-
-      {/* Step 1 — Account */}
       {step === 0 && (
-        <form action={handleStep1} className="flex flex-col gap-4">
-          <Field
+        <div
+          style={{
+            padding: '10px 14px',
+            background: PT.primaryLight,
+            borderRadius: 10,
+            fontSize: 12.5,
+            color: PT.primaryText,
+            fontWeight: 500,
+          }}
+        >
+          🚴 Daftar sebagai mitra pengemudi. Verifikasi dokumen diperlukan sebelum mulai bertugas.
+        </div>
+      )}
+      {step === 3 && (
+        <div
+          style={{
+            padding: '10px 14px',
+            background: PT.successLight,
+            borderRadius: 10,
+            fontSize: 12.5,
+            color: PT.success,
+            fontWeight: 500,
+          }}
+        >
+          💰 Data rekening digunakan untuk pencairan penghasilan harian Anda.
+        </div>
+      )}
+
+      {error && (
+        <p
+          style={{
+            background: PT.dangerLight,
+            color: PT.danger,
+            borderRadius: 8,
+            padding: '8px 12px',
+            fontSize: 13,
+            margin: 0,
+          }}
+        >
+          {error}
+        </p>
+      )}
+
+      {step === 0 && (
+        <form action={handleStep1} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+          <AuthField
+            label="Nama Lengkap (sesuai KTP) *"
+            name="name"
+            placeholder="Budi Santoso"
+            icon="👤"
+            defaultValue={fields.name}
+          />
+          <AuthField
+            label="No. Telepon / WhatsApp *"
+            name="phone"
+            placeholder="+62 812 3456 7890"
+            icon="📱"
+            defaultValue={fields.phone}
+          />
+          <AuthField
             label="Email"
             name="email"
             type="email"
+            placeholder="budi@example.com"
+            icon="✉️"
             autoComplete="email"
             defaultValue={fields.email}
           />
-          <Field
-            label="Kata Sandi (min. 8 karakter)"
+          <AuthField
+            label="Password *"
             name="password"
             type="password"
+            placeholder="Min. 8 karakter"
+            icon="🔒"
             autoComplete="new-password"
           />
-          <Field label="Nama Lengkap" name="name" defaultValue={fields.name} />
-          <Field label="Nomor HP (+62 / 08…)" name="phone" defaultValue={fields.phone} />
-          <Next />
+          <PrimaryButton>Lanjut →</PrimaryButton>
         </form>
       )}
 
-      {/* Step 2 — Personal */}
       {step === 1 && (
-        <form action={handleStep2} className="flex flex-col gap-4">
+        <form action={handleStep2} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
           <NikField defaultValue={fields.nik} />
-          <Field label="Provinsi domisili" name="province" defaultValue={fields.province} />
-          <div className="flex gap-2">
-            <Back
+          <PTSelect
+            label="Domisili / Provinsi *"
+            name="province"
+            defaultValue={fields.province ?? 'DKI Jakarta'}
+            options={ID_PROVINCES.map((p) => ({ value: p, label: p }))}
+          />
+          <div style={{ display: 'flex', gap: 10 }}>
+            <GhostButton
               onClick={() => {
                 setError(null);
                 setStep(0);
               }}
-            />
-            <Next />
+            >
+              ← Kembali
+            </GhostButton>
+            <PrimaryButton>Lanjut →</PrimaryButton>
           </div>
         </form>
       )}
 
-      {/* Step 3 — Vehicle */}
       {step === 2 && (
-        <form action={handleStep3} className="flex flex-col gap-4">
-          <SelectField
-            label="Jenis Kendaraan"
-            name="vehicleType"
-            defaultValue={fields.vehicleType}
-            options={[
-              { value: 'motorcycle', label: 'Motor' },
-              { value: 'car', label: 'Mobil' },
-              { value: 'bicycle', label: 'Sepeda' },
-            ]}
+        <form action={handleStep3} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: PT.text, marginBottom: 8 }}>
+              Jenis Kendaraan *
+            </div>
+            <VehicleTypeField defaultValue={fields.vehicleType} />
+          </div>
+          <AuthField
+            label="Merek & Tipe Kendaraan *"
+            name="vehicleModel"
+            placeholder="Honda Beat 2023"
+            icon="🏍️"
+            defaultValue={fields.vehicleModel}
           />
-          <Field label="Model Kendaraan" name="vehicleModel" defaultValue={fields.vehicleModel} />
-          <Field label="Nomor Plat" name="licensePlate" defaultValue={fields.licensePlate} />
-          <SelectField
-            label="Kelas SIM"
-            name="simClass"
-            defaultValue={fields.simClass}
-            options={[
-              { value: 'A', label: 'A' },
-              { value: 'B1', label: 'B1' },
-              { value: 'B2', label: 'B2' },
-              { value: 'C', label: 'C' },
-            ]}
+          <AuthField
+            label="Nomor Polisi *"
+            name="licensePlate"
+            placeholder="B 1234 XYZ"
+            icon="🔖"
+            defaultValue={fields.licensePlate}
           />
-          <Field label="Nomor SIM" name="simNumber" defaultValue={fields.simNumber} />
-          <Field
-            label="Tanggal Kadaluarsa SIM"
+          <SimClassField defaultValue={fields.simClass} />
+          <AuthField
+            label="Nomor SIM *"
+            name="simNumber"
+            placeholder="1234567890123456"
+            icon="📄"
+            defaultValue={fields.simNumber}
+          />
+          <AuthField
+            label="Masa Berlaku SIM *"
             name="simExpiresAt"
             type="date"
             defaultValue={fields.simExpiresAt}
           />
-          <div className="flex gap-2">
-            <Back
+          <div style={{ display: 'flex', gap: 10 }}>
+            <GhostButton
               onClick={() => {
                 setError(null);
                 setStep(1);
               }}
-            />
-            <Next />
+            >
+              ← Kembali
+            </GhostButton>
+            <PrimaryButton>Lanjut →</PrimaryButton>
           </div>
         </form>
       )}
 
-      {/* Step 4 — Payout */}
       {step === 3 && (
-        <form action={handleStep4} className="flex flex-col gap-4">
-          <Field label="Nama Bank" name="payoutBank" defaultValue={fields.payoutBank} />
-          <Field
-            label="Nomor Rekening"
+        <form action={handleStep4} style={{ display: 'flex', flexDirection: 'column', gap: 13 }}>
+          <PTSelect
+            label="Bank / E-Wallet *"
+            name="payoutBank"
+            defaultValue={fields.payoutBank ?? 'BCA'}
+            options={ID_BANKS.map((b) => ({ value: b, label: b }))}
+          />
+          <AuthField
+            label="Nomor Rekening *"
             name="payoutAccountNumber"
+            placeholder="1234567890"
+            icon="🏦"
             defaultValue={fields.payoutAccountNumber}
           />
-          <Field
-            label="Nama Pemilik Rekening"
+          <AuthField
+            label="Nama Pemilik Rekening *"
             name="payoutAccountName"
+            placeholder="BUDI SANTOSO"
+            icon="👤"
             defaultValue={fields.payoutAccountName}
           />
-          <div className="flex gap-2">
-            <Back
+
+          <div
+            style={{
+              padding: '10px 14px',
+              background: PT.bg,
+              borderRadius: 10,
+              border: `1px solid ${PT.border}`,
+              fontSize: 12,
+              color: PT.muted,
+              lineHeight: 1.6,
+            }}
+          >
+            ⚠️ Pastikan nama pemilik rekening sesuai dengan nama di KTP. Rekening yang tidak sesuai
+            dapat menghambat pencairan.
+          </div>
+
+          {/* Summary */}
+          <div
+            style={{
+              padding: '12px 14px',
+              background: PT.bg,
+              borderRadius: 10,
+              border: `1px solid ${PT.border}`,
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 700, color: PT.text, marginBottom: 8 }}>
+              Ringkasan Pendaftaran
+            </div>
+            {[
+              { l: 'Nama', v: fields.name },
+              { l: 'NIK', v: fields.nik },
+              { l: 'Kendaraan', v: fields.vehicleModel },
+              { l: 'Nopol', v: fields.licensePlate },
+            ].map((r) => (
+              <div
+                key={r.l}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  fontSize: 12,
+                  padding: '4px 0',
+                  borderBottom: `1px solid ${PT.border}`,
+                }}
+              >
+                <span style={{ color: PT.muted }}>{r.l}</span>
+                <span style={{ fontWeight: 600, color: PT.text }}>{r.v ?? '—'}</span>
+              </div>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', gap: 10 }}>
+            <GhostButton
               onClick={() => {
                 setError(null);
                 setStep(2);
               }}
-            />
-            <button
-              type="submit"
-              disabled={pending}
-              className="bg-brand-600 hover:bg-brand-700 flex-1 rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
             >
-              {pending ? 'Mendaftar…' : 'Daftar'}
-            </button>
+              ← Kembali
+            </GhostButton>
+            <PrimaryButton pending={pending}>
+              {pending ? 'Mendaftar…' : 'Daftar Sekarang ✓'}
+            </PrimaryButton>
           </div>
         </form>
       )}
@@ -268,55 +405,190 @@ export function DriverSignupForm({ onSuccess }: { onSuccess: () => void }) {
   );
 }
 
-// ─── Shared sub-components ────────────────────────────────────────────────
+// ── Shared helpers ─────────────────────────────────────────────────────────────
 
-function Field({
-  label,
-  name,
-  type = 'text',
-  autoComplete,
-  defaultValue,
-}: {
-  label: string;
-  name: string;
-  type?: string;
-  autoComplete?: string;
-  defaultValue?: string;
-}) {
+function StepIndicator({ steps, current }: { steps: readonly string[]; current: number }) {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">{label}</span>
-      <input
-        type={type}
-        name={name}
-        autoComplete={autoComplete}
-        defaultValue={defaultValue}
-        className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
-      />
-    </label>
+    <div style={{ display: 'flex', alignItems: 'center', marginBottom: 4 }}>
+      {steps.map((s, i) => (
+        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+            <div
+              style={{
+                width: 30,
+                height: 30,
+                borderRadius: 999,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontWeight: 700,
+                fontSize: 13,
+                transition: 'all 0.2s',
+                background: i < current ? PT.success : i === current ? PT.primary : PT.border,
+                color: i <= current ? '#fff' : PT.muted,
+              }}
+            >
+              {i < current ? '✓' : i + 1}
+            </div>
+            <span
+              style={{
+                fontSize: 10.5,
+                fontWeight: i === current ? 700 : 500,
+                color: i === current ? PT.primary : PT.muted,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {s}
+            </span>
+          </div>
+          {i < steps.length - 1 && (
+            <div
+              style={{
+                flex: 1,
+                height: 2,
+                background: i < current ? PT.success : PT.border,
+                margin: '0 6px',
+                marginBottom: 16,
+                transition: 'background 0.3s',
+              }}
+            />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
 
 function NikField({ defaultValue }: { defaultValue?: string }) {
   const [value, setValue] = useState(defaultValue ?? '');
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">NIK (16 digit)</span>
-      <input
-        type="text"
-        name="nik"
-        inputMode="numeric"
-        maxLength={16}
-        value={value}
-        onChange={(e) => setValue(e.target.value.replace(/\D/g, '').slice(0, 16))}
-        placeholder="3201234567890001"
-        className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
-      />
-    </label>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>NIK (16 digit) *</span>
+      <div style={{ position: 'relative' }}>
+        <span
+          style={{
+            position: 'absolute',
+            left: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 14,
+            pointerEvents: 'none',
+          }}
+        >
+          🪪
+        </span>
+        <input
+          type="text"
+          name="nik"
+          inputMode="numeric"
+          maxLength={16}
+          value={value}
+          onChange={(e) => setValue(e.target.value.replace(/\D/g, '').slice(0, 16))}
+          placeholder="3271012345670001"
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            border: `1.5px solid ${PT.border}`,
+            borderRadius: 10,
+            background: '#fff',
+            padding: '10px 12px 10px 36px',
+            fontSize: 13.5,
+            color: PT.text,
+            outline: 'none',
+            fontFamily: 'inherit',
+          }}
+          onFocus={(e) => {
+            e.currentTarget.style.borderColor = PT.primary;
+            e.currentTarget.style.boxShadow = `0 0 0 3px ${PT.primaryLight}`;
+          }}
+          onBlur={(e) => {
+            e.currentTarget.style.borderColor = PT.border;
+            e.currentTarget.style.boxShadow = 'none';
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
-function SelectField({
+function VehicleTypeField({ defaultValue }: { defaultValue?: string }) {
+  const [value, setValue] = useState(defaultValue ?? 'motorcycle');
+  return (
+    <>
+      <input type="hidden" name="vehicleType" value={value} />
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+        {[
+          { v: 'motorcycle', icon: '🏍️', label: 'Motor' },
+          { v: 'car', icon: '🚗', label: 'Mobil' },
+        ].map((j) => (
+          <div
+            key={j.v}
+            onClick={() => setValue(j.v)}
+            style={{
+              padding: 12,
+              borderRadius: 10,
+              border: `2px solid ${value === j.v ? PT.primary : PT.border}`,
+              textAlign: 'center',
+              cursor: 'pointer',
+              background: value === j.v ? PT.primaryLight : '#fff',
+              transition: 'all 0.15s',
+            }}
+          >
+            <div style={{ fontSize: 26, marginBottom: 4 }}>{j.icon}</div>
+            <div
+              style={{
+                fontSize: 13,
+                fontWeight: 700,
+                color: value === j.v ? PT.primaryText : PT.text,
+              }}
+            >
+              {j.label}
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+function SimClassField({ defaultValue }: { defaultValue?: string }) {
+  const [value, setValue] = useState(defaultValue ?? 'C');
+  return (
+    <>
+      <input type="hidden" name="simClass" value={value} />
+      <div>
+        <div style={{ fontSize: 13, fontWeight: 600, color: PT.text, marginBottom: 8 }}>
+          Golongan SIM *
+        </div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          {['C', 'A', 'B1'].map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setValue(s)}
+              style={{
+                padding: '8px 18px',
+                borderRadius: 9,
+                border: `2px solid ${value === s ? PT.primary : PT.border}`,
+                background: value === s ? PT.primaryLight : '#fff',
+                color: value === s ? PT.primaryText : PT.text,
+                fontFamily: 'inherit',
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.15s',
+              }}
+            >
+              SIM {s}
+            </button>
+          ))}
+        </div>
+      </div>
+    </>
+  );
+}
+
+function PTSelect({
   label,
   name,
   defaultValue,
@@ -328,45 +600,29 @@ function SelectField({
   options: { value: string; label: string }[];
 }) {
   return (
-    <label className="flex flex-col gap-1 text-sm">
-      <span className="font-medium">{label}</span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+      <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>{label}</span>
       <select
         name={name}
-        defaultValue={defaultValue ?? ''}
-        className="focus:border-brand-500 focus:ring-brand-500 rounded-md border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-1"
+        defaultValue={defaultValue}
+        style={{
+          border: `1.5px solid ${PT.border}`,
+          borderRadius: 10,
+          background: '#fff',
+          padding: '10px 12px',
+          fontSize: 13.5,
+          color: PT.text,
+          outline: 'none',
+          fontFamily: 'inherit',
+          appearance: 'auto',
+        }}
       >
-        <option value="" disabled>
-          Pilih…
-        </option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
             {o.label}
           </option>
         ))}
       </select>
-    </label>
-  );
-}
-
-function Next() {
-  return (
-    <button
-      type="submit"
-      className="bg-brand-600 hover:bg-brand-700 rounded-md px-4 py-2 text-sm font-medium text-white"
-    >
-      Lanjut →
-    </button>
-  );
-}
-
-function Back({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
-    >
-      ← Kembali
-    </button>
+    </div>
   );
 }

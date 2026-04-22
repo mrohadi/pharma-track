@@ -1,19 +1,18 @@
-import { useTranslations } from 'next-intl';
+const STATS = [
+  { value: '98%', label: 'Tingkat ketepatan waktu' },
+  { value: '3.200+', label: 'Apotek aktif' },
+  { value: '12 mnt', label: 'Rata-rata waktu dispatch' },
+  { value: '4,9★', label: 'Kepuasan driver' },
+];
 
 export function Stats() {
-  const t = useTranslations('Landing.stats');
-  const items = Array.from({ length: 4 }, (_, i) => ({
-    value: t(`items.${i}.value`),
-    label: t(`items.${i}.label`),
-  }));
-
   return (
-    <section className="bg-brand-700 px-6 py-14 text-white">
-      <div className="mx-auto grid max-w-4xl grid-cols-2 gap-8 sm:grid-cols-4">
-        {items.map((item) => (
-          <div key={item.label} className="text-center">
-            <div className="text-4xl font-extrabold">{item.value}</div>
-            <div className="mt-1 text-sm text-blue-200">{item.label}</div>
+    <section className="bg-blue-600 px-10 py-8">
+      <div className="mx-auto grid max-w-[1100px] grid-cols-4 gap-4">
+        {STATS.map((s) => (
+          <div key={s.label} className="text-center">
+            <div className="text-[32px] font-black tracking-[-1px] text-white">{s.value}</div>
+            <div className="mt-1 text-[13px] font-medium text-white/65">{s.label}</div>
           </div>
         ))}
       </div>

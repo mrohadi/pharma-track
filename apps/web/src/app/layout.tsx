@@ -25,6 +25,7 @@ export const metadata: Metadata = {
     description: 'Real-time order tracking, OTP handoffs, and WhatsApp notifications.',
   },
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'https://pharmatrack.app'),
+  manifest: '/manifest.webmanifest',
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
