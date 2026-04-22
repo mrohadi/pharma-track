@@ -9,7 +9,7 @@ export async function toggleDriverOnline(online: boolean) {
   const session = await getSession();
   if (!session?.user || session.user.role !== 'driver') return { ok: false as const };
   await setDriverOnline(session.user.id, online);
-  revalidatePath('/d');
+  revalidatePath('/driver');
   return { ok: true as const };
 }
 

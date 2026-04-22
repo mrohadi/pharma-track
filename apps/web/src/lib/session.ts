@@ -18,11 +18,11 @@ export async function getSession() {
 export function homeForRole(role: Role | undefined): string {
   switch (role) {
     case 'admin':
-      return '/a';
+      return '/admin';
     case 'pharmacy':
-      return '/p';
+      return '/pharmacy';
     case 'driver':
-      return '/d';
+      return '/driver';
     default:
       return '/';
   }

@@ -1,6 +1,6 @@
 import { asc, desc, eq, inArray } from 'drizzle-orm';
 import { db } from '../index';
-import { orders, orderItems, orderRatings, auditLog } from '../schema';
+import { orders, orderItems, orderRatings, auditLog, drivers, users } from '../schema';
 import type { OrderItem } from '../schema/order-items';
 import type { OrderPriority, OrderPaymentMode } from '../schema/orders';
 
@@ -16,11 +16,16 @@ export async function listRecentOrdersForPharmacy(pharmacyId: string, limit = 25
       id: orders.id,
       patientName: orders.patientName,
       patientPhone: orders.patientPhone,
+      deliveryAddress: orders.deliveryAddress,
       status: orders.status,
+      totalCents: orders.totalCents,
       podPhotoUrl: orders.podPhotoUrl,
       createdAt: orders.createdAt,
+      driverName: users.name,
     })
     .from(orders)
+    .leftJoin(drivers, eq(orders.assignedDriverId, drivers.id))
+    .leftJoin(users, eq(drivers.userId, users.id))
     .where(eq(orders.pharmacyId, pharmacyId))
     .orderBy(desc(orders.createdAt))
     .limit(limit);

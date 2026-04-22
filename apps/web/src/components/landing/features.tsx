@@ -33,17 +33,17 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section id="features" className="px-10 py-[72px]">
+    <section id="features" className="px-4 py-14 sm:px-6 sm:py-[72px] md:px-10">
       <div className="mx-auto max-w-[1100px]">
         <div className="mb-12 text-center">
           <div className="mb-2.5 text-[13px] font-bold uppercase tracking-[0.06em] text-blue-600">
             Semua yang Anda butuhkan
           </div>
-          <h2 className="text-[36px] font-extrabold tracking-[-0.8px] text-slate-900">
+          <h2 className="text-[26px] font-extrabold tracking-[-0.8px] text-slate-900 sm:text-[32px] md:text-[36px]">
             Dirancang untuk setiap peran di tim
           </h2>
         </div>
-        <div className="grid grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-5">
           {FEATURES.map((f) => (
             <div
               key={f.title}

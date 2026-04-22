@@ -149,7 +149,17 @@ function LoginPanel({ next }: { next?: string }) {
         setError(res.error.message ?? 'Gagal masuk');
         return;
       }
-      router.replace(next ?? '/');
+      const role = (res.data?.user as { role?: string } | null)?.role;
+      const dest =
+        next ??
+        (role === 'admin'
+          ? '/admin'
+          : role === 'pharmacy'
+            ? '/pharmacy'
+            : role === 'driver'
+              ? '/driver'
+              : '/');
+      router.replace(dest);
       router.refresh();
     });
   }

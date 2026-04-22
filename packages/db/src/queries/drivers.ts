@@ -2,7 +2,34 @@ import { asc, desc, eq, and, gte, sum } from 'drizzle-orm';
 import { db } from '../index';
 import { drivers, users, orders, pharmacies } from '../schema';
 import type { OrderStatus } from '@pharmatrack/shared';
-import type { DriverVerificationStatus } from '../schema/drivers';
+import type {
+  DriverVerificationStatus,
+  DriverVehicleType,
+  DriverSimClass,
+} from '../schema/drivers';
+
+export type UpdateDriverProfileInput = {
+  vehicleType?: DriverVehicleType;
+  vehicleModel?: string;
+  vehicle?: string;
+  licensePlate?: string;
+  simClass?: DriverSimClass;
+  simNumber?: string;
+  simExpiresAt?: string;
+  payoutBank?: string;
+  payoutAccountNumber?: string;
+  payoutAccountName?: string;
+};
+
+export async function updateDriverProfile(
+  userId: string,
+  input: UpdateDriverProfileInput,
+): Promise<void> {
+  await db
+    .update(drivers)
+    .set({ ...input, updatedAt: new Date() })
+    .where(eq(drivers.userId, userId));
+}
 
 export type DriverRow = {
   id: string;
