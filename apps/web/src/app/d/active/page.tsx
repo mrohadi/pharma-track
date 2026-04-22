@@ -1,9 +1,9 @@
+import { MapSVG } from '@/components/map-svg';
 import { requireRole } from '@/lib/guards';
 import { getDriverByUserId, listDriverQueue } from '@pharmatrack/db';
-import { MapSVG } from '@/components/map-svg';
+import Link from 'next/link';
 import { BottomNav } from '../bottom-nav';
 import { DeliveryControls } from '../delivery-controls';
-import Link from 'next/link';
 
 const STATUS_STEPS = [
   { id: 'assigned', label: 'Menuju Apotek', icon: '🏥', desc: 'Ambil order dari apotek' },
@@ -11,7 +11,7 @@ const STATUS_STEPS = [
   { id: 'in_transit', label: 'Tiba di Lokasi', icon: '📍', desc: 'Serahkan obat ke pasien' },
 ] as const;
 
-type StepId = (typeof STATUS_STEPS)[number]['id'];
+// type StepId = (typeof STATUS_STEPS)[number]['id'];
 
 function stepIndex(status: string): number {
   const i = STATUS_STEPS.findIndex((s) => s.id === status);
