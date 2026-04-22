@@ -1,13 +1,14 @@
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { getTranslations } from 'next-intl/server';
-import { listOrdersForAdmin, listPharmaciesForFilter, listDrivers } from '@pharmatrack/db';
+import { listOrdersForAdmin, listDrivers } from '@pharmatrack/db';
 import { OrderStatus } from '@pharmatrack/shared';
 import { requireRole } from '@/lib/guards';
-import { ORDER_STATUS_BADGE, maskPhone } from '@/lib/format';
+import { ORDER_STATUS_BADGE } from '@/lib/format';
 import { AssignCell } from '../assign-cell';
 import { sendAddressRequestAction } from '../send-address-request';
 import { PodPhotoLink } from '@/components/pod-photo-link';
-import { ExportButton } from '../export-button';
+import { OrdersFilters } from './orders-filters.client';
 
 const TERMINAL_STATUSES = new Set(['delivered', 'failed', 'cancelled']);
 
@@ -15,8 +16,7 @@ type SearchParams = {
   status?: string;
   pharmacyId?: string;
   page?: string;
-  from?: string;
-  to?: string;
+  q?: string;
 };
 
 function parseFilters(sp: SearchParams) {
@@ -29,7 +29,9 @@ function parseFilters(sp: SearchParams) {
   const pageNum = Number.parseInt(sp.page ?? '1', 10);
   const page = Number.isFinite(pageNum) && pageNum > 0 ? pageNum : 1;
 
-  return { status, pharmacyId, page };
+  const q = sp.q?.trim() ?? '';
+
+  return { status, pharmacyId, page, q };
 }
 
 function buildQuery(
@@ -45,6 +47,27 @@ function buildQuery(
   return s ? `/a/orders?${s}` : '/a/orders';
 }
 
+function formatRelativeTime(date: Date): string {
+  const diffMs = Date.now() - date.getTime();
+  const diffMins = Math.floor(diffMs / 60000);
+  if (diffMins < 1) return 'baru saja';
+  if (diffMins < 60) return `${diffMins}m lalu`;
+  const diffHours = Math.floor(diffMins / 60);
+  if (diffHours < 24) return `${diffHours}j lalu`;
+  return `${Math.floor(diffHours / 24)}h lalu`;
+}
+
+const STATUS_DOT: Record<string, string> = {
+  pending_address:    'bg-amber-400',
+  address_collected:  'bg-sky-400',
+  assigned:           'bg-indigo-400',
+  picked_up:          'bg-violet-400',
+  in_transit:         'bg-blue-400',
+  delivered:          'bg-green-400',
+  failed:             'bg-red-400',
+  cancelled:          'bg-slate-400',
+};
+
 export default async function AdminOrdersPage({
   searchParams,
 }: {
@@ -52,193 +75,296 @@ export default async function AdminOrdersPage({
 }) {
   await requireRole('admin');
   const sp = await searchParams;
-  const { status, pharmacyId, page } = parseFilters(sp);
+  const { status, pharmacyId, page, q } = parseFilters(sp);
 
-  const [{ rows, total, pageSize }, allPharmacies, allDrivers, t, tStatus, tCommon] =
-    await Promise.all([
-      listOrdersForAdmin({ status, pharmacyId, page }),
-      listPharmaciesForFilter(),
-      listDrivers(),
-      getTranslations('AdminPage'),
-      getTranslations('OrderStatus'),
-      getTranslations('Common'),
-    ]);
+  const [{ rows: allRows, total, pageSize }, allDrivers, tStatus, tCommon] = await Promise.all([
+    listOrdersForAdmin({ status, pharmacyId, page }),
+    listDrivers(),
+    getTranslations('OrderStatus'),
+    getTranslations('Common'),
+  ]);
+
+  // Client-side search filter on the current page
+  const rows = q
+    ? allRows.filter(
+        (o) =>
+          o.id.toLowerCase().includes(q.toLowerCase()) ||
+          o.patientName.toLowerCase().includes(q.toLowerCase()) ||
+          o.pharmacyName.toLowerCase().includes(q.toLowerCase()),
+      )
+    : allRows;
 
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const baseParams = { status: sp.status, pharmacyId: sp.pharmacyId };
+  const baseParams = { status: sp.status, pharmacyId: sp.pharmacyId, q: sp.q };
 
   return (
-    <main className="mx-auto max-w-6xl p-8">
-      <div className="mb-4 flex items-center justify-between">
+    <div style={{ padding: 28 }}>
+      {/* Page header */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-start',
+          marginBottom: 24,
+        }}
+      >
         <div>
-          <Link href="/a" className="text-sm text-slate-500 hover:underline">
-            ← Dashboard
-          </Link>
-          <h1 className="mt-1 text-2xl font-bold">{t('heading')}</h1>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: '#0f172a', margin: 0 }}>Order</h1>
+          <p style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>
+            Kelola dan pantau semua order pengiriman
+          </p>
         </div>
-        <div className="flex items-center gap-2">
-          <ExportButton status={sp.status} pharmacyId={sp.pharmacyId} />
-          <Link
-            href="/a/analytics"
-            className="rounded border border-slate-300 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
-          >
-            {t('analytics')}
-          </Link>
-          <Link
-            href="/a/batches"
-            className="bg-brand-600 hover:bg-brand-700 rounded px-4 py-2 text-sm font-medium text-white"
-          >
-            {t('manageBatches')}
-          </Link>
-        </div>
+        <Link
+          href="/a/orders/new"
+          style={{
+            background: 'oklch(0.52 0.18 250)',
+            color: '#fff',
+            borderRadius: 8,
+            padding: '9px 18px',
+            fontSize: 13,
+            fontWeight: 600,
+            textDecoration: 'none',
+            display: 'inline-block',
+          }}
+        >
+          + Order Baru
+        </Link>
       </div>
 
-      <form className="mb-4 flex flex-wrap items-end gap-3 text-sm" action="/a/orders" method="get">
-        <div>
-          <label htmlFor="status" className="mb-1 block text-xs text-slate-500">
-            {t('filterStatus')}
-          </label>
-          <select
-            id="status"
-            name="status"
-            defaultValue={sp.status ?? ''}
-            className="rounded border border-slate-300 p-1.5"
-          >
-            <option value="">{tCommon('all')}</option>
-            {OrderStatus.options.map((s: string) => (
-              <option key={s} value={s}>
-                {tStatus(s as Parameters<typeof tStatus>[0]) ?? s}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor="pharmacyId" className="mb-1 block text-xs text-slate-500">
-            {t('filterPharmacy')}
-          </label>
-          <select
-            id="pharmacyId"
-            name="pharmacyId"
-            defaultValue={sp.pharmacyId ?? ''}
-            className="rounded border border-slate-300 p-1.5"
-          >
-            <option value="">{tCommon('all')}</option>
-            {allPharmacies.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-        </div>
-        <button
-          type="submit"
-          className="rounded border border-slate-300 bg-white px-3 py-1.5 text-slate-700 hover:bg-slate-50"
-        >
-          {tCommon('apply')}
-        </button>
-        {(sp.status || sp.pharmacyId) && (
-          <Link
-            href="/a/orders"
-            className="rounded px-3 py-1.5 text-slate-500 hover:text-slate-700 hover:underline"
-          >
-            {tCommon('clear')}
-          </Link>
-        )}
-        <div className="ml-auto text-xs text-slate-500">{t('orderCount', { count: total })}</div>
-      </form>
+      {/* Filters: tabs + search + export */}
+      <Suspense fallback={null}>
+        <OrdersFilters />
+      </Suspense>
 
-      {rows.length === 0 ? (
-        <p className="text-sm text-slate-600">{t('noOrders')}</p>
-      ) : (
-        <div className="overflow-x-auto rounded border border-slate-200">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-3 py-2">{t('cols.patient')}</th>
-                <th className="px-3 py-2">{t('cols.phone')}</th>
-                <th className="px-3 py-2">{t('cols.pharmacy')}</th>
-                <th className="px-3 py-2">{t('cols.status')}</th>
-                <th className="px-3 py-2">{t('cols.driver')}</th>
-                <th className="px-3 py-2">{t('cols.actions')}</th>
-                <th className="px-3 py-2">{t('cols.pod')}</th>
-                <th className="px-3 py-2">{t('cols.created')}</th>
+      {/* Table */}
+      <div
+        style={{
+          background: '#fff',
+          borderRadius: 12,
+          border: '1px solid #e2e8f0',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ minWidth: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+            <thead>
+              <tr style={{ background: '#f8fafc', borderBottom: '1px solid #e2e8f0' }}>
+                {['Order ID', 'Pasien', 'Apotek', 'Driver', 'Status', 'Waktu', ''].map((h) => (
+                  <th
+                    key={h}
+                    style={{
+                      padding: '10px 16px',
+                      textAlign: 'left',
+                      fontSize: 11,
+                      fontWeight: 700,
+                      color: '#64748b',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.06em',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {h}
+                  </th>
+                ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {rows.map((o) => (
-                <tr key={o.id}>
-                  <td className="px-3 py-2">{o.patientName}</td>
-                  <td className="px-3 py-2 font-mono text-xs text-slate-600">
-                    {maskPhone(o.patientPhone)}
-                  </td>
-                  <td className="px-3 py-2">{o.pharmacyName}</td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        ORDER_STATUS_BADGE[o.status] ?? 'bg-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {tStatus(o.status as Parameters<typeof tStatus>[0]) ?? o.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2">
-                    <AssignCell
-                      orderId={o.id}
-                      drivers={allDrivers}
-                      currentDriverId={o.assignedDriverId}
-                      currentDriverName={o.assignedDriverName}
-                      disabled={TERMINAL_STATUSES.has(o.status)}
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    {o.status === 'pending_address' && (
-                      <form action={sendAddressRequestAction}>
-                        <input type="hidden" name="orderId" value={o.id} />
-                        <button
-                          type="submit"
-                          className="rounded bg-teal-600 px-2 py-1 text-xs font-medium text-white hover:bg-teal-700"
-                        >
-                          {t('requestAddress')}
-                        </button>
-                      </form>
-                    )}
-                  </td>
-                  <td className="px-3 py-2">
-                    {o.podPhotoUrl ? <PodPhotoLink photoKey={o.podPhotoUrl} /> : null}
-                  </td>
-                  <td className="px-3 py-2 text-slate-500">
-                    {new Date(o.createdAt).toLocaleString()}
+            <tbody>
+              {rows.length === 0 ? (
+                <tr>
+                  <td
+                    colSpan={7}
+                    style={{ padding: 40, textAlign: 'center', color: '#64748b', fontSize: 14 }}
+                  >
+                    Tidak ada order yang sesuai filter.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                rows.map((o) => {
+                  const badgeClass = ORDER_STATUS_BADGE[o.status] ?? 'bg-slate-100 text-slate-700';
+                  const dotClass = STATUS_DOT[o.status] ?? 'bg-slate-400';
+                  const statusLabel =
+                    tStatus(o.status as Parameters<typeof tStatus>[0]) ?? o.status;
+                  const isTerminal = TERMINAL_STATUSES.has(o.status);
+
+                  return (
+                    <tr
+                      key={o.id}
+                      style={{ borderBottom: '1px solid #f1f5f9' }}
+                    >
+                      {/* Order ID */}
+                      <td
+                        style={{
+                          padding: '12px 16px',
+                          fontWeight: 600,
+                          color: '#0f172a',
+                          fontFamily: 'monospace',
+                          fontSize: 12,
+                        }}
+                      >
+                        #{o.id.slice(0, 8).toUpperCase()}
+                      </td>
+
+                      {/* Pasien */}
+                      <td style={{ padding: '12px 16px', color: '#0f172a', fontWeight: 500 }}>
+                        {o.patientName}
+                      </td>
+
+                      {/* Apotek */}
+                      <td style={{ padding: '12px 16px', color: '#475569' }}>
+                        {o.pharmacyName}
+                      </td>
+
+                      {/* Driver */}
+                      <td style={{ padding: '12px 16px' }}>
+                        <AssignCell
+                          orderId={o.id}
+                          drivers={allDrivers}
+                          currentDriverId={o.assignedDriverId}
+                          currentDriverName={o.assignedDriverName}
+                          disabled={isTerminal}
+                        />
+                      </td>
+
+                      {/* Status badge */}
+                      <td style={{ padding: '12px 16px' }}>
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${badgeClass}`}
+                        >
+                          <span
+                            className={`inline-block h-1.5 w-1.5 rounded-full ${dotClass}`}
+                          />
+                          {statusLabel}
+                        </span>
+                      </td>
+
+                      {/* Waktu */}
+                      <td style={{ padding: '12px 16px', color: '#94a3b8', fontSize: 12 }}>
+                        {formatRelativeTime(new Date(o.createdAt))}
+                      </td>
+
+                      {/* Actions */}
+                      <td style={{ padding: '12px 16px' }}>
+                        <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                          {o.podPhotoUrl && <PodPhotoLink photoKey={o.podPhotoUrl} />}
+                          {o.status === 'pending_address' && (
+                            <form action={sendAddressRequestAction}>
+                              <input type="hidden" name="orderId" value={o.id} />
+                              <button
+                                type="submit"
+                                style={{
+                                  borderRadius: 6,
+                                  background: 'oklch(0.52 0.16 185)',
+                                  color: '#fff',
+                                  border: 'none',
+                                  padding: '4px 10px',
+                                  fontSize: 11,
+                                  fontWeight: 600,
+                                  cursor: 'pointer',
+                                  fontFamily: 'inherit',
+                                }}
+                              >
+                                Minta Alamat
+                              </button>
+                            </form>
+                          )}
+                          <button
+                            type="button"
+                            style={{
+                              borderRadius: 6,
+                              background: '#fff',
+                              color: '#475569',
+                              border: '1px solid #e2e8f0',
+                              padding: '4px 10px',
+                              fontSize: 11,
+                              fontWeight: 600,
+                              cursor: 'pointer',
+                              fontFamily: 'inherit',
+                            }}
+                          >
+                            View
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
             </tbody>
           </table>
         </div>
-      )}
+      </div>
 
-      {totalPages > 1 && (
-        <div className="mt-4 flex items-center justify-between text-sm">
-          <div className="text-slate-500">{tCommon('page', { page, total: totalPages })}</div>
-          <div className="flex gap-2">
+      {/* Pagination */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginTop: 16,
+        }}
+      >
+        <span style={{ fontSize: 13, color: '#64748b' }}>
+          Menampilkan {rows.length} dari {total} order
+        </span>
+        {totalPages > 1 && (
+          <div style={{ display: 'flex', gap: 6 }}>
             {page > 1 && (
               <Link
                 href={buildQuery(baseParams, { page: String(page - 1) })}
-                className="rounded border border-slate-300 bg-white px-3 py-1 hover:bg-slate-50"
+                style={pageBtnStyle(false)}
               >
                 {tCommon('prev')}
               </Link>
             )}
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              const p = i + 1;
+              return (
+                <Link key={p} href={buildQuery(baseParams, { page: String(p) })} style={pageBtnStyle(p === page)}>
+                  {p}
+                </Link>
+              );
+            })}
+            {totalPages > 5 && (
+              <>
+                <span style={pageBtnStyle(false)}>…</span>
+                <Link
+                  href={buildQuery(baseParams, { page: String(totalPages) })}
+                  style={pageBtnStyle(totalPages === page)}
+                >
+                  {totalPages}
+                </Link>
+              </>
+            )}
             {page < totalPages && (
               <Link
                 href={buildQuery(baseParams, { page: String(page + 1) })}
-                className="rounded border border-slate-300 bg-white px-3 py-1 hover:bg-slate-50"
+                style={pageBtnStyle(false)}
               >
                 {tCommon('next')}
               </Link>
             )}
           </div>
-        </div>
-      )}
-    </main>
+        )}
+      </div>
+    </div>
   );
+}
+
+function pageBtnStyle(active: boolean): React.CSSProperties {
+  return {
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    minWidth: 32,
+    height: 32,
+    borderRadius: 8,
+    border: `1px solid ${active ? 'oklch(0.52 0.18 250)' : '#e2e8f0'}`,
+    background: active ? 'oklch(0.95 0.04 250)' : '#fff',
+    color: active ? 'oklch(0.42 0.18 250)' : '#64748b',
+    fontSize: 13,
+    fontWeight: 600,
+    textDecoration: 'none',
+    padding: '0 8px',
+    cursor: 'pointer',
+  };
 }

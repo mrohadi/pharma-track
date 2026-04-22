@@ -1,24 +1,41 @@
-import { useTranslations } from 'next-intl';
+const STEPS = [
+  {
+    n: '01',
+    title: 'Apotek Membuat Order',
+    desc: 'Masukkan detail pasien, obat-obatan, dan alamat pengiriman dalam hitungan detik.',
+  },
+  {
+    n: '02',
+    title: 'Driver Dikirim',
+    desc: 'Driver terdekat yang tersedia mendapat notifikasi instan dan menerima tugas.',
+  },
+  {
+    n: '03',
+    title: 'Terkirim & Dikonfirmasi',
+    desc: 'Pasien menerima obat; bukti pengiriman digital tersimpan otomatis.',
+  },
+];
 
 export function Steps() {
-  const t = useTranslations('Landing.steps');
-  const items = Array.from({ length: 3 }, (_, i) => ({
-    title: t(`items.${i}.title`),
-    desc: t(`items.${i}.desc`),
-  }));
-
   return (
-    <section id="how-it-works" className="px-6 py-20">
-      <div className="mx-auto max-w-4xl">
-        <h2 className="mb-12 text-center text-3xl font-bold text-slate-800">{t('heading')}</h2>
-        <div className="grid gap-10 sm:grid-cols-3">
-          {items.map((item, i) => (
-            <div key={item.title} className="flex flex-col items-center text-center">
-              <div className="bg-brand-500 mb-4 flex h-12 w-12 items-center justify-center rounded-full text-xl font-bold text-white">
-                {i + 1}
+    <section id="how-it-works" className="bg-slate-50 px-10 py-[72px]">
+      <div className="mx-auto max-w-[900px]">
+        <div className="mb-12 text-center">
+          <div className="mb-2.5 text-[13px] font-bold uppercase tracking-[0.06em] text-blue-600">
+            Cara kerjanya
+          </div>
+          <h2 className="text-[36px] font-extrabold tracking-[-0.8px] text-slate-900">
+            Mudah dalam 3 langkah
+          </h2>
+        </div>
+        <div className="grid grid-cols-3 gap-6">
+          {STEPS.map((s) => (
+            <div key={s.n} className="px-6 py-6 text-center">
+              <div className="mx-auto mb-[18px] flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-lg font-black text-white shadow-[0_8px_20px_rgba(37,99,235,0.35)]">
+                {s.n}
               </div>
-              <h3 className="mb-2 font-semibold text-slate-800">{item.title}</h3>
-              <p className="text-sm text-slate-500">{item.desc}</p>
+              <div className="mb-2.5 text-[16px] font-bold text-slate-900">{s.title}</div>
+              <div className="text-[13.5px] leading-[1.65] text-slate-500">{s.desc}</div>
             </div>
           ))}
         </div>

@@ -30,20 +30,23 @@ export function BarChart({ data, height = 80, color = '#4f7cec' }: BarChartProps
       aria-hidden="true"
     >
       {data.map((d, i) => {
-        const barH = Math.max((d.value / max) * barAreaHeight, 1);
-        const x = i * barWidth + barWidth * 0.15;
-        const w = barWidth * 0.7;
+        const barH = d.value === 0 ? 0 : Math.max((d.value / max) * barAreaHeight, 3);
+        const gap = barWidth * 0.1;
+        const x = i * barWidth + gap;
+        const w = barWidth - gap * 2;
         const y = barAreaHeight - barH;
-        const opacity = 0.15 + 0.85 * (d.value / max);
+        const opacity = 0.25 + 0.75 * (d.value / max);
 
         return (
           <g key={i}>
-            <rect x={x} y={y} width={w} height={barH} rx="1.5" fill={color} opacity={opacity} />
+            {d.value > 0 && (
+              <rect x={x} y={y} width={w} height={barH} rx="2" fill={color} opacity={opacity} />
+            )}
             <text
               x={x + w / 2}
-              y={height - 2}
+              y={height - 1}
               textAnchor="middle"
-              fontSize="5"
+              fontSize="4.8"
               fill="#94a3b8"
               fontWeight="500"
             >
