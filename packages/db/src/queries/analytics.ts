@@ -2,6 +2,52 @@ import { and, eq, gte, lte, sql } from 'drizzle-orm';
 import { db } from '../index';
 import { orders, pharmacies, drivers } from '../schema';
 
+export type PharmacyDashboardStats = {
+  todayOrders: number;
+  deliveredToday: number;
+  inTransitToday: number;
+  pendingToday: number;
+  totalSalesTodayCents: number;
+  avgDeliveryMinutes: number | null;
+};
+
+/**
+ * Stats for the pharmacy dashboard: today's KPIs scoped to a single pharmacy.
+ */
+export async function getPharmacyDashboardStats(
+  pharmacyId: string,
+): Promise<PharmacyDashboardStats> {
+  const now = new Date();
+  const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const todayEnd = new Date(todayStart.getTime() + 86_400_000);
+
+  const [rows] = await db
+    .select({
+      total: sql<number>`count(*)::int`,
+      delivered: sql<number>`count(*) filter (where ${orders.status} = 'delivered')::int`,
+      inTransit: sql<number>`count(*) filter (where ${orders.status} in ('assigned','picked_up','in_transit'))::int`,
+      pending: sql<number>`count(*) filter (where ${orders.status} in ('pending_address','address_collected'))::int`,
+      totalSales: sql<number>`coalesce(sum(${orders.totalCents}) filter (where ${orders.status} = 'delivered'), 0)::int`,
+    })
+    .from(orders)
+    .where(
+      and(
+        eq(orders.pharmacyId, pharmacyId),
+        gte(orders.createdAt, todayStart),
+        lte(orders.createdAt, todayEnd),
+      ),
+    );
+
+  return {
+    todayOrders: rows?.total ?? 0,
+    deliveredToday: rows?.delivered ?? 0,
+    inTransitToday: rows?.inTransit ?? 0,
+    pendingToday: rows?.pending ?? 0,
+    totalSalesTodayCents: rows?.totalSales ?? 0,
+    avgDeliveryMinutes: null,
+  };
+}
+
 export type AnalyticsFilters = {
   /** ISO date string — inclusive start. */
   from?: string;
