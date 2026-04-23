@@ -47,6 +47,10 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            AUTH_URL=${{ secrets.AUTH_URL }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.AUTH_URL }}
 
   deploy:
     needs: build-push
@@ -65,22 +69,30 @@ jobs:
             APP_DIR=/home/ec2-user/pharma-track
             COMPOSE="$APP_DIR/infra/docker-compose.prod.yml"
 
-            # Normalise .env.prod → infra/.env so docker compose can read it.
-            # Handles: comment lines, blank lines, "export KEY=VALUE", "KEY = VALUE".
-            sed -E \
-              -e '/^[[:space:]]*#/d' \
-              -e '/^[[:space:]]*$/d' \
-              -e 's/^[[:space:]]*export[[:space:]]+//' \
-              -e 's/^([A-Za-z_][A-Za-z0-9_]*)[[:space:]]*=[[:space:]]*/\1=/' \
-              "$APP_DIR/.env.prod" \
-              | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' \
-              > "$APP_DIR/infra/.env"
-
-            # Inject / override auth URL from CI so it always matches prod domain
-            sed -i '/^AUTH_URL=/d' "$APP_DIR/infra/.env"
-            sed -i '/^NEXT_PUBLIC_APP_URL=/d' "$APP_DIR/infra/.env"
-            echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> "$APP_DIR/infra/.env"
-            echo "NEXT_PUBLIC_APP_URL=${{ secrets.AUTH_URL }}" >> "$APP_DIR/infra/.env"
+            # Write infra/.env entirely from GitHub Secrets — no manual .env.prod needed.
+            cat > "$APP_DIR/infra/.env" <<'ENVEOF'
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            POSTGRES_USER=${{ secrets.POSTGRES_USER }}
+            POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
+            AUTH_SECRET=${{ secrets.AUTH_SECRET }}
+            AUTH_URL=${{ secrets.AUTH_URL }}
+            NEXT_PUBLIC_APP_URL=${{ secrets.AUTH_URL }}
+            APP_URL=${{ secrets.AUTH_URL }}
+            PUBLIC_APP_URL=${{ secrets.AUTH_URL }}
+            REDIS_URL=${{ secrets.REDIS_URL }}
+            AWS_REGION=${{ secrets.AWS_REGION }}
+            AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
+            AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}
+            SES_FROM_EMAIL=${{ secrets.SES_FROM_EMAIL }}
+            S3_BUCKET=${{ secrets.S3_BUCKET }}
+            S3_REGION=${{ secrets.AWS_REGION }}
+            WHATSAPP_ADAPTER=${{ secrets.WHATSAPP_ADAPTER }}
+            WHATSAPP_PHONE_NUMBER_ID=${{ secrets.WHATSAPP_PHONE_NUMBER_ID }}
+            WHATSAPP_ACCESS_TOKEN=${{ secrets.WHATSAPP_ACCESS_TOKEN }}
+            WHATSAPP_VERIFY_TOKEN=${{ secrets.WHATSAPP_VERIFY_TOKEN }}
+            WHATSAPP_APP_SECRET=${{ secrets.WHATSAPP_APP_SECRET }}
+            NODE_ENV=production
+            ENVEOF
 
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
             docker pull "$IMAGE"
