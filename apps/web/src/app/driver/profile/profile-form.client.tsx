@@ -13,7 +13,15 @@ const VEHICLE_TYPE_OPTIONS = [
 const SIM_CLASS_OPTIONS = ['A', 'B1', 'B2', 'C'] as const;
 
 const BANK_OPTIONS = [
-  'BCA', 'BNI', 'BRI', 'Mandiri', 'CIMB', 'Danamon', 'BSI', 'Permata', 'Lainnya',
+  'BCA',
+  'BNI',
+  'BRI',
+  'Mandiri',
+  'CIMB',
+  'Danamon',
+  'BSI',
+  'Permata',
+  'Lainnya',
 ];
 
 type Props = { driver: Driver };
@@ -65,18 +73,35 @@ export function ProfileForm({ driver }: Props) {
             >
               <option value="">— Pilih —</option>
               {VEHICLE_TYPE_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
+                <option key={o.value} value={o.value}>
+                  {o.label}
+                </option>
               ))}
             </select>
           </Field>
           <Field label="Model Kendaraan">
-            <input name="vehicleModel" defaultValue={driver.vehicleModel ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Honda Vario 125" />
+            <input
+              name="vehicleModel"
+              defaultValue={driver.vehicleModel ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Honda Vario 125"
+            />
           </Field>
           <Field label="Merek / Deskripsi">
-            <input name="vehicle" defaultValue={driver.vehicle ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Honda" />
+            <input
+              name="vehicle"
+              defaultValue={driver.vehicle ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Honda"
+            />
           </Field>
           <Field label="Plat Nomor">
-            <input name="licensePlate" defaultValue={driver.licensePlate ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="B 1234 ABC" />
+            <input
+              name="licensePlate"
+              defaultValue={driver.licensePlate ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="B 1234 ABC"
+            />
           </Field>
         </div>
       </section>
@@ -86,39 +111,71 @@ export function ProfileForm({ driver }: Props) {
         <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">SIM</h2>
         <div className="space-y-3">
           <Field label="Kelas SIM">
-            <select name="simClass" defaultValue={driver.simClass ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select
+              name="simClass"
+              defaultValue={driver.simClass ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">— Pilih —</option>
               {SIM_CLASS_OPTIONS.map((c) => (
-                <option key={c} value={c}>{c}</option>
+                <option key={c} value={c}>
+                  {c}
+                </option>
               ))}
             </select>
           </Field>
           <Field label="Nomor SIM">
-            <input name="simNumber" defaultValue={driver.simNumber ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input
+              name="simNumber"
+              defaultValue={driver.simNumber ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </Field>
           <Field label="Berlaku Hingga">
-            <input type="date" name="simExpiresAt" defaultValue={driver.simExpiresAt ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input
+              type="date"
+              name="simExpiresAt"
+              defaultValue={driver.simExpiresAt ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </Field>
         </div>
       </section>
 
       {/* Rekening Payout */}
       <section className="rounded-xl border border-slate-200 bg-white p-4">
-        <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">Rekening Payout</h2>
+        <h2 className="mb-3 text-xs font-bold uppercase tracking-wide text-slate-400">
+          Rekening Payout
+        </h2>
         <div className="space-y-3">
           <Field label="Bank">
-            <select name="payoutBank" defaultValue={driver.payoutBank ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <select
+              name="payoutBank"
+              defaultValue={driver.payoutBank ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
               <option value="">— Pilih —</option>
               {BANK_OPTIONS.map((b) => (
-                <option key={b} value={b}>{b}</option>
+                <option key={b} value={b}>
+                  {b}
+                </option>
               ))}
             </select>
           </Field>
           <Field label="Nomor Rekening">
-            <input name="payoutAccountNumber" defaultValue={driver.payoutAccountNumber ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" inputMode="numeric" />
+            <input
+              name="payoutAccountNumber"
+              defaultValue={driver.payoutAccountNumber ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              inputMode="numeric"
+            />
           </Field>
           <Field label="Atas Nama">
-            <input name="payoutAccountName" defaultValue={driver.payoutAccountName ?? ''} className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <input
+              name="payoutAccountName"
+              defaultValue={driver.payoutAccountName ?? ''}
+              className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
           </Field>
         </div>
       </section>

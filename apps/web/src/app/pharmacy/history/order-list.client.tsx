@@ -146,16 +146,11 @@ export function OrderList({ orders }: { orders: RecentOrderRow[] }) {
                     👤 <span className="font-medium text-slate-800">{o.patientName}</span>
                   </div>
                   <div>
-                    🚴{' '}
-                    <span className="font-medium text-slate-800">{o.driverName ?? '—'}</span>
+                    🚴 <span className="font-medium text-slate-800">{o.driverName ?? '—'}</span>
                   </div>
-                  {o.deliveryAddress && (
-                    <div className="col-span-2">📍 {o.deliveryAddress}</div>
-                  )}
+                  {o.deliveryAddress && <div className="col-span-2">📍 {o.deliveryAddress}</div>}
                   {!o.deliveryAddress && (
-                    <div className="col-span-2 font-mono text-xs">
-                      {maskPhone(o.patientPhone)}
-                    </div>
+                    <div className="col-span-2 font-mono text-xs">{maskPhone(o.patientPhone)}</div>
                   )}
                   {o.items.length > 0 && (
                     <div className="col-span-2">

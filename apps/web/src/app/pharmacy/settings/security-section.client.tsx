@@ -59,7 +59,7 @@ export function SecuritySection() {
             value={pw.current}
             onChange={set('current')}
             placeholder="••••••••"
-            className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+            className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -73,7 +73,7 @@ export function SecuritySection() {
               value={pw.next}
               onChange={set('next')}
               placeholder="Min. 8 karakter"
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -86,7 +86,7 @@ export function SecuritySection() {
               value={pw.confirm}
               onChange={set('confirm')}
               placeholder="Ulangi"
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -96,7 +96,7 @@ export function SecuritySection() {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 hover:bg-blue-700 rounded px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {isPending ? 'Memperbarui…' : 'Perbarui Password'}
           </button>

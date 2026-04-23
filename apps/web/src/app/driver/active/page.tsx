@@ -42,7 +42,10 @@ export default async function ActiveDeliveryPage() {
         <span className="text-5xl">🚴</span>
         <h2 className="text-lg font-bold text-slate-700">Tidak ada delivery aktif</h2>
         <p className="text-sm text-slate-400">Terima order dari tab Beranda.</p>
-        <Link href="/driver" className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white">
+        <Link
+          href="/driver"
+          className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white"
+        >
           Ke Beranda
         </Link>
         <BottomNav />

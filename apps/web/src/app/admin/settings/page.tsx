@@ -111,10 +111,21 @@ export default async function AdminSettingsPage() {
               {[
                 { label: 'Nama Sistem', sub: 'Identitas platform', value: 'PharmaTrack' },
                 { label: 'Versi', sub: 'Versi aplikasi saat ini', value: 'v1.0.0' },
-                { label: 'Lingkungan', sub: 'Environment deployment', value: process.env.NODE_ENV ?? 'production' },
+                {
+                  label: 'Lingkungan',
+                  sub: 'Environment deployment',
+                  value: process.env.NODE_ENV ?? 'production',
+                },
               ].map((item) => (
                 <Row key={item.label} label={item.label} sub={item.sub}>
-                  <span style={{ fontSize: 13, fontWeight: 600, color: PT.text, fontFamily: 'monospace' }}>
+                  <span
+                    style={{
+                      fontSize: 13,
+                      fontWeight: 600,
+                      color: PT.text,
+                      fontFamily: 'monospace',
+                    }}
+                  >
                     {item.value}
                   </span>
                 </Row>
@@ -132,7 +143,9 @@ export default async function AdminSettingsPage() {
                 <Badge label="Nonaktif" color="amber" />
               </Row>
               <Row label="Batas Order Harian" sub="Per apotek per hari">
-                <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>Tidak terbatas</span>
+                <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>
+                  Tidak terbatas
+                </span>
               </Row>
               <Row label="Mode Pembayaran" sub="COD dan Prepaid">
                 <Badge label="Keduanya Aktif" color="green" />

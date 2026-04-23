@@ -60,7 +60,7 @@ export function AddressSection({ initial }: { initial: AddressFields }) {
               id="province"
               value={form.province}
               onChange={setField('province')}
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">— Pilih provinsi —</option>
               {PROVINCES.map((p) => (
@@ -78,7 +78,7 @@ export function AddressSection({ initial }: { initial: AddressFields }) {
               id="city"
               value={form.city}
               onChange={setField('city')}
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div className="sm:col-span-2">
@@ -89,7 +89,7 @@ export function AddressSection({ initial }: { initial: AddressFields }) {
               id="address"
               value={form.address}
               onChange={setField('address')}
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -99,7 +99,7 @@ export function AddressSection({ initial }: { initial: AddressFields }) {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 hover:bg-blue-700 rounded px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {isPending ? 'Menyimpan…' : 'Simpan Alamat'}
           </button>

@@ -59,7 +59,11 @@ export default async function AuditLogPage({
           <p className="text-sm text-slate-500">{t('entries', { count: total })}</p>
         </div>
 
-        <form className="flex flex-wrap items-end gap-2 text-sm" action="/admin/audit-log" method="get">
+        <form
+          className="flex flex-wrap items-end gap-2 text-sm"
+          action="/admin/audit-log"
+          method="get"
+        >
           <div>
             <label htmlFor="entityType" className="mb-1 block text-xs text-slate-500">
               {t('filterEntityType')}

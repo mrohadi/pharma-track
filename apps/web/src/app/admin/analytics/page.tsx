@@ -185,11 +185,7 @@ export default async function AdminAnalyticsPage({
         </div>
 
         {/* Date filter */}
-        <form
-          action="/admin/analytics"
-          method="get"
-          className="flex flex-wrap items-end gap-2"
-        >
+        <form action="/admin/analytics" method="get" className="flex flex-wrap items-end gap-2">
           <div>
             <label
               htmlFor="from"

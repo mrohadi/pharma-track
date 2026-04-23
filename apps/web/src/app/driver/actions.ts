@@ -210,7 +210,8 @@ export async function updateDriverProfileAction(
   input: UpdateDriverProfileInput,
 ): Promise<UpdateProfileResult> {
   const session = await getSession();
-  if (!session?.user || session.user.role !== 'driver') return { ok: false, reason: 'Not authorized' };
+  if (!session?.user || session.user.role !== 'driver')
+    return { ok: false, reason: 'Not authorized' };
   await updateDriverProfile(session.user.id, input);
   revalidatePath('/driver/profile');
   return { ok: true };

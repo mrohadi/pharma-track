@@ -46,7 +46,7 @@ export function LegalSection({ initial }: { initial: LegalFields }) {
               id="sia"
               value={form.siaNumber}
               onChange={set('siaNumber')}
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -57,7 +57,7 @@ export function LegalSection({ initial }: { initial: LegalFields }) {
               id="sipa"
               value={form.sipaNumber}
               onChange={set('sipaNumber')}
-              className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -77,7 +77,7 @@ export function LegalSection({ initial }: { initial: LegalFields }) {
           <button
             type="submit"
             disabled={isPending}
-            className="bg-blue-600 hover:bg-blue-700 rounded px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
+            className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
           >
             {isPending ? 'Mengajukan…' : 'Ajukan Pembaruan'}
           </button>

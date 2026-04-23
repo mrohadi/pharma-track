@@ -72,9 +72,7 @@ function TextInput({
     <input
       {...rest}
       className={`w-full rounded-lg border px-3 py-2 text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 ${
-        error
-          ? 'border-red-400 focus:ring-red-200'
-          : 'border-slate-200 focus:ring-blue-200'
+        error ? 'border-red-400 focus:ring-red-200' : 'border-slate-200 focus:ring-blue-200'
       } ${className ?? ''}`}
     />
   );
@@ -161,10 +159,7 @@ function Step2Items({
       {errors.items && <p className="text-xs text-red-500">{errors.items}</p>}
 
       {state.items.map((item, idx) => (
-        <div
-          key={idx}
-          className="relative rounded-xl border border-slate-200 bg-slate-50 p-4"
-        >
+        <div key={idx} className="relative rounded-xl border border-slate-200 bg-slate-50 p-4">
           <div className="mb-3 text-xs font-semibold text-slate-400">Item {idx + 1}</div>
           {state.items.length > 1 && (
             <button

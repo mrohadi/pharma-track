@@ -204,7 +204,10 @@ export function AdminSidebar({
   return (
     <>
       {/* ── Desktop: fixed sidebar (lg+) ── */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex" style={{ width: 240 }}>
+      <div
+        className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex"
+        style={{ width: 240 }}
+      >
         {sidebarContent}
       </div>
 

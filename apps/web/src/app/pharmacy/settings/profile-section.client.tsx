@@ -94,7 +94,7 @@ function Field({
         type={type}
         value={value}
         onChange={onChange}
-        className="focus:ring-blue-500 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2"
+        className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
       />
     </div>
   );
@@ -105,7 +105,7 @@ function SubmitButton({ pending, children }: { pending: boolean; children: React
     <button
       type="submit"
       disabled={pending}
-      className="bg-blue-600 hover:bg-blue-700 rounded px-5 py-2 text-sm font-medium text-white disabled:opacity-50"
+      className="rounded bg-blue-600 px-5 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50"
     >
       {pending ? 'Menyimpan…' : children}
     </button>

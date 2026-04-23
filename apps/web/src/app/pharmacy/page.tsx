@@ -180,9 +180,7 @@ export default async function PharmacyHome() {
                     {!isPending && (
                       <div className="mt-1 text-xs text-slate-500">
                         🚴 Driver:{' '}
-                        <span className="font-semibold text-slate-700">
-                          {o.driverName ?? '—'}
-                        </span>{' '}
+                        <span className="font-semibold text-slate-700">{o.driverName ?? '—'}</span>{' '}
                         · ETA ~14 mnt
                       </div>
                     )}
@@ -228,9 +226,7 @@ export default async function PharmacyHome() {
               />
               <SummaryRow
                 label="Rata-rata Waktu Kirim"
-                value={
-                  stats?.avgDeliveryMinutes != null ? `${stats.avgDeliveryMinutes} mnt` : '—'
-                }
+                value={stats?.avgDeliveryMinutes != null ? `${stats.avgDeliveryMinutes} mnt` : '—'}
               />
               <SummaryRow label="Rating Driver" value="—" />
             </div>

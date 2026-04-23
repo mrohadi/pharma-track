@@ -64,9 +64,7 @@ function Field({
         {label}
       </label>
       {children}
-      {error && (
-        <p style={{ fontSize: 12, color: PT.danger, marginTop: 4 }}>{error}</p>
-      )}
+      {error && <p style={{ fontSize: 12, color: PT.danger, marginTop: 4 }}>{error}</p>}
     </div>
   );
 }
@@ -209,7 +207,11 @@ export function AdminNewOrderClient() {
               </Field>
               <Field label="Alamat Pengiriman *" error={errors.deliveryAddress}>
                 <textarea
-                  style={{ ...inputStyle(!!errors.deliveryAddress), resize: 'vertical', minHeight: 80 }}
+                  style={{
+                    ...inputStyle(!!errors.deliveryAddress),
+                    resize: 'vertical',
+                    minHeight: 80,
+                  }}
                   value={form.deliveryAddress}
                   onChange={(e) => setForm((f) => ({ ...f, deliveryAddress: e.target.value }))}
                   placeholder="Alamat lengkap"
@@ -284,9 +286,7 @@ export function AdminNewOrderClient() {
                         min={1}
                         style={inputStyle(!!errors[`item_${idx}_qty`])}
                         value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(idx, { quantity: Number(e.target.value) })
-                        }
+                        onChange={(e) => updateItem(idx, { quantity: Number(e.target.value) })}
                       />
                     </Field>
                     <Field label="Harga (opsional)">

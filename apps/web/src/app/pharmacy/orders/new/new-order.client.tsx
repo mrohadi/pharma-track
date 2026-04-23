@@ -27,13 +27,11 @@ export function NewOrderClient() {
       </div>
 
       {/* Mode toggle */}
-      <div className="mb-6 flex overflow-hidden rounded-xl border border-slate-200 bg-white w-fit">
+      <div className="mb-6 flex w-fit overflow-hidden rounded-xl border border-slate-200 bg-white">
         <button
           onClick={() => setMode('manual')}
           className={`px-5 py-2.5 text-sm font-semibold transition-colors ${
-            mode === 'manual'
-              ? 'bg-blue-600 text-white'
-              : 'text-slate-500 hover:text-slate-700'
+            mode === 'manual' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           ✏️ Input Manual
@@ -41,9 +39,7 @@ export function NewOrderClient() {
         <button
           onClick={() => setMode('csv')}
           className={`px-5 py-2.5 text-sm font-semibold transition-colors ${
-            mode === 'csv'
-              ? 'bg-blue-600 text-white'
-              : 'text-slate-500 hover:text-slate-700'
+            mode === 'csv' ? 'bg-blue-600 text-white' : 'text-slate-500 hover:text-slate-700'
           }`}
         >
           📂 Upload CSV
