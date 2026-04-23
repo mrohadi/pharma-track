@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 import { PTLogo } from '@/components/logo';
 import { SignOutButton } from '@/components/sign-out-button';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 const SIDEBAR_BG = 'oklch(0.15 0.04 255)';
 const DANGER = 'oklch(0.55 0.2 25)';
