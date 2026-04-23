@@ -26,7 +26,6 @@ export const PT = {
 };
 
 type Tab = 'login' | 'signup';
-type LoginRole = 'admin' | 'pharmacy' | 'driver';
 type SignupRole = 'pharmacy' | 'driver';
 
 export function AuthForm({ next }: { next?: string }) {
@@ -126,17 +125,10 @@ export function AuthForm({ next }: { next?: string }) {
 
 // ── Login Panel ───────────────────────────────────────────────────────────────
 
-const LOGIN_ROLES = [
-  { id: 'admin' as LoginRole, icon: '🛡️', label: 'Admin' },
-  { id: 'pharmacy' as LoginRole, icon: '🏥', label: 'Apotek' },
-  { id: 'driver' as LoginRole, icon: '🚴', label: 'Driver' },
-];
-
 function LoginPanel({ next }: { next?: string }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const [loginRole, setLoginRole] = useState<LoginRole>('pharmacy');
 
   function onSubmit(formData: FormData) {
     setError(null);
@@ -180,58 +172,6 @@ function LoginPanel({ next }: { next?: string }) {
         </h2>
         <p style={{ color: PT.muted, fontSize: 13.5, margin: 0 }}>Masuk ke akun PharmaTrack Anda</p>
       </div>
-
-      {/* Role selector */}
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: PT.text, marginBottom: 8 }}>
-          Masuk sebagai
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 8 }}>
-          {LOGIN_ROLES.map((r) => (
-            <button
-              key={r.id}
-              type="button"
-              onClick={() => setLoginRole(r.id)}
-              style={{
-                padding: '10px 8px',
-                borderRadius: 10,
-                border: `2px solid ${loginRole === r.id ? PT.primary : PT.border}`,
-                textAlign: 'center',
-                cursor: 'pointer',
-                background: loginRole === r.id ? PT.primaryLight : '#fff',
-                transition: 'all 0.15s',
-                fontFamily: 'inherit',
-              }}
-            >
-              <div style={{ fontSize: 20, marginBottom: 4 }}>{r.icon}</div>
-              <div
-                style={{
-                  fontSize: 12,
-                  fontWeight: 600,
-                  color: loginRole === r.id ? PT.primaryText : PT.muted,
-                }}
-              >
-                {r.label}
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {loginRole === 'admin' && (
-        <div
-          style={{
-            padding: '10px 14px',
-            background: PT.warningLight,
-            borderRadius: 10,
-            fontSize: 12.5,
-            color: 'oklch(0.48 0.14 75)',
-            fontWeight: 500,
-          }}
-        >
-          🛡️ Akun Admin hanya dapat diakses melalui undangan dari Super Admin.
-        </div>
-      )}
 
       <form action={onSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
         <AuthField
