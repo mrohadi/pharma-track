@@ -18,7 +18,7 @@ export default async function ProfilePage() {
   const badge = VERIFICATION_BADGE[driver?.verificationStatus ?? 'pending'];
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ paddingBottom: 80 }}>
+    <div className="flex h-screen flex-col overflow-hidden">
       {/* Dark header */}
       <header className="bg-slate-800 px-4 pb-6 pt-12">
         <div className="flex items-center gap-4">
@@ -39,7 +39,7 @@ export default async function ProfilePage() {
         </div>
       </header>
 
-      <div className="flex-1 px-4 pt-4">
+      <div className="flex-1 overflow-auto px-4 pb-24 pt-4">
         {driver ? (
           <ProfileForm driver={driver} />
         ) : (

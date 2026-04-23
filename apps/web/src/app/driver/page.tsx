@@ -38,7 +38,7 @@ export default async function DriverHome() {
   const isOnline = driver.status !== 'offline';
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ paddingBottom: 80 }}>
+    <div className="flex h-screen flex-col overflow-hidden">
       {/* Dark header */}
       <header className="bg-slate-800 px-4 pb-5 pt-12">
         <div className="flex items-start justify-between">
@@ -74,7 +74,7 @@ export default async function DriverHome() {
         </div>
       </header>
 
-      <div className="flex-1 px-4 pt-4">
+      <div className="flex-1 overflow-auto px-4 pb-24 pt-4">
         {/* Online toggle */}
         <OnlineToggle online={isOnline} />
 

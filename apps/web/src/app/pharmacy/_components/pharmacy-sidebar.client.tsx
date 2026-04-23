@@ -1,30 +1,27 @@
 'use client';
 
-import { PTLogo } from '@/components/logo';
-import { SignOutButton } from '@/components/sign-out-button';
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { SignOutButton } from '@/components/sign-out-button';
 
 const SIDEBAR_BG = 'oklch(0.15 0.04 255)';
-const DANGER = 'oklch(0.55 0.2 25)';
 
 const NAV = [
-  { href: '/admin', icon: '📊', label: 'Dashboard' },
-  { href: '/admin/orders', icon: '📦', label: 'Orders' },
-  { href: '/admin/users', icon: '👥', label: 'Users' },
-  { href: '/admin/analytics', icon: '📈', label: 'Analytics' },
-  { href: '/admin/settings', icon: '⚙️', label: 'Settings' },
+  { href: '/pharmacy', icon: '📊', label: 'Dashboard' },
+  { href: '/pharmacy/orders/new', icon: '➕', label: 'Order Baru' },
+  { href: '/pharmacy/history', icon: '📋', label: 'Riwayat Order' },
+  { href: '/pharmacy/settings', icon: '⚙️', label: 'Settings' },
 ];
 
-export function AdminSidebar({
-  userName,
+export function PharmacySidebar({
+  initial,
+  pharmacyName,
   userEmail,
-  pendingCount,
 }: {
-  userName: string;
+  initial: string;
+  pharmacyName: string;
   userEmail: string;
-  pendingCount: number;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -41,7 +38,7 @@ export function AdminSidebar({
   }
 
   function isActive(href: string) {
-    if (href === '/admin') return pathname === '/admin';
+    if (href === '/pharmacy') return pathname === '/pharmacy';
     return pathname.startsWith(href);
   }
 
@@ -59,25 +56,38 @@ export function AdminSidebar({
       {/* Logo */}
       <div
         style={{
-          padding: '22px 18px 18px',
+          padding: '20px 18px 18px',
           display: 'flex',
           alignItems: 'center',
           gap: 10,
           borderBottom: '1px solid rgba(255,255,255,0.07)',
         }}
       >
-        <PTLogo size={34} white />
+        <div
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            background: 'rgba(255,255,255,0.15)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 18,
+            fontWeight: 700,
+            color: '#fff',
+            flexShrink: 0,
+          }}
+        >
+          +
+        </div>
         <div style={{ flex: 1 }}>
-          <div style={{ color: '#fff', fontWeight: 700, fontSize: 15.5, lineHeight: 1.2 }}>
+          <div style={{ color: '#fff', fontWeight: 700, fontSize: 14, lineHeight: 1.2 }}>
             PharmaTrack
           </div>
-          <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: 11, marginTop: 1 }}>
-            Administrator
-          </div>
+          <div style={{ color: 'rgba(255,255,255,0.38)', fontSize: 11, marginTop: 1 }}>Apotek</div>
         </div>
-        {/* Close button — only visible on mobile when drawer open */}
         <button
-          onClick={() => closeDrawer()}
+          onClick={closeDrawer}
           aria-label="Close menu"
           className="lg:hidden"
           style={{
@@ -103,12 +113,11 @@ export function AdminSidebar({
       <nav style={{ flex: 1, minHeight: 0, padding: '10px', overflowY: 'auto' }}>
         {NAV.map((item) => {
           const active = isActive(item.href);
-          const badge = item.href === '/admin/users' && pendingCount > 0 ? pendingCount : null;
           return (
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => closeDrawer()}
+              onClick={closeDrawer}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -125,21 +134,6 @@ export function AdminSidebar({
             >
               <span style={{ fontSize: 17 }}>{item.icon}</span>
               {item.label}
-              {badge && (
-                <span
-                  style={{
-                    marginLeft: 'auto',
-                    background: DANGER,
-                    color: '#fff',
-                    borderRadius: 999,
-                    fontSize: 11,
-                    fontWeight: 700,
-                    padding: '1px 7px',
-                  }}
-                >
-                  {badge}
-                </span>
-              )}
             </Link>
           );
         })}
@@ -170,7 +164,7 @@ export function AdminSidebar({
             flexShrink: 0,
           }}
         >
-          {userName.charAt(0).toUpperCase()}
+          {initial}
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
@@ -183,7 +177,7 @@ export function AdminSidebar({
               textOverflow: 'ellipsis',
             }}
           >
-            {userName}
+            {pharmacyName}
           </div>
           <div
             style={{
@@ -204,7 +198,7 @@ export function AdminSidebar({
 
   return (
     <>
-      {/* ── Desktop: fixed sidebar (lg+) ── */}
+      {/* Desktop: fixed sidebar (lg+) */}
       <div
         className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex"
         style={{ width: 240 }}
@@ -212,65 +206,59 @@ export function AdminSidebar({
         {sidebarContent}
       </div>
 
-      {/* ── Mobile/tablet: top bar (< lg) ── */}
+      {/* Mobile/tablet: top bar (< lg) */}
       <div
         className={`items-center justify-between px-4 py-3 lg:hidden ${open ? 'hidden' : 'flex'}`}
         style={{ background: SIDEBAR_BG, position: 'sticky', top: 0, zIndex: 50 }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <PTLogo size={28} white />
-          <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>PharmaTrack</span>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Pending badge on mobile */}
-          {pendingCount > 0 && (
-            <Link
-              href="/admin/users"
-              style={{
-                background: DANGER,
-                color: '#fff',
-                borderRadius: 999,
-                fontSize: 11,
-                fontWeight: 700,
-                padding: '2px 8px',
-                textDecoration: 'none',
-              }}
-            >
-              {pendingCount} pending
-            </Link>
-          )}
-          <button
-            onClick={() => openDrawer()}
-            aria-label="Open menu"
+          <div
             style={{
-              background: 'rgba(255,255,255,0.1)',
-              border: 'none',
-              borderRadius: 8,
-              color: '#fff',
-              fontSize: 20,
-              width: 36,
-              height: 36,
-              cursor: 'pointer',
+              width: 28,
+              height: 28,
+              borderRadius: 7,
+              background: 'rgba(255,255,255,0.15)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              fontSize: 16,
+              fontWeight: 700,
+              color: '#fff',
             }}
           >
-            ☰
-          </button>
+            +
+          </div>
+          <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>PharmaTrack</span>
         </div>
+        <button
+          onClick={openDrawer}
+          aria-label="Open menu"
+          style={{
+            background: 'rgba(255,255,255,0.1)',
+            border: 'none',
+            borderRadius: 8,
+            color: '#fff',
+            fontSize: 20,
+            width: 36,
+            height: 36,
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          ☰
+        </button>
       </div>
 
-      {/* ── Drawer overlay (mobile/tablet) ── */}
+      {/* Drawer overlay (mobile/tablet) */}
       {open && (
         <>
-          {/* Backdrop — sits above the sticky top bar (z-30) */}
           <div
             className="fixed inset-0 bg-black/60 lg:hidden"
             style={{ zIndex: 60 }}
-            onClick={() => closeDrawer()}
+            onClick={closeDrawer}
           />
-          {/* Drawer — above backdrop */}
           <div
             style={{
               position: 'fixed',

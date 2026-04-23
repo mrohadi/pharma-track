@@ -38,16 +38,18 @@ export default async function ActiveDeliveryPage() {
 
   if (active.length === 0) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-6 text-center">
-        <span className="text-5xl">🚴</span>
-        <h2 className="text-lg font-bold text-slate-700">Tidak ada delivery aktif</h2>
-        <p className="text-sm text-slate-400">Terima order dari tab Beranda.</p>
-        <Link
-          href="/driver"
-          className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white"
-        >
-          Ke Beranda
-        </Link>
+      <div className="flex h-screen flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
+          <span className="text-5xl">🚴</span>
+          <h2 className="text-lg font-bold text-slate-700">Tidak ada delivery aktif</h2>
+          <p className="text-sm text-slate-400">Terima order dari tab Beranda.</p>
+          <Link
+            href="/driver"
+            className="rounded-xl bg-blue-600 px-6 py-2.5 text-sm font-bold text-white"
+          >
+            Ke Beranda
+          </Link>
+        </div>
         <BottomNav />
       </div>
     );
@@ -59,7 +61,7 @@ export default async function ActiveDeliveryPage() {
   const cur = STATUS_STEPS[si];
 
   return (
-    <div className="flex min-h-screen flex-col" style={{ paddingBottom: 80 }}>
+    <div className="flex h-screen flex-col overflow-hidden">
       {/* Map */}
       <div className="relative" style={{ height: 220, flexShrink: 0 }}>
         <MapSVG route />
@@ -79,7 +81,7 @@ export default async function ActiveDeliveryPage() {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 pt-4">
+      <div className="flex-1 overflow-auto px-4 pb-24 pt-4">
         {/* Status stepper */}
         <div className="mb-3 rounded-xl border border-slate-200 bg-white p-4">
           <div className="mb-3 flex gap-1.5">
