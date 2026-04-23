@@ -15,7 +15,13 @@ RUN pnpm install --frozen-lockfile
 # ---- builder ----
 FROM base AS builder
 WORKDIR /app
+# Copy root node_modules (pnpm virtual store) AND each workspace package's
+# node_modules so their .bin executables (e.g. next, tsx) are resolvable.
 COPY --from=deps /app/node_modules ./node_modules
+COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/db/node_modules ./packages/db/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/packages/whatsapp/node_modules ./packages/whatsapp/node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 RUN pnpm build

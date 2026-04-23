@@ -10,7 +10,7 @@ import { getSessionCookie } from 'better-auth/cookies';
  * it doesn't decode role without a DB round-trip, which we don't want on the
  * edge for every navigation.
  */
-const PROTECTED_PREFIXES = ['/p', '/a', '/d'];
+const PROTECTED_PREFIXES = ['/pharmacy', '/admin', '/driver'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -30,5 +30,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/p/:path*', '/a/:path*', '/d/:path*'],
+  matcher: ['/pharmacy/:path*', '/admin/:path*', '/driver/:path*'],
 };

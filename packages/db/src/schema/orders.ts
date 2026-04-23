@@ -1,4 +1,4 @@
-import { pgTable, uuid, text, timestamp, pgEnum, index } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, text, timestamp, pgEnum, index, integer } from 'drizzle-orm/pg-core';
 import { pharmacies } from './pharmacies';
 import { drivers } from './drivers';
 import { batches } from './batches';
@@ -21,6 +21,10 @@ export const failureReasonEnum = pgEnum('failure_reason', [
   'patient_not_home',
   'other',
 ]);
+
+export const orderPriorityEnum = pgEnum('order_priority', ['normal', 'urgent']);
+
+export const orderPaymentModeEnum = pgEnum('order_payment_mode', ['cod', 'prepaid', 'insurance']);
 
 export const orders = pgTable(
   'orders',
@@ -46,6 +50,16 @@ export const orders = pgTable(
     failureReason: failureReasonEnum('failure_reason'),
     failureNote: text('failure_note'),
     podPhotoUrl: text('pod_photo_url'),
+    // address breakdown
+    subdistrict: text('subdistrict'),
+    city: text('city'),
+    province: text('province'),
+    // order metadata
+    priority: orderPriorityEnum('priority').default('normal').notNull(),
+    paymentMode: orderPaymentModeEnum('payment_mode').default('cod').notNull(),
+    totalCents: integer('total_cents'),
+    driverFeeCents: integer('driver_fee_cents'),
+    notes: text('notes'),
     createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull(),
   },
@@ -57,3 +71,5 @@ export const orders = pgTable(
 
 export type Order = typeof orders.$inferSelect;
 export type NewOrder = typeof orders.$inferInsert;
+export type OrderPriority = (typeof orderPriorityEnum.enumValues)[number];
+export type OrderPaymentMode = (typeof orderPaymentModeEnum.enumValues)[number];

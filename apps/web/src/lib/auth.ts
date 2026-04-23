@@ -30,9 +30,9 @@ export const auth = betterAuth({
   },
 
   // Map extra columns on our users table so better-auth surfaces them on the session.
-  // NOTE: public email/password sign-up is still open — Phase 1 TODO is to gate it
-  // behind an invite token or admin-only endpoint. Until then, role is accepted as
-  // input (so seed works) which is not a production-safe default.
+  // Sign-up is gated through /api/signup/pharmacy and /api/signup/driver which validate
+  // input, create the linked pharmacy/driver row, and set verificationStatus='pending'.
+  // Admin accounts are seeded only — there is no public admin registration path.
   user: {
     additionalFields: {
       role: {

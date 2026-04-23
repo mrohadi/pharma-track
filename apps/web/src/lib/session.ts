@@ -12,15 +12,17 @@ export async function getSession() {
 
 /**
  * Role-aware post-login redirect target.
+ * Pending/suspended pharmacy and driver users will be redirected to
+ * /pending-verification by the layout guard after landing here.
  */
 export function homeForRole(role: Role | undefined): string {
   switch (role) {
     case 'admin':
-      return '/a';
+      return '/admin';
     case 'pharmacy':
-      return '/p';
+      return '/pharmacy';
     case 'driver':
-      return '/d';
+      return '/driver';
     default:
       return '/';
   }
