@@ -5,7 +5,7 @@ export function Hero() {
   return (
     <>
       {/* NAV */}
-      <nav className="bg-white/92 sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-200 px-10 backdrop-blur-md">
+      <nav className="bg-white/92 sticky top-0 z-50 flex h-16 items-center justify-between border-b border-slate-200 px-4 backdrop-blur-md sm:px-10">
         <div className="flex items-center gap-2.5">
           <PTLogo size={32} />
           <span className="text-[17px] font-extrabold tracking-tight text-slate-800">
@@ -15,25 +15,25 @@ export function Hero() {
         <div className="flex items-center gap-2">
           <a
             href="#features"
-            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 md:block"
           >
             Fitur
           </a>
           <a
             href="#pricing"
-            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 md:block"
           >
             Harga
           </a>
           <a
             href="#contact"
-            className="rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            className="hidden rounded-lg px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-100 md:block"
           >
             Kontak
           </a>
           <Link
             href="/login"
-            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50"
+            className="hidden rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50 sm:block"
           >
             Masuk
           </Link>
@@ -47,14 +47,14 @@ export function Hero() {
       </nav>
 
       {/* HERO */}
-      <section className="mx-auto grid max-w-[1100px] grid-cols-2 items-center gap-16 px-10 pb-16 pt-20">
+      <section className="mx-auto grid max-w-[1100px] grid-cols-1 items-center gap-10 px-4 pb-12 pt-12 sm:px-6 md:grid-cols-2 md:gap-16 md:px-10 md:pb-16 md:pt-20">
         {/* Left */}
         <div>
           <div className="mb-[22px] inline-flex items-center gap-2 rounded-full bg-blue-50 px-3.5 py-1.5 text-xs font-bold text-blue-700">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-blue-600" />
             Kini hadir di 40+ kota
           </div>
-          <h1 className="mb-5 text-[52px] font-black leading-[1.08] tracking-[-1.5px] text-slate-900">
+          <h1 className="mb-5 text-[38px] font-black leading-[1.08] tracking-[-1.5px] text-slate-900 sm:text-[46px] md:text-[52px]">
             Pengiriman obat,
             <br />
             <span className="text-blue-600">lebih cerdas.</span>
@@ -90,7 +90,7 @@ export function Hero() {
         </div>
 
         {/* Right — Dashboard mock */}
-        <div className="relative">
+        <div className="relative pb-6 md:pb-0">
           <div className="overflow-hidden rounded-[20px] border border-slate-200 bg-[oklch(0.96_0.015_250)] shadow-[0_24px_64px_rgba(0,0,0,0.10)]">
             {/* Titlebar */}
             <div className="flex items-center gap-2 bg-slate-800 px-4 py-3">
@@ -161,7 +161,7 @@ export function Hero() {
           </div>
 
           {/* Floating badge */}
-          <div className="absolute -bottom-4 -left-4 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)]">
+          <div className="absolute -bottom-2 left-2 flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 shadow-[0_8px_24px_rgba(0,0,0,0.12)] md:-bottom-4 md:-left-4">
             <span className="text-[22px]">🚴</span>
             <div>
               <div className="text-[11px] font-bold text-slate-800">Driver dalam perjalanan</div>

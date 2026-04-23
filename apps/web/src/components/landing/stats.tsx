@@ -7,8 +7,8 @@ const STATS = [
 
 export function Stats() {
   return (
-    <section className="bg-blue-600 px-10 py-8">
-      <div className="mx-auto grid max-w-[1100px] grid-cols-4 gap-4">
+    <section className="bg-blue-600 px-4 py-8 sm:px-10">
+      <div className="mx-auto grid max-w-[1100px] grid-cols-2 gap-6 sm:grid-cols-4">
         {STATS.map((s) => (
           <div key={s.label} className="text-center">
             <div className="text-[32px] font-black tracking-[-1px] text-white">{s.value}</div>

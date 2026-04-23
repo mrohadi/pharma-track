@@ -19,14 +19,14 @@ const ROLES = [
 
 export function Roles() {
   return (
-    <section className="px-10 py-[72px]">
+    <section className="px-4 py-14 sm:px-6 sm:py-[72px] md:px-10">
       <div className="mx-auto max-w-[1100px]">
         <div className="mb-12 text-center">
-          <h2 className="text-[36px] font-extrabold tracking-[-0.8px] text-slate-900">
+          <h2 className="text-[26px] font-extrabold tracking-[-0.8px] text-slate-900 sm:text-[32px] md:text-[36px]">
             Every stakeholder, perfectly connected
           </h2>
         </div>
-        <div className="mx-auto grid max-w-[720px] grid-cols-2 gap-5">
+        <div className="mx-auto grid max-w-[720px] grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5">
           {ROLES.map((r) => (
             <div key={r.role} className="overflow-hidden rounded-2xl border border-slate-200">
               <div className={`${r.bgColor} px-6 pb-5 pt-7`}>

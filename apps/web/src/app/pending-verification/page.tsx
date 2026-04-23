@@ -13,7 +13,7 @@ export default async function PendingVerificationPage() {
   // Admin and approved users shouldn't land here — send them home.
   const role = session.user.role as string | undefined;
   if (role === 'admin') {
-    redirect('/a');
+    redirect('/admin');
   }
 
   return (

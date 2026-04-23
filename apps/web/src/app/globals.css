@@ -12,3 +12,18 @@ body {
   background: rgb(var(--background));
   color: rgb(var(--foreground));
 }
+
+@keyframes pt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pt-page-enter {
+  animation: pt-fade-in 0.22s ease-out both;
+}
