@@ -1,4 +1,4 @@
-import { MapSVG } from '@/components/map-svg';
+import { DeliveryMap } from '@/components/delivery-map';
 import { requireRole } from '@/lib/guards';
 import { getDriverByUserId, listDriverQueue } from '@pharmatrack/db';
 import Link from 'next/link';
@@ -63,22 +63,11 @@ export default async function ActiveDeliveryPage() {
   return (
     <div className="flex h-screen flex-col overflow-hidden">
       {/* Map */}
-      <div className="relative" style={{ height: 220, flexShrink: 0 }}>
-        <MapSVG route />
-        {/* ETA overlay */}
-        <div
-          className="absolute left-3 rounded-xl bg-white/95 px-3 py-2 shadow-md"
-          style={{ top: 52 }}
-        >
-          <div className="text-lg font-black text-slate-800">~14 min</div>
-          <div className="text-[11px] font-medium text-slate-400">estimasi tiba</div>
-        </div>
-        <div
-          className="absolute right-3 cursor-pointer rounded-xl bg-white/95 px-3 py-2 shadow-md"
-          style={{ top: 52 }}
-        >
-          <span className="text-lg">🧭</span>
-        </div>
+      <div style={{ height: 260, flexShrink: 0 }}>
+        <DeliveryMap
+          address={order.deliveryAddress ?? order.patientName}
+          patientName={order.patientName}
+        />
       </div>
 
       <div className="flex-1 overflow-auto px-4 pb-24 pt-4">
