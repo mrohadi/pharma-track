@@ -24,6 +24,12 @@ COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_module
 COPY --from=deps /app/packages/whatsapp/node_modules ./packages/whatsapp/node_modules
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
+# Build-time placeholder suppresses better-auth warning during `next build`.
+# Real secrets injected at runtime via docker-compose env_file — never baked in.
+ARG AUTH_SECRET=build-time-placeholder-not-used-at-runtime
+ARG AUTH_URL=http://localhost:3000
+ENV AUTH_SECRET=$AUTH_SECRET
+ENV AUTH_URL=$AUTH_URL
 RUN pnpm build
 # Bundle the DB migrate script into a single self-contained JS file so the
 # slim runner image can run migrations without needing tsx or node_modules.
