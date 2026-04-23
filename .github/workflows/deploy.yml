@@ -76,6 +76,12 @@ jobs:
               | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' \
               > "$APP_DIR/infra/.env"
 
+            # Inject / override auth URL from CI so it always matches prod domain
+            sed -i '/^AUTH_URL=/d' "$APP_DIR/infra/.env"
+            sed -i '/^NEXT_PUBLIC_APP_URL=/d' "$APP_DIR/infra/.env"
+            echo "AUTH_URL=${{ secrets.AUTH_URL }}" >> "$APP_DIR/infra/.env"
+            echo "NEXT_PUBLIC_APP_URL=${{ secrets.AUTH_URL }}" >> "$APP_DIR/infra/.env"
+
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
             docker pull "$IMAGE"
 
