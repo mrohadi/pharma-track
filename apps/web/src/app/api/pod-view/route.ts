@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   }
 
   const key = req.nextUrl.searchParams.get('key');
-  if (!key || !key.startsWith('pod-photos/')) {
+  if (!key || !/^(dev|prod)\/pod-photos\//.test(key)) {
     return NextResponse.json({ error: 'Invalid key' }, { status: 400 });
   }
 

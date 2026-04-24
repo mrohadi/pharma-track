@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSession } from '@/lib/session';
-import { createPresignedUploadUrl } from '@/lib/s3';
+import { uploadFile } from '@/lib/s3';
 
 const ALLOWED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
+const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
 
 /**
  * POST /api/pod-upload
- * Body: { orderId, contentType }
- * Returns: { uploadUrl, key }
+ * Body: multipart/form-data — fields: orderId, file
+ * Returns: { key }
  *
- * Driver-only. Returns a presigned S3 PUT URL so the browser
- * uploads the POD photo directly — no server relay.
+ * Driver-only. File uploaded server-side to S3 — no browser CORS needed.
  */
 export async function POST(req: NextRequest) {
   const session = await getSession();
@@ -18,21 +18,41 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = (await req.json()) as { orderId?: string; contentType?: string };
-  const { orderId, contentType } = body;
+  let formData: FormData;
+  try {
+    formData = await req.formData();
+  } catch {
+    return NextResponse.json({ error: 'Invalid form data' }, { status: 400 });
+  }
 
-  if (!orderId || !/^[0-9a-f-]{36}$/i.test(orderId)) {
+  const orderId = formData.get('orderId');
+  const file = formData.get('file');
+
+  if (!orderId || typeof orderId !== 'string' || !/^[0-9a-f-]{36}$/i.test(orderId)) {
     return NextResponse.json({ error: 'Invalid orderId' }, { status: 400 });
   }
 
-  if (!contentType || !ALLOWED_TYPES.has(contentType)) {
+  if (!file || !(file instanceof Blob)) {
+    return NextResponse.json({ error: 'Missing file' }, { status: 400 });
+  }
+
+  if (!ALLOWED_TYPES.has(file.type)) {
     return NextResponse.json(
       { error: `Invalid content type. Allowed: ${[...ALLOWED_TYPES].join(', ')}` },
       { status: 400 },
     );
   }
 
-  const { uploadUrl, key } = await createPresignedUploadUrl({ orderId, contentType });
+  if (file.size > MAX_SIZE) {
+    return NextResponse.json({ error: 'File too large. Max 5 MB' }, { status: 400 });
+  }
 
-  return NextResponse.json({ uploadUrl, key });
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const key = await uploadFile({ orderId, contentType: file.type, buffer });
+    return NextResponse.json({ key });
+  } catch (err) {
+    console.error('[pod-upload] S3 error:', err);
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+  }
 }
