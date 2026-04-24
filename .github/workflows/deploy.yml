@@ -69,8 +69,8 @@ jobs:
             APP_DIR=/home/ec2-user/pharma-track
             COMPOSE="$APP_DIR/infra/docker-compose.prod.yml"
 
-            # Write infra/.env entirely from GitHub Secrets — no manual .env.prod needed.
-            cat > "$APP_DIR/infra/.env" <<'ENVEOF'
+            # Write infra/.env entirely from GitHub Secrets.
+            cat > "$APP_DIR/infra/.env" <<ENVEOF
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             POSTGRES_USER=${{ secrets.POSTGRES_USER }}
             POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }}
@@ -100,7 +100,7 @@ jobs:
             cd "$APP_DIR"
 
             # Run DB migrations before swapping traffic
-            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" run --rm migrator
+            WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" --profile migrate run --rm migrator
 
             # Hot-swap web container only; keep postgres + redis running
             WEB_IMAGE="$IMAGE" docker compose -f "$COMPOSE" up -d --no-deps --wait web
