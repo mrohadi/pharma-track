@@ -1,13 +1,13 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const BUCKET = process.env.S3_BUCKET ?? 'pharmatrack-uploads';
 const REGION = process.env.S3_REGION ?? 'ap-southeast-1';
 const ENV_PREFIX = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
 // S3_UPLOAD_URL_TTL_SECONDS — presigned PUT expiry (default 5 min)
 // S3_VIEW_URL_TTL_SECONDS   — presigned GET expiry (default 5 min)
-const UPLOAD_TTL = Number(process.env.S3_UPLOAD_URL_TTL_SECONDS ?? 300);
+// const UPLOAD_TTL = Number(process.env.S3_UPLOAD_URL_TTL_SECONDS ?? 300);
 const VIEW_TTL = Number(process.env.S3_VIEW_URL_TTL_SECONDS ?? 300);
 
 function getS3Client() {
