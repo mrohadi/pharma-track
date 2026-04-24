@@ -32,27 +32,17 @@ export function PodPhotoInput({ orderId, required, onUploaded }: Props) {
     setUploading(true);
 
     try {
-      // 1. Get presigned URL
-      const res = await fetch('/api/pod-upload', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderId, contentType: file.type }),
-      });
+      const form = new FormData();
+      form.append('orderId', orderId);
+      form.append('file', file);
+
+      const res = await fetch('/api/pod-upload', { method: 'POST', body: form });
       if (!res.ok) {
         const body = await res.json();
-        throw new Error(body.error ?? 'Failed to get upload URL');
+        throw new Error(body.error ?? 'Upload failed');
       }
-      const { uploadUrl, key } = (await res.json()) as { uploadUrl: string; key: string };
+      const { key } = (await res.json()) as { key: string };
 
-      // 2. Upload directly to S3
-      const uploadRes = await fetch(uploadUrl, {
-        method: 'PUT',
-        headers: { 'Content-Type': file.type },
-        body: file,
-      });
-      if (!uploadRes.ok) throw new Error('Upload failed');
-
-      // 3. Show preview + notify parent
       setPreview(URL.createObjectURL(file));
       onUploaded(key);
     } catch (err) {

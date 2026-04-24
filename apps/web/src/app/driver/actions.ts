@@ -130,7 +130,7 @@ export async function verifyDeliveryOtpAction(formData: FormData): Promise<Verif
   if (!PIN_RE.test(otp)) return { ok: false, reason: 'OTP must be 6 digits' };
 
   // Validate podPhotoUrl looks like an S3 key (not arbitrary input)
-  if (podPhotoUrl && !podPhotoUrl.startsWith('pod-photos/')) {
+  if (podPhotoUrl && !/^(dev|prod)\/pod-photos\//.test(podPhotoUrl)) {
     return { ok: false, reason: 'Invalid photo URL' };
   }
 

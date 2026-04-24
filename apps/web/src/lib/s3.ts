@@ -1,40 +1,45 @@
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const BUCKET = process.env.S3_BUCKET ?? 'pharmatrack-uploads';
 const REGION = process.env.S3_REGION ?? 'ap-southeast-1';
+const ENV_PREFIX = process.env.NODE_ENV === 'production' ? 'prod' : 'dev';
+// S3_UPLOAD_URL_TTL_SECONDS — presigned PUT expiry (default 5 min)
+// S3_VIEW_URL_TTL_SECONDS   — presigned GET expiry (default 5 min)
+// const UPLOAD_TTL = Number(process.env.S3_UPLOAD_URL_TTL_SECONDS ?? 300);
+const VIEW_TTL = Number(process.env.S3_VIEW_URL_TTL_SECONDS ?? 300);
 
 function getS3Client() {
-  // LocalStack / MinIO for dev: set S3_ENDPOINT to http://localhost:4566
-  const endpoint = process.env.S3_ENDPOINT || undefined;
-
   return new S3Client({
     region: REGION,
-    ...(endpoint ? { endpoint, forcePathStyle: true } : {}),
+    requestChecksumCalculation: 'WHEN_REQUIRED',
+    responseChecksumValidation: 'WHEN_REQUIRED',
   });
 }
 
 /**
- * Generate a presigned PUT URL so the driver's browser can upload
- * the POD photo directly to S3 (no server-side relay needed).
+ * Upload a file buffer server-side to S3. Returns the object key.
  */
-export async function createPresignedUploadUrl(opts: {
+export async function uploadFile(opts: {
   orderId: string;
   contentType: string;
-}): Promise<{ uploadUrl: string; key: string }> {
+  buffer: Buffer;
+}): Promise<string> {
   const ext = opts.contentType === 'image/png' ? 'png' : 'jpg';
-  const key = `pod-photos/${opts.orderId}/${Date.now()}.${ext}`;
+  const key = `${ENV_PREFIX}/pod-photos/${opts.orderId}/${Date.now()}.${ext}`;
 
   const client = getS3Client();
-  const command = new PutObjectCommand({
+  const input: PutObjectCommandInput = {
     Bucket: BUCKET,
     Key: key,
     ContentType: opts.contentType,
-  });
+    Body: opts.buffer,
+    ContentLength: opts.buffer.byteLength,
+  };
 
-  const uploadUrl = await getSignedUrl(client, command, { expiresIn: 300 }); // 5 min
-
-  return { uploadUrl, key };
+  await client.send(new PutObjectCommand(input));
+  return key;
 }
 
 /**
@@ -48,5 +53,5 @@ export async function createPresignedViewUrl(key: string): Promise<string> {
     Key: key,
   });
 
-  return getSignedUrl(client, command, { expiresIn: 3600 }); // 1 hour
+  return getSignedUrl(client, command, { expiresIn: VIEW_TTL });
 }
