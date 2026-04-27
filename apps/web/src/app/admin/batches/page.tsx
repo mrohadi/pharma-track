@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
+import { RegeneratePinButton } from './regenerate-pin-button';
 import {
   listBatchesForAdmin,
   listBatchableOrders,
@@ -9,12 +9,21 @@ import {
 import { requireRole } from '@/lib/guards';
 import { CreateBatchForm } from './create-batch-form';
 
-const BATCH_STATUS_BADGE: Record<string, string> = {
-  draft: 'bg-slate-100 text-slate-700',
-  assigned: 'bg-indigo-100 text-indigo-800',
-  picked_up: 'bg-violet-100 text-violet-800',
-  completed: 'bg-green-100 text-green-800',
-  cancelled: 'bg-red-100 text-red-800',
+const PT = {
+  primary: 'oklch(0.52 0.18 250)',
+  text: '#0f172a',
+  muted: '#64748b',
+  border: '#e2e8f0',
+  bg: '#f8fafc',
+  card: '#ffffff',
+};
+
+const BATCH_STATUS: Record<string, { bg: string; color: string; label: string }> = {
+  draft: { bg: '#f1f5f9', color: '#475569', label: 'Draft' },
+  assigned: { bg: '#eef2ff', color: '#4338ca', label: 'Ditugaskan' },
+  picked_up: { bg: '#f5f3ff', color: '#6d28d9', label: 'Sudah diambil' },
+  completed: { bg: '#f0fdf4', color: '#15803d', label: 'Selesai' },
+  cancelled: { bg: '#fef2f2', color: '#b91c1c', label: 'Dibatalkan' },
 };
 
 export default async function BatchesPage({
@@ -25,55 +34,116 @@ export default async function BatchesPage({
   await requireRole('admin');
   const sp = await searchParams;
 
-  const [allBatches, allDrivers, allPharmacies, t, tBatch] = await Promise.all([
+  const [allBatches, allDrivers, allPharmacies] = await Promise.all([
     listBatchesForAdmin(),
     listDrivers(),
     listPharmaciesForFilter(),
-    getTranslations('BatchesPage'),
-    getTranslations('BatchStatus'),
   ]);
 
   const selectedPharmacyId = sp.pharmacyId ?? allPharmacies[0]?.id;
   const batchableOrders = selectedPharmacyId ? await listBatchableOrders(selectedPharmacyId) : [];
 
   return (
-    <main className="mx-auto max-w-5xl p-8">
-      <div className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-bold">{t('heading')}</h1>
-        <Link href="/admin/orders" className="text-brand-700 text-sm hover:underline">
-          {t('backToOrders')}
+    <div className="p-4 sm:p-6 lg:p-7">
+      {/* Header */}
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 700, color: PT.text, margin: 0 }}>Batches</h1>
+          <p style={{ fontSize: 13, color: PT.muted, marginTop: 4 }}>
+            Kelompokkan order dan tugaskan ke driver
+          </p>
+        </div>
+        <Link
+          href="/admin/orders"
+          style={{
+            borderRadius: 8,
+            border: `1px solid ${PT.border}`,
+            padding: '8px 16px',
+            fontSize: 13,
+            fontWeight: 600,
+            color: PT.muted,
+            textDecoration: 'none',
+          }}
+        >
+          ← Orders
         </Link>
       </div>
 
-      <section className="mb-8 rounded border border-slate-200 p-4">
-        <h2 className="mb-3 text-lg font-semibold">{t('createBatch')}</h2>
-        <div className="mb-3">
-          <form action="/admin/batches" method="get" className="flex items-end gap-2">
-            <div>
-              <label htmlFor="pharmacyId" className="mb-1 block text-xs text-slate-500">
-                {t('filterPharmacy')}
-              </label>
-              <select
-                id="pharmacyId"
-                name="pharmacyId"
-                defaultValue={selectedPharmacyId ?? ''}
-                className="rounded border border-slate-300 p-1.5 text-sm"
-              >
-                {allPharmacies.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <button
-              type="submit"
-              className="rounded border border-slate-300 bg-white px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-            >
-              {t('loadOrders')}
-            </button>
-          </form>
+      {/* Create batch card */}
+      <div
+        style={{
+          background: PT.card,
+          borderRadius: 14,
+          border: `1px solid ${PT.border}`,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          padding: 20,
+          marginBottom: 24,
+        }}
+      >
+        <div style={{ fontWeight: 700, fontSize: 14, color: PT.text, marginBottom: 16 }}>
+          Buat Batch Baru
         </div>
+
+        {/* Pharmacy filter */}
+        <form
+          action="/admin/batches"
+          method="get"
+          style={{ marginBottom: 16, display: 'flex', gap: 8, alignItems: 'flex-end' }}
+        >
+          <div>
+            <label
+              htmlFor="pharmacyId"
+              style={{
+                display: 'block',
+                fontSize: 12,
+                fontWeight: 600,
+                color: PT.muted,
+                marginBottom: 6,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+              }}
+            >
+              Apotek
+            </label>
+            <select
+              id="pharmacyId"
+              name="pharmacyId"
+              defaultValue={selectedPharmacyId ?? ''}
+              style={{
+                borderRadius: 8,
+                border: `1px solid ${PT.border}`,
+                padding: '8px 12px',
+                fontSize: 13,
+                color: PT.text,
+                background: PT.card,
+                fontFamily: 'inherit',
+              }}
+            >
+              {allPharmacies.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          </div>
+          <button
+            type="submit"
+            style={{
+              borderRadius: 8,
+              border: `1px solid ${PT.border}`,
+              padding: '8px 16px',
+              fontSize: 13,
+              fontWeight: 600,
+              color: PT.muted,
+              background: PT.card,
+              cursor: 'pointer',
+              fontFamily: 'inherit',
+            }}
+          >
+            Muat Order
+          </button>
+        </form>
+
         {selectedPharmacyId && (
           <CreateBatchForm
             orders={batchableOrders}
@@ -81,51 +151,116 @@ export default async function BatchesPage({
             pharmacyId={selectedPharmacyId}
           />
         )}
-      </section>
+      </div>
 
-      <h2 className="mb-2 text-lg font-semibold">{t('allBatches')}</h2>
-      {allBatches.length === 0 ? (
-        <p className="text-sm text-slate-600">{t('noBatches')}</p>
-      ) : (
-        <div className="overflow-x-auto rounded border border-slate-200">
-          <table className="min-w-full text-sm">
-            <thead className="bg-slate-50 text-left text-xs uppercase tracking-wide text-slate-500">
-              <tr>
-                <th className="px-3 py-2">{t('cols.pharmacy')}</th>
-                <th className="px-3 py-2">{t('cols.driver')}</th>
-                <th className="px-3 py-2">{t('cols.orders')}</th>
-                <th className="px-3 py-2">{t('cols.status')}</th>
-                <th className="px-3 py-2">{t('cols.pickedUp')}</th>
-                <th className="px-3 py-2">{t('cols.created')}</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {allBatches.map((b) => (
-                <tr key={b.id}>
-                  <td className="px-3 py-2">{b.pharmacyName}</td>
-                  <td className="px-3 py-2">{b.driverName ?? '—'}</td>
-                  <td className="px-3 py-2">{b.orderCount}</td>
-                  <td className="px-3 py-2">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                        BATCH_STATUS_BADGE[b.status] ?? 'bg-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {tBatch(b.status as Parameters<typeof tBatch>[0]) ?? b.status}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-slate-500">
-                    {b.pickupConfirmedAt ? new Date(b.pickupConfirmedAt).toLocaleString() : '—'}
-                  </td>
-                  <td className="px-3 py-2 text-slate-500">
-                    {new Date(b.createdAt).toLocaleString()}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      {/* Batch list */}
+      <div
+        style={{
+          background: PT.card,
+          borderRadius: 14,
+          border: `1px solid ${PT.border}`,
+          boxShadow: '0 1px 3px rgba(0,0,0,0.04)',
+          overflow: 'hidden',
+        }}
+      >
+        <div style={{ padding: '16px 20px', borderBottom: `1px solid ${PT.border}` }}>
+          <div style={{ fontWeight: 700, fontSize: 14, color: PT.text }}>
+            Semua Batch ({allBatches.length})
+          </div>
         </div>
-      )}
-    </main>
+
+        {allBatches.length === 0 ? (
+          <div style={{ padding: 40, textAlign: 'center', color: PT.muted, fontSize: 13 }}>
+            Belum ada batch.
+          </div>
+        ) : (
+          <div style={{ overflowX: 'auto' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+              <thead>
+                <tr style={{ background: PT.bg }}>
+                  {['Apotek', 'Driver', 'Order', 'Status', 'PIN', 'Pickup', 'Dibuat'].map((h) => (
+                    <th
+                      key={h}
+                      style={{
+                        padding: '10px 16px',
+                        textAlign: 'left',
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: PT.muted,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                        borderBottom: `1px solid ${PT.border}`,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {h}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {allBatches.map((b, i) => {
+                  const badge = BATCH_STATUS[b.status] ?? BATCH_STATUS.draft;
+                  return (
+                    <tr
+                      key={b.id}
+                      style={{
+                        borderBottom: i < allBatches.length - 1 ? `1px solid ${PT.border}` : 'none',
+                      }}
+                    >
+                      <td style={{ padding: '12px 16px', fontWeight: 600, color: PT.text }}>
+                        {b.pharmacyName}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: PT.muted }}>
+                        {b.driverName ?? '—'}
+                      </td>
+                      <td style={{ padding: '12px 16px', color: PT.text, fontWeight: 600 }}>
+                        {b.orderCount}
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        <span
+                          style={{
+                            display: 'inline-block',
+                            background: badge.bg,
+                            color: badge.color,
+                            borderRadius: 999,
+                            padding: '2px 10px',
+                            fontSize: 11,
+                            fontWeight: 600,
+                          }}
+                        >
+                          {badge.label}
+                        </span>
+                      </td>
+                      <td style={{ padding: '12px 16px' }}>
+                        {b.status === 'assigned' ? (
+                          <RegeneratePinButton batchId={b.id} />
+                        ) : (
+                          <span style={{ fontSize: 12, color: PT.muted }}>—</span>
+                        )}
+                      </td>
+                      <td
+                        style={{ padding: '12px 16px', color: PT.muted, whiteSpace: 'nowrap' }}
+                        suppressHydrationWarning
+                      >
+                        {b.pickupConfirmedAt
+                          ? new Date(b.pickupConfirmedAt).toLocaleString('id-ID')
+                          : '—'}
+                      </td>
+                      <td
+                        style={{ padding: '12px 16px', color: PT.muted, whiteSpace: 'nowrap' }}
+                        suppressHydrationWarning
+                      >
+                        {new Date(b.createdAt).toLocaleString('id-ID')}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

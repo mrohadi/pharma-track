@@ -1,40 +1,39 @@
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-
-const REGION = process.env.AWS_REGION ?? 'ap-southeast-1';
-const FROM = process.env.SES_FROM_EMAIL ?? 'noreply@pharmatrack.mrohadi.com';
-
-function getSesClient() {
-  return new SESClient({ region: REGION });
-}
+const FROM = process.env.RESEND_FROM_EMAIL ?? 'noreply@pharmatrack.mrohadi.com';
+const RESEND_API = 'https://api.resend.com/emails';
 
 export type SendEmailResult = { success: true } | { success: false; error: string };
 
-/**
- * Send a plain-text + HTML email via AWS SES.
- * FROM address: SES_FROM_EMAIL env var (default: noreply@pharmatrack.mrohadi.com)
- */
 export async function sendEmail(opts: {
   to: string;
   subject: string;
   text: string;
   html: string;
 }): Promise<SendEmailResult> {
-  const client = getSesClient();
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) return { success: false, error: 'RESEND_API_KEY not configured' };
 
   try {
-    await client.send(
-      new SendEmailCommand({
-        Source: FROM,
-        Destination: { ToAddresses: [opts.to] },
-        Message: {
-          Subject: { Data: opts.subject, Charset: 'UTF-8' },
-          Body: {
-            Text: { Data: opts.text, Charset: 'UTF-8' },
-            Html: { Data: opts.html, Charset: 'UTF-8' },
-          },
-        },
+    // Use native fetch with cache: 'no-store' to bypass Next.js fetch instrumentation
+    const res = await fetch(RESEND_API, {
+      method: 'POST',
+      cache: 'no-store',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: FROM,
+        to: opts.to,
+        subject: opts.subject,
+        text: opts.text,
+        html: opts.html,
       }),
-    );
+    });
+
+    const data = (await res.json()) as { id?: string; name?: string; message?: string };
+    if (!res.ok) {
+      return { success: false, error: data.message ?? data.name ?? `HTTP ${res.status}` };
+    }
     return { success: true };
   } catch (err) {
     return { success: false, error: err instanceof Error ? err.message : String(err) };
@@ -42,7 +41,8 @@ export async function sendEmail(opts: {
 }
 
 /**
- * Send the delivery OTP email to the patient.
+ * Send delivery OTP email to patient.
+ * Called as fallback when WhatsApp send fails.
  */
 export function sendDeliveryOtpEmail(opts: {
   to: string;

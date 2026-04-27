@@ -1,14 +1,16 @@
 import { headers } from 'next/headers';
+import { cache } from 'react';
 import { auth } from './auth';
 import type { Role } from '@pharmatrack/shared';
 
 /**
  * Server-side helper to read the current session in a Server Component or
- * Server Action. Returns null if unauthenticated.
+ * Server Action. Deduped per request via React.cache so multiple Server
+ * Components in the same render tree share one fetch.
  */
-export async function getSession() {
+export const getSession = cache(async () => {
   return auth.api.getSession({ headers: await headers() });
-}
+});
 
 /**
  * Role-aware post-login redirect target.

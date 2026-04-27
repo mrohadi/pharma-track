@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { SignOutButton } from '@/components/sign-out-button';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 
 const SIDEBAR_BG = 'oklch(0.15 0.04 255)';
 
@@ -14,17 +15,37 @@ const NAV = [
   { href: '/pharmacy/settings', icon: '⚙️', label: 'Settings' },
 ];
 
+// Module-level cache — survives client-side navigation
+let cachedUser: { name: string; email: string } | null = null;
+
 export function PharmacySidebar({
-  initial,
-  pharmacyName,
-  userEmail,
+  initial: initialInitial,
+  pharmacyName: initialPharmacyName,
+  userEmail: initialEmail,
+  locale,
 }: {
   initial: string;
   pharmacyName: string;
   userEmail: string;
+  locale: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(
+    () => cachedUser ?? { name: initialPharmacyName, email: initialEmail },
+  );
+
+  useEffect(() => {
+    if (cachedUser) return;
+    fetch('/api/me')
+      .then((r) => r.json())
+      .then((data) => {
+        const u = { name: data.name, email: data.email };
+        cachedUser = u;
+        setUser(u);
+      })
+      .catch(() => {});
+  }, []);
 
   function openDrawer() {
     setOpen(true);
@@ -164,7 +185,7 @@ export function PharmacySidebar({
             flexShrink: 0,
           }}
         >
-          {initial}
+          {user.name.charAt(0).toUpperCase() || initialInitial}
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
@@ -177,7 +198,7 @@ export function PharmacySidebar({
               textOverflow: 'ellipsis',
             }}
           >
-            {pharmacyName}
+            {user.name}
           </div>
           <div
             style={{
@@ -188,10 +209,13 @@ export function PharmacySidebar({
               textOverflow: 'ellipsis',
             }}
           >
-            {userEmail}
+            {user.email}
           </div>
         </div>
-        <SignOutButton className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-white/40 transition-colors hover:text-white/70" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <SignOutButton className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-white/40 transition-colors hover:text-white/70" />
+          <LocaleSwitcher locale={locale} variant="dark" />
+        </div>
       </div>
     </div>
   );
@@ -208,8 +232,16 @@ export function PharmacySidebar({
 
       {/* Mobile/tablet: top bar (< lg) */}
       <div
-        className={`items-center justify-between px-4 py-3 lg:hidden ${open ? 'hidden' : 'flex'}`}
-        style={{ background: SIDEBAR_BG, position: 'sticky', top: 0, zIndex: 50 }}
+        className="flex items-center justify-between px-4 py-3 lg:hidden"
+        style={{
+          background: SIDEBAR_BG,
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          opacity: open ? 0 : 1,
+          pointerEvents: open ? 'none' : 'auto',
+          transition: 'opacity 0.2s ease',
+        }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div
@@ -252,28 +284,35 @@ export function PharmacySidebar({
       </div>
 
       {/* Drawer overlay (mobile/tablet) */}
-      {open && (
-        <>
-          <div
-            className="fixed inset-0 bg-black/60 lg:hidden"
-            style={{ zIndex: 60 }}
-            onClick={closeDrawer}
-          />
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: 240,
-              zIndex: 70,
-              height: '100%',
-            }}
-          >
-            {sidebarContent}
-          </div>
-        </>
-      )}
+      <>
+        <div
+          className="fixed inset-0 lg:hidden"
+          style={{
+            zIndex: 60,
+            background: 'rgba(0,0,0,0.6)',
+            opacity: open ? 1 : 0,
+            pointerEvents: open ? 'auto' : 'none',
+            transition: 'opacity 0.25s ease',
+          }}
+          onClick={closeDrawer}
+        />
+        <div
+          className="lg:hidden"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            width: 240,
+            zIndex: 70,
+            height: '100%',
+            transform: open ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.25s ease',
+          }}
+        >
+          {sidebarContent}
+        </div>
+      </>
     </>
   );
 }

@@ -1,5 +1,6 @@
-import { createOrderWithItems, createAddressRequest } from '@pharmatrack/db';
+import { createOrderWithItems, createAddressRequest, autoAssignOrder } from '@pharmatrack/db';
 import { getWhatsAppClient, TEMPLATES } from '@pharmatrack/whatsapp';
+import { sendPushToDriver } from '@/lib/push';
 import type { OrderWizardInput } from '@pharmatrack/shared';
 
 const APP_URL = process.env.APP_URL ?? 'http://localhost:3000';
@@ -22,6 +23,7 @@ export async function createOrderFromWizard(
     actorUserId,
     patientName: input.patientName,
     patientPhone: input.patientPhone,
+    patientEmail: input.patientEmail || undefined,
     medicineText,
     deliveryAddress: input.deliveryAddress || undefined,
     items: input.items,
@@ -62,6 +64,17 @@ export async function createOrderFromWizard(
         `[createOrderFromWizard] createAddressRequest failed for order ${orderId}:`,
         result.reason,
       );
+    }
+  }
+
+  // Auto-assign driver if enabled and address already provided
+  if (process.env.AUTO_ASSIGN_DRIVER === 'true' && input.deliveryAddress) {
+    const assigned = await autoAssignOrder({ orderId, systemUserId: actorUserId });
+    if (assigned.assigned && assigned.driverId) {
+      sendPushToDriver(assigned.driverId, {
+        title: 'Order baru ditugaskan',
+        body: 'Ada order pengiriman baru untuk Anda. Buka PharmaTrack untuk detail.',
+      }).catch(console.error);
     }
   }
 

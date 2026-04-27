@@ -24,6 +24,7 @@ const STEP_LABELS = ['Data Pasien', 'Obat-obatan', 'Opsi Pengiriman', 'Konfirmas
 const INITIAL_STATE: WizardState = {
   patientName: '',
   patientPhone: '',
+  patientEmail: '',
   deliveryAddress: '',
   items: [{ name: '', quantity: 1, unitPriceCents: undefined }],
   priority: 'normal',
@@ -111,7 +112,19 @@ function Step1Patient({
             error={errors.patientPhone}
           />
         </InputField>
-        <div />
+        <InputField
+          label="Email Pasien (opsional)"
+          error={errors.patientEmail}
+          hint="Digunakan sebagai fallback jika OTP WhatsApp gagal."
+        >
+          <TextInput
+            type="email"
+            value={(state as WizardState & { patientEmail?: string }).patientEmail ?? ''}
+            onChange={(e) => onChange({ patientEmail: e.target.value } as Partial<WizardState>)}
+            placeholder="pasien@email.com"
+            error={errors.patientEmail}
+          />
+        </InputField>
         <div className="col-span-2">
           <InputField
             label="Alamat Lengkap (opsional)"
@@ -505,6 +518,7 @@ export function OrderWizard() {
       const payload: OrderWizardInput = {
         patientName: state.patientName,
         patientPhone: state.patientPhone,
+        patientEmail: (state as WizardState & { patientEmail?: string }).patientEmail || undefined,
         deliveryAddress: state.deliveryAddress || undefined,
         items: state.items,
         priority: state.priority,

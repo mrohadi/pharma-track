@@ -22,6 +22,7 @@ type Item = { name: string; quantity: number; unitPriceCents?: number };
 type FormState = {
   patientName: string;
   patientPhone: string;
+  patientEmail: string;
   deliveryAddress: string;
   items: Item[];
   priority: 'normal' | 'express';
@@ -32,6 +33,7 @@ type FormState = {
 const INITIAL: FormState = {
   patientName: '',
   patientPhone: '',
+  patientEmail: '',
   deliveryAddress: '',
   items: [{ name: '', quantity: 1, unitPriceCents: undefined }],
   priority: 'normal',
@@ -203,6 +205,15 @@ export function AdminNewOrderClient() {
                   value={form.patientPhone}
                   onChange={(e) => setForm((f) => ({ ...f, patientPhone: e.target.value }))}
                   placeholder="+62..."
+                />
+              </Field>
+              <Field label="Email Pasien (opsional)" error={errors.patientEmail}>
+                <input
+                  type="email"
+                  style={inputStyle(!!errors.patientEmail)}
+                  value={form.patientEmail}
+                  onChange={(e) => setForm((f) => ({ ...f, patientEmail: e.target.value }))}
+                  placeholder="pasien@email.com"
                 />
               </Field>
               <Field label="Alamat Pengiriman *" error={errors.deliveryAddress}>
