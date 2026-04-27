@@ -13,6 +13,7 @@ import {
 import type { UpdateDriverProfileInput } from '@pharmatrack/db';
 import { getWhatsAppClient, TEMPLATES } from '@pharmatrack/whatsapp';
 import { getSession } from '@/lib/session';
+import { sendDeliveryOtpEmail } from '@/lib/ses';
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 const PIN_RE = /^[0-9]{6}$/;
@@ -100,7 +101,24 @@ export async function startDeliveryAction(formData: FormData): Promise<StartDeli
 
   if (!sendResult.success) {
     console.error(`[DeliveryOTP] WhatsApp send failed for order ${orderId}:`, sendResult.error);
-    // OTP is still generated — driver can ask patient verbally as fallback
+
+    // Email fallback — only if patient has an email address
+    if (result.patientEmail) {
+      const emailResult = await sendDeliveryOtpEmail({
+        to: result.patientEmail,
+        patientFirstName: firstName,
+        otp: result.otp,
+        orderId,
+      });
+      if (!emailResult.success) {
+        console.error(
+          `[DeliveryOTP] Email fallback failed for order ${orderId}:`,
+          emailResult.error,
+        );
+      } else {
+        console.log(`[DeliveryOTP] Email fallback sent for order ${orderId}`);
+      }
+    }
   }
 
   // In mock mode, log the OTP for dev testing

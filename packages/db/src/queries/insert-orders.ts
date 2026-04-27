@@ -4,6 +4,7 @@ import { orders, auditLog } from '../schema';
 export type NewCsvOrder = {
   patientName: string;
   patientPhone: string;
+  patientEmail?: string;
   medicineText: string;
   deliveryAddress?: string;
 };
@@ -27,6 +28,7 @@ export async function insertOrdersFromCsv(opts: {
           pharmacyId,
           patientName: r.patientName,
           patientPhone: r.patientPhone,
+          patientEmail: r.patientEmail ?? null,
           medicineText: r.medicineText,
           deliveryAddress: r.deliveryAddress ?? null,
           status: 'pending_address' as const,

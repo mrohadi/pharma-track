@@ -25,6 +25,7 @@ export type GenerateDeliveryOtpResult =
       otp: string;
       patientName: string;
       patientPhone: string;
+      patientEmail: string | null;
       orderId: string;
     }
   | { ok: false; reason: string };
@@ -55,6 +56,7 @@ export async function generateDeliveryOtp(opts: {
           status: orders.status,
           patientName: orders.patientName,
           patientPhone: orders.patientPhone,
+          patientEmail: orders.patientEmail,
         })
         .from(orders)
         .where(eq(orders.id, orderId))
@@ -113,6 +115,7 @@ export async function generateDeliveryOtp(opts: {
       otp,
       patientName: order.patientName,
       patientPhone: order.patientPhone,
+      patientEmail: order.patientEmail,
       orderId,
     };
   });

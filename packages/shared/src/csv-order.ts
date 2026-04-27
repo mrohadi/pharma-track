@@ -13,7 +13,7 @@ import { z } from 'zod';
  */
 export const CSV_HEADERS = {
   required: ['patient_name', 'patient_phone', 'medicine'] as const,
-  optional: ['delivery_address'] as const,
+  optional: ['delivery_address', 'patient_email'] as const,
 };
 
 export const ALL_CSV_HEADERS = [...CSV_HEADERS.required, ...CSV_HEADERS.optional] as const;
@@ -57,6 +57,11 @@ export const CsvOrderRow = z.object({
     .max(500)
     .optional()
     .transform((v) => (v ? v : undefined)),
+  patient_email: z
+    .string()
+    .trim()
+    .transform((v) => v || undefined)
+    .pipe(z.string().email('patient_email must be a valid email').optional()),
 });
 
 export type CsvOrderRow = z.infer<typeof CsvOrderRow>;
@@ -70,7 +75,13 @@ export type CsvRowError = {
 
 /** Example rows for the downloadable template. */
 export const CSV_TEMPLATE_ROWS = [
-  ['patient_name', 'patient_phone', 'medicine', 'delivery_address'],
-  ['Budi Santoso', '081234567890', 'Paracetamol 500mg x10; Amoxicillin 500mg x15', ''],
-  ['Siti Rahayu', '+6281298765432', 'Vitamin D3 1000IU x30', 'Jl. Merdeka No. 12, Jakarta'],
+  ['patient_name', 'patient_phone', 'medicine', 'delivery_address', 'patient_email'],
+  ['Budi Santoso', '081234567890', 'Paracetamol 500mg x10; Amoxicillin 500mg x15', '', ''],
+  [
+    'Siti Rahayu',
+    '+6281298765432',
+    'Vitamin D3 1000IU x30',
+    'Jl. Merdeka No. 12, Jakarta',
+    'siti@example.com',
+  ],
 ];
