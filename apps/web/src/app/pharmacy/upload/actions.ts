@@ -64,6 +64,7 @@ export async function uploadOrdersCsv(formData: FormData): Promise<UploadResult>
     rows: valid.map((r) => ({
       patientName: r.patient_name,
       patientPhone: r.patient_phone,
+      patientEmail: r.patient_email,
       medicineText: r.medicine,
       deliveryAddress: r.delivery_address,
     })),

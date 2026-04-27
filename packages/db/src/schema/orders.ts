@@ -35,6 +35,7 @@ export const orders = pgTable(
       .references(() => pharmacies.id, { onDelete: 'restrict' }),
     patientName: text('patient_name').notNull(),
     patientPhone: text('patient_phone').notNull(),
+    patientEmail: text('patient_email'),
     medicineText: text('medicine_text').notNull(),
     deliveryAddress: text('delivery_address'),
     addressCollectedAt: timestamp('address_collected_at', { withTimezone: true }),
