@@ -153,7 +153,10 @@ export default async function AdminDashboard() {
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 style={{ fontSize: 20, fontWeight: 700, color: PT.text, margin: 0 }}>Dashboard</h1>
-          <p style={{ color: PT.muted, fontSize: 13.5, margin: '4px 0 0' }}>
+          <p
+            style={{ color: PT.muted, fontSize: 13.5, margin: '4px 0 0' }}
+            suppressHydrationWarning
+          >
             Selamat pagi, Admin · {dateStr}
           </p>
         </div>
@@ -237,7 +240,7 @@ export default async function AdminDashboard() {
           >
             <div>
               <div style={{ fontWeight: 700, fontSize: 15, color: PT.text }}>Order Minggu Ini</div>
-              <div style={{ fontSize: 12, color: PT.muted, marginTop: 2 }}>
+              <div style={{ fontSize: 12, color: PT.muted, marginTop: 2 }} suppressHydrationWarning>
                 {weekTotal} total · {weekStart}–{weekEnd}
               </div>
             </div>
@@ -436,6 +439,7 @@ export default async function AdminDashboard() {
                           fontSize: 12,
                           whiteSpace: 'nowrap',
                         }}
+                        suppressHydrationWarning
                       >
                         {timeStr}
                       </td>

@@ -1,15 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { getSessionCookie } from 'better-auth/cookies';
 
-/**
- * Lightweight edge middleware: redirects unauthenticated requests to /login.
- * Role-scoped access control (pharmacy vs admin vs driver) happens in the
- * per-segment layouts, where the full session is available via `getSession()`.
- *
- * Why not check role here? `getSessionCookie` only confirms a session exists;
- * it doesn't decode role without a DB round-trip, which we don't want on the
- * edge for every navigation.
- */
 const PROTECTED_PREFIXES = ['/pharmacy', '/admin', '/driver'];
 
 export function middleware(request: NextRequest) {

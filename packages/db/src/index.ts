@@ -5,7 +5,16 @@ import * as schema from './schema';
 const connectionString =
   process.env.DATABASE_URL ?? 'postgresql://pharmatrack:pharmatrack@localhost:5432/pharmatrack';
 
-const client = postgres(connectionString, { max: 10 });
+declare global {
+  // eslint-disable-next-line no-var
+  var __pgClient: ReturnType<typeof postgres> | undefined;
+}
+
+// Reuse pool across hot-reloads in dev; create once in prod
+const client =
+  globalThis.__pgClient ??
+  postgres(connectionString, { max: 5, idle_timeout: 20, connect_timeout: 10 });
+if (process.env.NODE_ENV !== 'production') globalThis.__pgClient = client;
 
 export const db = drizzle(client, { schema });
 export * from './schema';
@@ -30,3 +39,7 @@ export * from './queries/pharmacies';
 export * from './queries/users';
 export * from './queries/signup';
 export * from './queries/verification';
+export * from './queries/order-detail';
+export * from './queries/legal-doc-reviews';
+export * from './queries/auto-assign';
+export * from './queries/invitations';

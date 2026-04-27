@@ -1,6 +1,7 @@
 import { requireRole } from '@/lib/guards';
 import { listAllPharmacies, listAllDrivers } from '@pharmatrack/db';
 import { UsersTabs } from './tabs.client';
+import { InviteUserButton } from './invite-user-button';
 
 const STAT_COLORS = {
   teal: { icon: '#0d9488', bg: '#f0fdfa', border: '#99f6e4' },
@@ -97,23 +98,7 @@ export default async function AdminUsersPage() {
             Kelola apotek dan driver terdaftar
           </p>
         </div>
-        <button
-          type="button"
-          style={{
-            background: 'oklch(0.52 0.18 250)',
-            color: '#fff',
-            borderRadius: 8,
-            padding: '9px 18px',
-            fontSize: 13,
-            fontWeight: 600,
-            border: 'none',
-            cursor: 'pointer',
-            fontFamily: 'inherit',
-            flexShrink: 0,
-          }}
-        >
-          + Undang Pengguna
-        </button>
+        <InviteUserButton />
       </div>
 
       {/* Stat cards */}

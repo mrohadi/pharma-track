@@ -254,8 +254,8 @@ export default async function AdminOrdersPage({
                               </button>
                             </form>
                           )}
-                          <button
-                            type="button"
+                          <Link
+                            href={`/admin/orders/${o.id}`}
                             style={{
                               borderRadius: 6,
                               background: '#fff',
@@ -264,12 +264,13 @@ export default async function AdminOrdersPage({
                               padding: '4px 10px',
                               fontSize: 11,
                               fontWeight: 600,
-                              cursor: 'pointer',
                               fontFamily: 'inherit',
+                              textDecoration: 'none',
+                              display: 'inline-block',
                             }}
                           >
                             View
-                          </button>
+                          </Link>
                         </div>
                       </td>
                     </tr>

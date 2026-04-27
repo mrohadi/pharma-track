@@ -2,9 +2,10 @@
 
 import { PTLogo } from '@/components/logo';
 import { SignOutButton } from '@/components/sign-out-button';
+import { LocaleSwitcher } from '@/components/locale-switcher';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 const SIDEBAR_BG = 'oklch(0.15 0.04 255)';
 const DANGER = 'oklch(0.55 0.2 25)';
@@ -12,22 +13,49 @@ const DANGER = 'oklch(0.55 0.2 25)';
 const NAV = [
   { href: '/admin', icon: '📊', label: 'Dashboard' },
   { href: '/admin/orders', icon: '📦', label: 'Orders' },
+  { href: '/admin/batches', icon: '🗂️', label: 'Batches' },
   { href: '/admin/users', icon: '👥', label: 'Users' },
+  { href: '/admin/legal-docs', icon: '📋', label: 'Dokumen Legal' },
   { href: '/admin/analytics', icon: '📈', label: 'Analytics' },
   { href: '/admin/settings', icon: '⚙️', label: 'Settings' },
 ];
 
+// Module-level cache — survives client-side navigation
+let cachedUser: { name: string; email: string; pendingCount: number } | null = null;
+
 export function AdminSidebar({
-  userName,
-  userEmail,
-  pendingCount,
+  userName: initialName,
+  userEmail: initialEmail,
+  pendingCount: initialPendingCount,
+  locale,
 }: {
   userName: string;
   userEmail: string;
   pendingCount: number;
+  locale: string;
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [user, setUser] = useState(
+    () =>
+      cachedUser ?? {
+        name: initialName,
+        email: initialEmail,
+        pendingCount: initialPendingCount,
+      },
+  );
+
+  useEffect(() => {
+    if (cachedUser) return;
+    fetch('/api/me')
+      .then((r) => r.json())
+      .then((data) => {
+        const u = { name: data.name, email: data.email, pendingCount: data.pendingCount ?? 0 };
+        cachedUser = u;
+        setUser(u);
+      })
+      .catch(() => {});
+  }, []);
 
   function openDrawer() {
     setOpen(true);
@@ -75,7 +103,6 @@ export function AdminSidebar({
             Administrator
           </div>
         </div>
-        {/* Close button — only visible on mobile when drawer open */}
         <button
           onClick={() => closeDrawer()}
           aria-label="Close menu"
@@ -103,7 +130,8 @@ export function AdminSidebar({
       <nav style={{ flex: 1, minHeight: 0, padding: '10px', overflowY: 'auto' }}>
         {NAV.map((item) => {
           const active = isActive(item.href);
-          const badge = item.href === '/admin/users' && pendingCount > 0 ? pendingCount : null;
+          const badge =
+            item.href === '/admin/users' && user.pendingCount > 0 ? user.pendingCount : null;
           return (
             <Link
               key={item.href}
@@ -170,7 +198,7 @@ export function AdminSidebar({
             flexShrink: 0,
           }}
         >
-          {userName.charAt(0).toUpperCase()}
+          {user.name.charAt(0).toUpperCase()}
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
@@ -183,7 +211,7 @@ export function AdminSidebar({
               textOverflow: 'ellipsis',
             }}
           >
-            {userName}
+            {user.name}
           </div>
           <div
             style={{
@@ -194,17 +222,20 @@ export function AdminSidebar({
               textOverflow: 'ellipsis',
             }}
           >
-            {userEmail}
+            {user.email}
           </div>
         </div>
-        <SignOutButton className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-white/40 transition-colors hover:text-white/70" />
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
+          <SignOutButton className="cursor-pointer border-none bg-transparent p-0 text-[11px] text-white/40 transition-colors hover:text-white/70" />
+          <LocaleSwitcher locale={locale} variant="dark" />
+        </div>
       </div>
     </div>
   );
 
   return (
     <>
-      {/* ── Desktop: fixed sidebar (lg+) ── */}
+      {/* Desktop: fixed sidebar (lg+) */}
       <div
         className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:z-40 lg:flex"
         style={{ width: 240 }}
@@ -212,18 +243,25 @@ export function AdminSidebar({
         {sidebarContent}
       </div>
 
-      {/* ── Mobile/tablet: top bar (< lg) ── */}
+      {/* Mobile/tablet: top bar (< lg) */}
       <div
-        className={`items-center justify-between px-4 py-3 lg:hidden ${open ? 'hidden' : 'flex'}`}
-        style={{ background: SIDEBAR_BG, position: 'sticky', top: 0, zIndex: 50 }}
+        className="flex items-center justify-between px-4 py-3 lg:hidden"
+        style={{
+          background: SIDEBAR_BG,
+          position: 'sticky',
+          top: 0,
+          zIndex: 50,
+          opacity: open ? 0 : 1,
+          pointerEvents: open ? 'none' : 'auto',
+          transition: 'opacity 0.2s ease',
+        }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <PTLogo size={28} white />
           <span style={{ color: '#fff', fontWeight: 700, fontSize: 15 }}>PharmaTrack</span>
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          {/* Pending badge on mobile */}
-          {pendingCount > 0 && (
+          {user.pendingCount > 0 && (
             <Link
               href="/admin/users"
               style={{
@@ -236,7 +274,7 @@ export function AdminSidebar({
                 textDecoration: 'none',
               }}
             >
-              {pendingCount} pending
+              {user.pendingCount} pending
             </Link>
           )}
           <button
@@ -261,31 +299,36 @@ export function AdminSidebar({
         </div>
       </div>
 
-      {/* ── Drawer overlay (mobile/tablet) ── */}
-      {open && (
-        <>
-          {/* Backdrop — sits above the sticky top bar (z-30) */}
-          <div
-            className="fixed inset-0 bg-black/60 lg:hidden"
-            style={{ zIndex: 60 }}
-            onClick={() => closeDrawer()}
-          />
-          {/* Drawer — above backdrop */}
-          <div
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              bottom: 0,
-              width: 240,
-              zIndex: 70,
-              height: '100%',
-            }}
-          >
-            {sidebarContent}
-          </div>
-        </>
-      )}
+      {/* Drawer overlay (mobile/tablet) */}
+      <>
+        <div
+          className="fixed inset-0 lg:hidden"
+          style={{
+            zIndex: 60,
+            background: 'rgba(0,0,0,0.6)',
+            opacity: open ? 1 : 0,
+            pointerEvents: open ? 'auto' : 'none',
+            transition: 'opacity 0.25s ease',
+          }}
+          onClick={() => closeDrawer()}
+        />
+        <div
+          className="lg:hidden"
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            width: 240,
+            zIndex: 70,
+            height: '100%',
+            transform: open ? 'translateX(0)' : 'translateX(-100%)',
+            transition: 'transform 0.25s ease',
+          }}
+        >
+          {sidebarContent}
+        </div>
+      </>
     </>
   );
 }

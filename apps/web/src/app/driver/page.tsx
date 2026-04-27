@@ -5,6 +5,8 @@ import { BottomNav } from './bottom-nav';
 import { OnlineToggle } from './online-toggle';
 import { PickupForm } from './pickup-form';
 import { DeliveryControls } from './delivery-controls';
+import { LocaleSwitcher } from '@/components/locale-switcher';
+import { getLocale } from 'next-intl/server';
 
 function formatRupiah(cents: number): string {
   return `Rp${Math.round(cents / 100).toLocaleString('id-ID')}`;
@@ -12,6 +14,7 @@ function formatRupiah(cents: number): string {
 
 export default async function DriverHome() {
   const session = await requireRole('driver');
+  const locale = await getLocale();
 
   const driver = await getDriverByUserId(session.user.id);
   if (!driver) {
@@ -48,8 +51,11 @@ export default async function DriverHome() {
               {session.user.name ?? session.user.email}
             </div>
           </div>
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-base font-bold text-white">
-            {(session.user.name ?? session.user.email ?? 'D')[0].toUpperCase()}
+          <div className="flex items-center gap-3">
+            <LocaleSwitcher locale={locale} variant="dark" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-base font-bold text-white">
+              {(session.user.name ?? session.user.email ?? 'D')[0].toUpperCase()}
+            </div>
           </div>
         </div>
         {/* Today stats */}

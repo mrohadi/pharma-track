@@ -228,3 +228,52 @@ export async function listBatchesForDriver(driverId: string) {
 
   return rows;
 }
+
+// ─── Regenerate pickup PIN ───────────────────────────────────────────────
+
+export type RegeneratePinResult = { ok: true; pin: string } | { ok: false; reason: string };
+
+/**
+ * Generate a new pickup PIN for an assigned batch.
+ * Only works when batch status is 'assigned' (not yet picked up).
+ */
+export async function regenerateBatchPin(opts: {
+  batchId: string;
+  actorUserId: string;
+}): Promise<RegeneratePinResult> {
+  const { batchId, actorUserId } = opts;
+
+  const batch = (
+    await db
+      .select({ id: batches.id, status: batches.status })
+      .from(batches)
+      .where(eq(batches.id, batchId))
+      .limit(1)
+  ).at(0);
+
+  if (!batch) return { ok: false, reason: 'Batch not found' };
+  if (batch.status !== 'assigned') {
+    return {
+      ok: false,
+      reason: `Batch ${batch.status} — only assigned batches can regenerate PIN`,
+    };
+  }
+
+  const pin = generatePin();
+  const pinHash = hashPin(pin);
+
+  await db
+    .update(batches)
+    .set({ pickupPinHash: pinHash, updatedAt: new Date() })
+    .where(eq(batches.id, batchId));
+
+  await db.insert(auditLog).values({
+    actorUserId,
+    entityType: 'batch',
+    entityId: batchId,
+    action: 'batch.pin_regenerated',
+    diff: {} as Record<string, unknown>,
+  });
+
+  return { ok: true, pin };
+}

@@ -140,7 +140,10 @@ export default async function AdminSettingsPage() {
           <Section title="Pengaturan Order" description="Aturan pembuatan dan pemrosesan order">
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <Row label="Auto-assign Driver" sub="Otomatis tugaskan driver tersedia">
-                <Badge label="Nonaktif" color="amber" />
+                <Badge
+                  label={process.env.AUTO_ASSIGN_DRIVER === 'true' ? 'Aktif' : 'Nonaktif'}
+                  color={process.env.AUTO_ASSIGN_DRIVER === 'true' ? 'green' : 'amber'}
+                />
               </Row>
               <Row label="Batas Order Harian" sub="Per apotek per hari">
                 <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>

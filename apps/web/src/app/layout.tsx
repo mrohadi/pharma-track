@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
-import { PageTransition } from '@/components/page-transition';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -35,10 +34,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale}>
-      <body className="min-h-screen antialiased">
-        <NextIntlClientProvider messages={messages}>
-          <PageTransition>{children}</PageTransition>
-        </NextIntlClientProvider>
+      <head>
+        <meta name="color-scheme" content="light only" />
+      </head>
+      <body className="min-h-screen antialiased" suppressHydrationWarning>
+        <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
       </body>
     </html>
   );

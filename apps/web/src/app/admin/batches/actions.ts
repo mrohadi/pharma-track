@@ -1,7 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { createBatch } from '@pharmatrack/db';
+import { createBatch, regenerateBatchPin } from '@pharmatrack/db';
 import { getSession } from '@/lib/session';
 import { sendPushToDriver } from '@/lib/push';
 
@@ -55,4 +55,20 @@ export async function createBatchAction(formData: FormData): Promise<CreateBatch
   revalidatePath('/driver');
 
   return { ok: true, batchId: result.batchId, pin: result.pin, orderCount: result.orderCount };
+}
+
+export type RegeneratePinActionResult = { ok: true; pin: string } | { ok: false; reason: string };
+
+export async function regeneratePinAction(batchId: string): Promise<RegeneratePinActionResult> {
+  const session = await getSession();
+  if (!session?.user || session.user.role !== 'admin') {
+    return { ok: false, reason: 'Not authorized' };
+  }
+  if (!UUID_RE.test(batchId)) return { ok: false, reason: 'Invalid batch ID' };
+
+  const result = await regenerateBatchPin({ batchId, actorUserId: session.user.id });
+  if (!result.ok) return { ok: false, reason: result.reason };
+
+  revalidatePath('/admin/batches');
+  return { ok: true, pin: result.pin };
 }

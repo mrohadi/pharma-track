@@ -10,3 +10,4 @@ export * from './audit-log';
 export * from './push-subscriptions';
 export * from './order-items';
 export * from './order-ratings';
+export * from './invitations';

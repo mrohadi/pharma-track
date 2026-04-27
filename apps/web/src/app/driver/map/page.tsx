@@ -3,6 +3,7 @@ import { requireRole } from '@/lib/guards';
 import { getDriverByUserId, listDriverQueue } from '@pharmatrack/db';
 import Link from 'next/link';
 import { BottomNav } from '../bottom-nav';
+import { LocationTracker } from '../location-tracker';
 
 export default async function DriverMapPage() {
   const session = await requireRole('driver');
@@ -60,6 +61,7 @@ export default async function DriverMapPage() {
       <div className="flex-1 overflow-hidden">
         <DeliveryMap address={address} patientName={order.patientName} />
       </div>
+      <LocationTracker />
 
       {/* Other active orders */}
       {active.length > 1 && (

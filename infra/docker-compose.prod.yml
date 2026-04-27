@@ -10,7 +10,8 @@ services:
       AWS_REGION: ${AWS_REGION}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
-      SES_FROM_EMAIL: ${SES_FROM_EMAIL}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL}
       S3_BUCKET: ${S3_BUCKET}
       S3_REGION: ${S3_REGION}
       WHATSAPP_ADAPTER: ${WHATSAPP_ADAPTER:-meta}
@@ -34,6 +35,7 @@ services:
   postgres:
     image: postgres:16-alpine
     restart: unless-stopped
+    command: postgres -c max_connections=200 -c shared_buffers=128MB
     environment:
       POSTGRES_DB: pharmatrack
       POSTGRES_USER: ${POSTGRES_USER}

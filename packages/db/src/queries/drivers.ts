@@ -142,6 +142,18 @@ export async function listCompletedOrders(
   return rows;
 }
 
+/** Update driver GPS location. */
+export async function updateDriverLocation(
+  driverId: string,
+  lat: number,
+  lng: number,
+): Promise<void> {
+  await db
+    .update(drivers)
+    .set({ lastLat: lat, lastLng: lng, lastLocationAt: new Date(), updatedAt: new Date() })
+    .where(eq(drivers.id, driverId));
+}
+
 /** Look up the driver row for a given user id (driver's own user account). */
 export async function getDriverByUserId(userId: string) {
   const row = (await db.select().from(drivers).where(eq(drivers.userId, userId)).limit(1)).at(0);

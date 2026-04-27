@@ -141,7 +141,10 @@ export default async function AuditLogPage({
               <tbody className="divide-y divide-slate-100">
                 {rows.map((entry) => (
                   <tr key={entry.id} className="align-top">
-                    <td className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-500">
+                    <td
+                      className="whitespace-nowrap px-3 py-2 font-mono text-xs text-slate-500"
+                      suppressHydrationWarning
+                    >
                       {new Date(entry.at).toLocaleString()}
                     </td>
                     <td className="px-3 py-2 text-slate-700">

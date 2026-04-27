@@ -90,7 +90,7 @@ export function PharmacyRow({ pharmacy }: { pharmacy: Pharmacy }) {
       </td>
 
       {/* Bergabung */}
-      <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }}>
+      <td style={{ padding: '12px 16px', fontSize: 12, color: '#94a3b8' }} suppressHydrationWarning>
         {new Date(pharmacy.createdAt).toLocaleDateString('id-ID', {
           month: 'short',
           year: 'numeric',

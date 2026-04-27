@@ -7,6 +7,12 @@ const phoneID = z.string().regex(/^(\+62|08)\d{7,12}$/, 'Nomor telepon harus dia
 export const OrderWizardStep1Schema = z.object({
   patientName: z.string().min(1, 'Nama pasien wajib diisi'),
   patientPhone: phoneID,
+  patientEmail: z
+    .string()
+    .email('Format email tidak valid')
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => v || undefined),
   deliveryAddress: z.string().optional(),
 });
 

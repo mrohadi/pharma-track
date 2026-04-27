@@ -3,6 +3,7 @@ import { listRecentOrdersForPharmacy, getPharmacyById } from '@pharmatrack/db';
 import { getPharmacyDashboardStats } from '@pharmatrack/db';
 import { requireRole } from '@/lib/guards';
 import { maskPhone } from '@/lib/format';
+import { OrderActions } from './_components/order-actions.client';
 
 export default async function PharmacyHome() {
   const session = await requireRole('pharmacy');
@@ -57,7 +58,7 @@ export default async function PharmacyHome() {
       <div className="mb-6 flex items-start justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-800">Dashboard</h1>
-          <p className="mt-1 text-[13.5px] text-slate-500">
+          <p className="mt-1 text-[13.5px] text-slate-500" suppressHydrationWarning>
             {pharmacy?.name ?? 'Apotek'} · {today}
           </p>
         </div>
@@ -163,19 +164,7 @@ export default async function PharmacyHome() {
                       </div>
                     )}
 
-                    {isPending && (
-                      <div className="mt-2.5 flex gap-2">
-                        <button className="rounded-md bg-blue-600 px-3 py-1 text-xs font-semibold text-white hover:bg-blue-700">
-                          Dispatch Driver
-                        </button>
-                        <button className="rounded-md border border-slate-200 px-3 py-1 text-xs font-medium text-slate-600 hover:bg-slate-50">
-                          Edit
-                        </button>
-                        <button className="rounded-md border border-red-200 px-3 py-1 text-xs font-medium text-red-600 hover:bg-red-50">
-                          Cancel
-                        </button>
-                      </div>
-                    )}
+                    {isPending && <OrderActions orderId={o.id} />}
 
                     {!isPending && (
                       <div className="mt-1 text-xs text-slate-500">

@@ -54,11 +54,64 @@ export async function listRecentOrdersForPharmacy(pharmacyId: string, limit = 25
 
 export type RecentOrderRow = Awaited<ReturnType<typeof listRecentOrdersForPharmacy>>[number];
 
+/**
+ * Fetch a single order with ownership check.
+ * Returns null if not found or does not belong to pharmacyId.
+ */
+export async function getOrderForPharmacy(orderId: string, pharmacyId: string) {
+  const [order] = await db
+    .select({
+      id: orders.id,
+      pharmacyId: orders.pharmacyId,
+      status: orders.status,
+      patientName: orders.patientName,
+      patientPhone: orders.patientPhone,
+      patientEmail: orders.patientEmail,
+      medicineText: orders.medicineText,
+      deliveryAddress: orders.deliveryAddress,
+      notes: orders.notes,
+    })
+    .from(orders)
+    .where(eq(orders.id, orderId))
+    .limit(1);
+
+  if (!order || order.pharmacyId !== pharmacyId) return null;
+  return order;
+}
+
+export async function updateOrderFields(
+  orderId: string,
+  actorUserId: string,
+  patch: Partial<{
+    patientName: string;
+    patientPhone: string;
+    patientEmail: string | null;
+    medicineText: string;
+    deliveryAddress: string | null;
+    notes: string | null;
+  }>,
+): Promise<void> {
+  await db.transaction(async (tx) => {
+    await tx
+      .update(orders)
+      .set({ ...patch, updatedAt: new Date() })
+      .where(eq(orders.id, orderId));
+    await tx.insert(auditLog).values({
+      actorUserId,
+      entityType: 'order',
+      entityId: orderId,
+      action: 'order.edited',
+      diff: patch as Record<string, unknown>,
+    });
+  });
+}
+
 export async function createOrderWithItems(opts: {
   pharmacyId: string;
   actorUserId: string;
   patientName: string;
   patientPhone: string;
+  patientEmail?: string;
   medicineText: string;
   deliveryAddress?: string;
   items: {
@@ -80,6 +133,7 @@ export async function createOrderWithItems(opts: {
         pharmacyId: opts.pharmacyId,
         patientName: opts.patientName,
         patientPhone: opts.patientPhone,
+        patientEmail: opts.patientEmail ?? null,
         medicineText: opts.medicineText,
         deliveryAddress: opts.deliveryAddress ?? null,
         status: 'pending_address',

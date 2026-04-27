@@ -14,6 +14,7 @@ import type { UpdateDriverProfileInput } from '@pharmatrack/db';
 import { getWhatsAppClient, TEMPLATES } from '@pharmatrack/whatsapp';
 import { getSession } from '@/lib/session';
 import { sendDeliveryOtpEmail } from '@/lib/ses';
+import { sendPushToDriver } from '@/lib/push';
 
 const UUID_RE = /^[0-9a-f-]{36}$/i;
 const PIN_RE = /^[0-9]{6}$/;
@@ -99,8 +100,12 @@ export async function startDeliveryAction(formData: FormData): Promise<StartDeli
     bodyParams: [firstName, result.otp],
   });
 
-  if (!sendResult.success) {
-    console.error(`[DeliveryOTP] WhatsApp send failed for order ${orderId}:`, sendResult.error);
+  const waFailed = !sendResult.success || process.env.FORCE_EMAIL_FALLBACK === 'true';
+
+  if (waFailed) {
+    if (!sendResult.success) {
+      console.error(`[DeliveryOTP] WhatsApp send failed for order ${orderId}:`, sendResult.error);
+    }
 
     // Email fallback — only if patient has an email address
     if (result.patientEmail) {
@@ -124,6 +129,15 @@ export async function startDeliveryAction(formData: FormData): Promise<StartDeli
   // In mock mode, log the OTP for dev testing
   if ((process.env.WHATSAPP_ADAPTER ?? 'mock') === 'mock') {
     console.log(`[DeliveryOTP] 🔑 OTP for order ${orderId}: ${result.otp}`);
+  }
+
+  // Notify driver via push that OTP was sent
+  const driver = await getDriverByUserId(session.user.id);
+  if (driver) {
+    sendPushToDriver(driver.id, {
+      title: 'OTP terkirim ke pasien',
+      body: `Minta pasien menyebutkan kode OTP untuk order ${orderId.slice(0, 8).toUpperCase()}.`,
+    }).catch(console.error);
   }
 
   revalidatePath('/driver');
@@ -215,6 +229,15 @@ export async function failDeliveryAction(formData: FormData): Promise<FailDelive
   });
 
   if (!result.ok) return { ok: false, reason: result.reason };
+
+  // Notify driver via push that delivery failed
+  const driver = await getDriverByUserId(session.user.id);
+  if (driver) {
+    sendPushToDriver(driver.id, {
+      title: 'Pengiriman gagal dicatat',
+      body: `Order ${orderId.slice(0, 8).toUpperCase()} ditandai gagal: ${failureReason}.`,
+    }).catch(console.error);
+  }
 
   revalidatePath('/driver');
   return { ok: true };
