@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { formatNpwp } from '@pharmatrack/shared';
 
 type ProfileFields = {
   name: string;
@@ -10,13 +11,18 @@ type ProfileFields = {
 };
 
 export function ProfileSection({ initial }: { initial: ProfileFields }) {
-  const [form, setForm] = useState(initial);
+  const [form, setForm] = useState({ ...initial, npwp: formatNpwp(initial.npwp) });
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const set = (k: keyof ProfileFields) => (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm((f) => ({ ...f, [k]: e.target.value }));
+    if (k === 'npwp') {
+      const d = e.target.value.replace(/\D/g, '').slice(0, 15);
+      setForm((f) => ({ ...f, npwp: formatNpwp(d) }));
+    } else {
+      setForm((f) => ({ ...f, [k]: e.target.value }));
+    }
     setSaved(false);
   };
 
