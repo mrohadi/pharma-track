@@ -372,7 +372,7 @@ function StepIndicator({ steps, current }: { steps: readonly string[]; current: 
 }
 
 function NpwpField({ defaultValue }: { defaultValue?: string }) {
-  const [value, setValue] = useState(defaultValue ?? '');
+  const [value, setValue] = useState(formatNpwp(defaultValue ?? ''));
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
       <span style={{ fontSize: 13, fontWeight: 600, color: PT.text }}>NPWP Apotek</span>
