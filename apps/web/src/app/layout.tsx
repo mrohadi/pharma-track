@@ -36,6 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang={locale}>
       <head>
         <meta name="color-scheme" content="light only" />
+        <meta name="facebook-domain-verification" content="64j86u5bsks8j9hf0nfy592x2vny86" />
       </head>
       <body className="min-h-screen antialiased" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>{children}</NextIntlClientProvider>
