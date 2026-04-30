@@ -1,4 +1,9 @@
-CREATE TYPE "public"."invitation_role" AS ENUM('pharmacy', 'driver');--> statement-breakpoint
+DO $$ BEGIN
+  CREATE TYPE "public"."invitation_role" AS ENUM('pharmacy', 'driver');
+EXCEPTION
+  WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "invitations" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"token" text NOT NULL,
