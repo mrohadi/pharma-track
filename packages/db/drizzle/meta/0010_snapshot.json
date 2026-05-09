@@ -73,12 +73,8 @@
           "name": "address_requests_order_id_orders_id_fk",
           "tableFrom": "address_requests",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -88,9 +84,7 @@
         "address_requests_token_unique": {
           "name": "address_requests_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -174,12 +168,8 @@
           "name": "audit_log_actor_user_id_users_id_fk",
           "tableFrom": "audit_log",
           "tableTo": "users",
-          "columnsFrom": [
-            "actor_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["actor_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -298,12 +288,8 @@
           "name": "accounts_user_id_users_id_fk",
           "tableFrom": "accounts",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -392,12 +378,8 @@
           "name": "sessions_user_id_users_id_fk",
           "tableFrom": "sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -407,9 +389,7 @@
         "sessions_token_unique": {
           "name": "sessions_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -532,12 +512,8 @@
           "name": "batches_pharmacy_id_pharmacies_id_fk",
           "tableFrom": "batches",
           "tableTo": "pharmacies",
-          "columnsFrom": [
-            "pharmacy_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pharmacy_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -545,12 +521,8 @@
           "name": "batches_driver_id_drivers_id_fk",
           "tableFrom": "batches",
           "tableTo": "drivers",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -707,12 +679,8 @@
           "name": "drivers_user_id_users_id_fk",
           "tableFrom": "drivers",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -915,12 +883,8 @@
           "name": "users_pharmacy_id_pharmacies_id_fk",
           "tableFrom": "users",
           "tableTo": "pharmacies",
-          "columnsFrom": [
-            "pharmacy_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pharmacy_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -930,9 +894,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -1171,12 +1133,8 @@
           "name": "orders_pharmacy_id_pharmacies_id_fk",
           "tableFrom": "orders",
           "tableTo": "pharmacies",
-          "columnsFrom": [
-            "pharmacy_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pharmacy_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         },
@@ -1184,12 +1142,8 @@
           "name": "orders_batch_id_batches_id_fk",
           "tableFrom": "orders",
           "tableTo": "batches",
-          "columnsFrom": [
-            "batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["batch_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1197,12 +1151,8 @@
           "name": "orders_assigned_driver_id_drivers_id_fk",
           "tableFrom": "orders",
           "tableTo": "drivers",
-          "columnsFrom": [
-            "assigned_driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["assigned_driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1271,12 +1221,8 @@
           "name": "otp_attempts_order_id_orders_id_fk",
           "tableFrom": "otp_attempts",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1352,12 +1298,8 @@
           "name": "push_subscriptions_driver_id_drivers_id_fk",
           "tableFrom": "push_subscriptions",
           "tableTo": "drivers",
-          "columnsFrom": [
-            "driver_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["driver_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1367,9 +1309,7 @@
         "push_subscriptions_endpoint_unique": {
           "name": "push_subscriptions_endpoint_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "endpoint"
-          ]
+          "columns": ["endpoint"]
         }
       },
       "policies": {},
@@ -1433,12 +1373,8 @@
           "name": "order_items_order_id_orders_id_fk",
           "tableFrom": "order_items",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1492,12 +1428,8 @@
           "name": "order_ratings_order_id_orders_id_fk",
           "tableFrom": "order_ratings",
           "tableTo": "orders",
-          "columnsFrom": [
-            "order_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["order_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1507,9 +1439,7 @@
         "order_ratings_order_id_unique": {
           "name": "order_ratings_order_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "order_id"
-          ]
+          "columns": ["order_id"]
         }
       },
       "policies": {},
@@ -1578,12 +1508,8 @@
           "name": "invitations_invited_by_user_id_users_id_fk",
           "tableFrom": "invitations",
           "tableTo": "users",
-          "columnsFrom": [
-            "invited_by_user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["invited_by_user_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1593,9 +1519,7 @@
         "invitations_token_unique": {
           "name": "invitations_token_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "token"
-          ]
+          "columns": ["token"]
         }
       },
       "policies": {},
@@ -1607,107 +1531,57 @@
     "public.contact_channel": {
       "name": "contact_channel",
       "schema": "public",
-      "values": [
-        "whatsapp",
-        "email",
-        "sms"
-      ]
+      "values": ["whatsapp", "email", "sms"]
     },
     "public.batch_status": {
       "name": "batch_status",
       "schema": "public",
-      "values": [
-        "draft",
-        "assigned",
-        "picked_up",
-        "completed",
-        "cancelled"
-      ]
+      "values": ["draft", "assigned", "picked_up", "completed", "cancelled"]
     },
     "public.driver_sim_class": {
       "name": "driver_sim_class",
       "schema": "public",
-      "values": [
-        "A",
-        "B1",
-        "B2",
-        "C"
-      ]
+      "values": ["A", "B1", "B2", "C"]
     },
     "public.driver_status": {
       "name": "driver_status",
       "schema": "public",
-      "values": [
-        "offline",
-        "available",
-        "on_delivery"
-      ]
+      "values": ["offline", "available", "on_delivery"]
     },
     "public.driver_vehicle_type": {
       "name": "driver_vehicle_type",
       "schema": "public",
-      "values": [
-        "motorcycle",
-        "car",
-        "bicycle"
-      ]
+      "values": ["motorcycle", "car", "bicycle"]
     },
     "public.driver_verification_status": {
       "name": "driver_verification_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "active",
-        "suspended",
-        "rejected"
-      ]
+      "values": ["pending", "active", "suspended", "rejected"]
     },
     "public.pharmacy_verification_status": {
       "name": "pharmacy_verification_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "active",
-        "suspended",
-        "rejected"
-      ]
+      "values": ["pending", "active", "suspended", "rejected"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "admin",
-        "pharmacy",
-        "driver"
-      ]
+      "values": ["admin", "pharmacy", "driver"]
     },
     "public.failure_reason": {
       "name": "failure_reason",
       "schema": "public",
-      "values": [
-        "no_answer",
-        "wrong_address",
-        "patient_refused",
-        "patient_not_home",
-        "other"
-      ]
+      "values": ["no_answer", "wrong_address", "patient_refused", "patient_not_home", "other"]
     },
     "public.order_payment_mode": {
       "name": "order_payment_mode",
       "schema": "public",
-      "values": [
-        "cod",
-        "prepaid",
-        "insurance"
-      ]
+      "values": ["cod", "prepaid", "insurance"]
     },
     "public.order_priority": {
       "name": "order_priority",
       "schema": "public",
-      "values": [
-        "normal",
-        "urgent"
-      ]
+      "values": ["normal", "urgent"]
     },
     "public.order_status": {
       "name": "order_status",
@@ -1726,18 +1600,12 @@
     "public.otp_type": {
       "name": "otp_type",
       "schema": "public",
-      "values": [
-        "pickup",
-        "delivery"
-      ]
+      "values": ["pickup", "delivery"]
     },
     "public.invitation_role": {
       "name": "invitation_role",
       "schema": "public",
-      "values": [
-        "pharmacy",
-        "driver"
-      ]
+      "values": ["pharmacy", "driver"]
     }
   },
   "schemas": {},

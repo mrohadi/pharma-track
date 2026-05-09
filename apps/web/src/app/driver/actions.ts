@@ -11,7 +11,7 @@ import {
   updateDriverProfile,
 } from '@pharmatrack/db';
 import type { UpdateDriverProfileInput } from '@pharmatrack/db';
-import { getWhatsAppClient, TEMPLATES } from '@pharmatrack/whatsapp';
+import { getWhatsAppClient } from '@pharmatrack/whatsapp';
 import { getSession } from '@/lib/session';
 import { sendDeliveryOtpEmail } from '@/lib/ses';
 import { sendPushToDriver } from '@/lib/push';
@@ -93,11 +93,9 @@ export async function startDeliveryAction(formData: FormData): Promise<StartDeli
   const wa = getWhatsAppClient();
   const firstName = result.patientName.split(' ')[0] ?? result.patientName;
 
-  const sendResult = await wa.sendTemplateMessage({
+  const sendResult = await wa.sendTextMessage({
     to: result.patientPhone,
-    templateName: TEMPLATES.DELIVERY_OTP,
-    language: 'id',
-    bodyParams: [firstName, result.otp],
+    body: `Halo ${firstName}, kode OTP pengiriman obat Anda adalah *${result.otp}*. Kode berlaku 10 menit. Jangan bagikan kode ini kepada siapapun.`,
   });
 
   const waFailed = !sendResult.success || process.env.FORCE_EMAIL_FALLBACK === 'true';

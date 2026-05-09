@@ -164,7 +164,7 @@ export default async function PharmacyHome() {
                       </div>
                     )}
 
-                    {isPending && <OrderActions orderId={o.id} />}
+                    {isPending && <OrderActions orderId={o.id} orderStatus={o.status} />}
 
                     {!isPending && (
                       <div className="mt-1 text-xs text-slate-500">
