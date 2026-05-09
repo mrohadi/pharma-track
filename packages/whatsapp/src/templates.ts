@@ -15,7 +15,7 @@ export const TEMPLATES = {
    *   {{2}} = pharmacy name
    * Button URL suffix: the token for /address/[token]
    */
-  ADDRESS_COLLECTION: 'address_collection_v1',
+  ADDRESS_COLLECTION: 'address_collection_otp_v1',
 
   /**
    * Address reminder — 15 min after first message if no response.

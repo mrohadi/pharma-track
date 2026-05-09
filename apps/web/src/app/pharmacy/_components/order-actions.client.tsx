@@ -12,16 +12,45 @@ type OrderField = {
   notes: string;
 };
 
-export function OrderActions({ orderId }: { orderId: string }) {
+export function OrderActions({
+  orderId,
+  orderStatus,
+}: {
+  orderId: string;
+  orderStatus: string;
+}) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [dispatchState, setDispatchState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [dispatchError, setDispatchError] = useState('');
+  const [addrReqState, setAddrReqState] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
+  const [addrReqError, setAddrReqError] = useState('');
   const [cancelState, setCancelState] = useState<'idle' | 'loading' | 'confirm'>('idle');
   const [editOpen, setEditOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState('');
   const [fields, setFields] = useState<OrderField | null>(null);
+
+  async function handleSendAddressRequest() {
+    setAddrReqState('loading');
+    setAddrReqError('');
+    try {
+      const res = await fetch(`/api/pharmacy/orders/${orderId}/address-request`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setAddrReqError(data.error ?? 'Gagal kirim link alamat');
+        setAddrReqState('error');
+        return;
+      }
+      setAddrReqState('done');
+      startTransition(() => router.refresh());
+    } catch {
+      setAddrReqError('Network error');
+      setAddrReqState('error');
+    }
+  }
 
   async function handleDispatch() {
     setDispatchState('loading');
@@ -112,7 +141,20 @@ export function OrderActions({ orderId }: { orderId: string }) {
 
   return (
     <>
-      <div className="mt-2.5 flex gap-2">
+      <div className="mt-2.5 flex flex-wrap gap-2">
+        {orderStatus === 'pending_address' && (
+          <button
+            onClick={handleSendAddressRequest}
+            disabled={addrReqState === 'loading' || addrReqState === 'done'}
+            className="rounded-md bg-green-600 px-3 py-1 text-xs font-semibold text-white hover:bg-green-700 disabled:opacity-60"
+          >
+            {addrReqState === 'loading'
+              ? 'Mengirim...'
+              : addrReqState === 'done'
+                ? 'Terkirim!'
+                : 'Kirim Link Alamat'}
+          </button>
+        )}
         <button
           onClick={handleDispatch}
           disabled={dispatchState === 'loading'}
@@ -135,6 +177,7 @@ export function OrderActions({ orderId }: { orderId: string }) {
         </button>
       </div>
       {dispatchState === 'error' && <p className="mt-1 text-xs text-red-500">{dispatchError}</p>}
+      {addrReqState === 'error' && <p className="mt-1 text-xs text-red-500">{addrReqError}</p>}
 
       {/* Edit modal */}
       {editOpen && (
