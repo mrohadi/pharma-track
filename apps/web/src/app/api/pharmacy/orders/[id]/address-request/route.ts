@@ -31,10 +31,7 @@ export async function POST(_req: NextRequest, { params }: Params) {
   if (!order) return NextResponse.json({ error: 'Order not found' }, { status: 404 });
 
   if (order.status !== 'pending_address') {
-    return NextResponse.json(
-      { error: 'Order not in pending_address status' },
-      { status: 422 },
-    );
+    return NextResponse.json({ error: 'Order not in pending_address status' }, { status: 422 });
   }
 
   const result = await createAddressRequest({ orderId: id, actorUserId });

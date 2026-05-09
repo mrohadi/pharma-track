@@ -12,13 +12,7 @@ type OrderField = {
   notes: string;
 };
 
-export function OrderActions({
-  orderId,
-  orderStatus,
-}: {
-  orderId: string;
-  orderStatus: string;
-}) {
+export function OrderActions({ orderId, orderStatus }: { orderId: string; orderStatus: string }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [dispatchState, setDispatchState] = useState<'idle' | 'loading' | 'error'>('idle');
